@@ -60,10 +60,10 @@ export default function MaintenancePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-1400 via-primary-1500 to-black flex items-center justify-center p-4 overflow-hidden relative">
       {/* Background Effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary-500/10 rounded-full blur-[120px] animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-[120px] animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[150px]"></div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 -left-20 sm:left-10 w-48 h-48 sm:w-72 sm:h-72 bg-primary-500/10 rounded-full blur-[100px] sm:blur-[120px] animate-pulse"></div>
+        <div className="absolute bottom-20 -right-20 sm:right-10 w-64 h-64 sm:w-96 sm:h-96 bg-purple-500/10 rounded-full blur-[100px] sm:blur-[120px] animate-pulse delay-1000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bg-cyan-500/5 rounded-full blur-[120px] sm:blur-[150px]"></div>
       </div>
 
       <div className="relative z-10 max-w-2xl w-full">
