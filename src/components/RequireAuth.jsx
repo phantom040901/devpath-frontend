@@ -11,28 +11,30 @@ export default function RequireAuth({ children }) {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [checkingMaintenance, setCheckingMaintenance] = useState(true);
   const [userRole, setUserRole] = useState(null);
+  const [bypassMaintenance, setBypassMaintenance] = useState(false);
 
-  // Check user role and subscribe to maintenance mode
+  // Check user role, bypass permission and subscribe to maintenance mode
   useEffect(() => {
     if (!user) {
       setCheckingMaintenance(false);
       return;
     }
 
-    // Get user role
-    const getUserRole = async () => {
+    // Get user role and bypass permission
+    const getUserData = async () => {
       try {
         const userDoc = await getDoc(doc(db, 'users', user.uid));
         if (userDoc.exists()) {
-          const role = userDoc.data().role;
-          setUserRole(role);
+          const userData = userDoc.data();
+          setUserRole(userData.role);
+          setBypassMaintenance(userData.bypassMaintenance || false);
         }
       } catch (error) {
-        console.error('Error fetching user role:', error);
+        console.error('Error fetching user data:', error);
       }
     };
 
-    getUserRole();
+    getUserData();
 
     // Subscribe to real-time maintenance mode updates
     const unsubscribe = subscribeToMaintenanceMode((status) => {
@@ -60,8 +62,8 @@ export default function RequireAuth({ children }) {
     return <Navigate to="/" replace />;
   }
 
-  // Show maintenance page if maintenance mode is enabled (unless user is admin)
-  if (maintenanceMode && userRole !== 'admin') {
+  // Show maintenance page if maintenance mode is enabled (unless user is admin or has bypass permission)
+  if (maintenanceMode && userRole !== 'admin' && !bypassMaintenance) {
     return <MaintenancePage />;
   }
 

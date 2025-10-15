@@ -1,14 +1,14 @@
 // src/pages/admin/StudentDetails.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import AdminNav from "../../components/admin/AdminNav";
-import { 
-  ArrowLeft, 
-  Mail, 
-  Calendar, 
-  Award, 
+import {
+  ArrowLeft,
+  Mail,
+  Calendar,
+  Award,
   TrendingUp,
   BookOpen,
   Code,
@@ -21,7 +21,9 @@ import {
   MapPin,
   Trophy,
   Clock,
-  ArrowRight
+  ArrowRight,
+  Shield,
+  ShieldCheck
 } from "lucide-react";
 
 export default function StudentDetails() {
@@ -32,6 +34,8 @@ export default function StudentDetails() {
   const [assessments, setAssessments] = useState([]);
   const [roadmapProgress, setRoadmapProgress] = useState(null);
   const [showAllAssessments, setShowAllAssessments] = useState(false);
+  const [bypassMaintenance, setBypassMaintenance] = useState(false);
+  const [updatingBypass, setUpdatingBypass] = useState(false);
 
   useEffect(() => {
     loadStudentData();
@@ -58,6 +62,27 @@ export default function StudentDetails() {
     return null;
   };
 
+  const toggleBypassMaintenance = async () => {
+    try {
+      setUpdatingBypass(true);
+      const userRef = doc(db, "users", studentId);
+      const newValue = !bypassMaintenance;
+
+      await updateDoc(userRef, {
+        bypassMaintenance: newValue,
+        bypassMaintenanceUpdatedAt: new Date().toISOString()
+      });
+
+      setBypassMaintenance(newValue);
+      console.log(`Bypass maintenance ${newValue ? 'enabled' : 'disabled'} for user:`, studentId);
+    } catch (error) {
+      console.error("Error updating bypass maintenance:", error);
+      alert("Failed to update bypass maintenance permission. Please try again.");
+    } finally {
+      setUpdatingBypass(false);
+    }
+  };
+
   const loadStudentData = async () => {
     try {
       console.log('Loading student data for:', studentId);
@@ -72,6 +97,9 @@ export default function StudentDetails() {
       }
 
       const userData = userDoc.data();
+
+      // Set bypass maintenance permission
+      setBypassMaintenance(userData.bypassMaintenance || false);
 
       // Get roadmap progress
       const roadmapDoc = await getDoc(doc(db, 'roadmapProgress', studentId));
@@ -509,6 +537,48 @@ export default function StudentDetails() {
               <InfoRow label="Year Level" value={student.yearLevel} />
               <InfoRow label="Total Assessments" value={student.totalAssessments} />
               <InfoRow label="Last Activity" value={formatDate(student.lastActivity)} />
+
+              {/* Bypass Maintenance Permission */}
+              <div className="pt-3 border-t border-gray-800">
+                <div className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-2">
+                    {bypassMaintenance ? (
+                      <ShieldCheck size={18} className="text-emerald-400" />
+                    ) : (
+                      <Shield size={18} className="text-gray-400" />
+                    )}
+                    <div>
+                      <span className="text-white font-medium text-sm block">Maintenance Bypass</span>
+                      <span className="text-xs text-gray-400">
+                        {bypassMaintenance ? 'Can access during maintenance' : 'Normal access restrictions'}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={toggleBypassMaintenance}
+                    disabled={updatingBypass}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+                      bypassMaintenance
+                        ? 'bg-emerald-500'
+                        : 'bg-gray-700'
+                    } ${updatingBypass ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        bypassMaintenance ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
+                </div>
+                {bypassMaintenance && (
+                  <div className="mt-2 p-2 bg-emerald-500/10 border border-emerald-500/30 rounded-lg">
+                    <p className="text-xs text-emerald-300 flex items-center gap-1.5">
+                      <AlertCircle size={12} />
+                      This student can access their dashboard even when the system is under maintenance.
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
