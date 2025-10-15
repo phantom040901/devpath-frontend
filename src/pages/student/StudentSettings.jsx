@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { User, Lock, Shield, Save, Eye, EyeOff, CheckCircle, AlertCircle, Loader, Trash2, Download, Bell, Palette, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../components/AuthContext';
-import { useTheme } from '../../components/ThemeContext';
+import { useTheme } from '../../contexts/ThemeContext';
 import { motion } from 'framer-motion';
 import DashboardNav from '../../components/dashboard/DashboardNav';
 import DashboardFooter from '../../components/dashboard/DashboardFooter';
