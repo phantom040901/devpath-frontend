@@ -260,14 +260,14 @@ export default function AssessmentsList() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary-1400 via-primary-1500 to-black">
-        <div className="text-gray-300 animate-pulse text-lg">Loading assessments...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary-1400 via-primary-1500 to-black dark:from-primary-1400 dark:via-primary-1500 dark:to-black light:from-gray-50 light:via-white light:to-gray-100">
+        <div className="text-gray-700 dark:text-gray-300 light:text-gray-700 animate-pulse text-lg">Loading assessments...</div>
       </div>
     );
   }
 
   return (
-    <section className="min-h-screen w-full bg-gradient-to-b from-primary-1400 via-primary-1500 to-black px-4 sm:px-6 lg:px-10 py-12 sm:py-16">
+    <section className="min-h-screen w-full bg-gradient-to-b from-primary-1400 via-primary-1500 to-black dark:from-primary-1400 dark:via-primary-1500 dark:to-black light:from-gray-50 light:via-white light:to-gray-100 px-4 sm:px-6 lg:px-10 py-12 sm:py-16">
       <DashNav />
 
       <motion.div
@@ -279,7 +279,7 @@ export default function AssessmentsList() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-primary-400 via-emerald-300 to-cyan-400 bg-clip-text text-transparent mb-3 sm:mb-4">
           Assessments
         </h1>
-        <p className="text-gray-300 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+        <p className="text-gray-600 dark:text-gray-300 light:text-gray-600 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
           Test your knowledge and track your progress across academic and technical skills
         </p>
       </motion.div>
@@ -467,8 +467,8 @@ const Section = memo(function Section({
       </div>
 
       {items.length === 0 ? (
-        <div className="text-center py-12 px-6 rounded-2xl bg-gray-800/40 border border-gray-700/40">
-          <p className="text-gray-400">No assessments available yet</p>
+        <div className="text-center py-12 px-6 rounded-2xl bg-gray-800/40 dark:bg-gray-800/40 light:bg-gray-100 border border-gray-700/40 dark:border-gray-700/40 light:border-gray-300">
+          <p className="text-gray-600 dark:text-gray-400 light:text-gray-600">No assessments available yet</p>
         </div>
       ) : (
         <div className="grid gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
@@ -516,10 +516,10 @@ const AssessmentCard = memo(function AssessmentCard({
   return (
     <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl backdrop-blur-sm transition-all group flex flex-col h-full hover:-translate-y-1 relative overflow-hidden
       ${isCompleted
-        ? 'bg-gray-900/70 border-2 border-emerald-500/50 hover:border-emerald-400/70'
+        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border-2 border-emerald-500/50 hover:border-emerald-400/70'
         : !accessStatus.canAccess && accessStatus.reason === 'threshold_met_incomplete_resources'
-        ? 'bg-gray-900/70 border-2 border-yellow-500/50 hover:border-yellow-400/70'
-        : 'bg-gray-900/70 border border-gray-700/40 hover:border-primary-500/50'
+        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border-2 border-yellow-500/50 hover:border-yellow-400/70'
+        : 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border border-gray-700/40 dark:border-gray-700/40 light:border-gray-300 hover:border-primary-500/50'
       }`}
     >
       {/* Threshold Met Badge */}
@@ -573,14 +573,14 @@ const AssessmentCard = memo(function AssessmentCard({
 
       <h3 className={`text-lg sm:text-xl font-bold mb-2 transition line-clamp-2
         ${isCompleted
-          ? 'text-emerald-300 group-hover:text-emerald-200'
-          : 'text-white group-hover:text-primary-400'
+          ? 'text-emerald-300 dark:text-emerald-300 light:text-emerald-600 group-hover:text-emerald-200 dark:group-hover:text-emerald-200 light:group-hover:text-emerald-500'
+          : 'text-gray-900 dark:text-white light:text-gray-900 group-hover:text-primary-600 dark:group-hover:text-primary-400 light:group-hover:text-primary-600'
         }`}
       >
         {assessment.title}
       </h3>
 
-      <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-2">
+      <p className="text-gray-600 dark:text-gray-400 light:text-gray-600 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-2">
         {assessment.description}
       </p>
 
@@ -604,7 +604,7 @@ const AssessmentCard = memo(function AssessmentCard({
               <div className="space-y-2">
                 {/* Attempts Progress */}
                 <div className="flex items-center justify-between text-xs sm:text-sm">
-                  <span className="text-gray-400 flex items-center gap-1.5 sm:gap-2">
+                  <span className="text-gray-600 dark:text-gray-400 light:text-gray-600 flex items-center gap-1.5 sm:gap-2">
                     <Target size={12} className="sm:w-3.5 sm:h-3.5" />
                     <span>Attempts</span>
                   </span>
@@ -613,8 +613,8 @@ const AssessmentCard = memo(function AssessmentCard({
                   </span>
                 </div>
                 
-                <div className="w-full bg-gray-800 rounded-full h-2 overflow-hidden">
-                  <div 
+                <div className="w-full bg-gray-800 dark:bg-gray-800 light:bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <div
                     className="h-full transition-all duration-500 bg-gradient-to-r from-emerald-500 to-cyan-400"
                     style={{ width: `${((assessment.attempts ?? 0) / 2) * 100}%` }}
                   />
@@ -649,24 +649,24 @@ const AssessmentCard = memo(function AssessmentCard({
 
                       {/* Progress bars */}
                       <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-400">
+                        <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 light:text-gray-600">
                           <span className="truncate pr-1">Learning Progress</span>
                           <span className="text-yellow-400 font-bold whitespace-nowrap">
                             {accessStatus.completedResources || 0}/{accessStatus.requiredCompletion}
                           </span>
                         </div>
-                        <div className="w-full bg-gray-800 rounded-full h-1.5">
+                        <div className="w-full bg-gray-800 dark:bg-gray-800 light:bg-gray-200 rounded-full h-1.5">
                           <div
                             className="h-full bg-gradient-to-r from-yellow-500 to-emerald-400 rounded-full transition-all"
                             style={{ width: `${accessStatus.completionPercentage}%` }}
                           />
                         </div>
 
-                        <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-400 pt-1">
+                        <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 light:text-gray-600 pt-1">
                           <span className="truncate pr-1">Time Remaining</span>
                           <span className="text-blue-400 font-bold whitespace-nowrap">{accessStatus.daysRemaining}d</span>
                         </div>
-                        <div className="w-full bg-gray-800 rounded-full h-1.5">
+                        <div className="w-full bg-gray-800 dark:bg-gray-800 light:bg-gray-200 rounded-full h-1.5">
                           <div
                             className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all"
                             style={{ width: `${((7 - accessStatus.daysRemaining) / 7) * 100}%` }}
@@ -698,7 +698,7 @@ const AssessmentCard = memo(function AssessmentCard({
               </div>
             )}
 
-            <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-500 pt-1">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-600 dark:text-gray-500 light:text-gray-600 pt-1">
               <CheckCircle size={12} className="sm:w-3.5 sm:h-3.5 text-emerald-400 flex-shrink-0" />
               <span className="truncate">
                 {assessment.result?.submittedAt
@@ -727,20 +727,20 @@ const AssessmentCard = memo(function AssessmentCard({
                     <Trophy size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
                     <span className="font-medium">Threshold Already Met!</span>
                   </div>
-                  <p className="text-[10px] sm:text-xs text-gray-400">
+                  <p className="text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 light:text-gray-600">
                     Score: {accessStatus.currentScore}% (Target: {accessStatus.threshold}%)
                   </p>
                 </div>
 
-                <div className="p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-700/30">
+                <div className="p-2 sm:p-3 rounded-lg bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100 border border-gray-700/30 dark:border-gray-700/30 light:border-gray-300">
                   <div className="space-y-1.5 sm:space-y-2">
-                    <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-400">
+                    <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-600 dark:text-gray-400 light:text-gray-600">
                       <span className="truncate pr-1">Complete Resources to Unlock</span>
                       <span className="text-yellow-400 font-bold whitespace-nowrap">
                         {accessStatus.completedResources}/{accessStatus.requiredCompletion}
                       </span>
                     </div>
-                    <div className="w-full bg-gray-800 rounded-full h-1.5">
+                    <div className="w-full bg-gray-800 dark:bg-gray-800 light:bg-gray-200 rounded-full h-1.5">
                       <div
                         className="h-full bg-gradient-to-r from-yellow-500 to-emerald-400 rounded-full transition-all"
                         style={{ width: `${accessStatus.completionPercentage}%` }}
@@ -752,8 +752,8 @@ const AssessmentCard = memo(function AssessmentCard({
             )}
 
             {accessStatus.reason !== 'threshold_met_incomplete_resources' && (
-              <div className="py-3 sm:py-4 px-3 sm:px-4 rounded-lg bg-gray-800/50 border border-gray-700/30">
-                <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-400">
+              <div className="py-3 sm:py-4 px-3 sm:px-4 rounded-lg bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100 border border-gray-700/30 dark:border-gray-700/30 light:border-gray-300">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-600 dark:text-gray-400 light:text-gray-600">
                   <Clock size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
                   <span>Not started yet</span>
                 </div>
