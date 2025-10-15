@@ -1,12 +1,11 @@
 // src/components/dashboard/DashboardNav.jsx
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { User, LogOut, Settings, ChevronDown, Menu, X } from "lucide-react";
+import { User, LogOut, Settings, ChevronDown, Menu, X, MessageSquare } from "lucide-react";
 import { useAuth } from "../AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import logoImage from "../../assets/logo.png";
 import NotificationBell from "./NotificationBell";
-import ThemeToggle from "../ThemeToggle";
 
 export default function DashboardNav() {
   const location = useLocation();
@@ -20,6 +19,11 @@ export default function DashboardNav() {
   const [assessOpen, setAssessOpen] = useState(false);
   const [careerOpen, setCareerOpen] = useState(false);
   const [progressOpen, setProgressOpen] = useState(false);
+
+  // Mobile dropdown states
+  const [mobileCareerOpen, setMobileCareerOpen] = useState(false);
+  const [mobileAssessOpen, setMobileAssessOpen] = useState(false);
+  const [mobileProgressOpen, setMobileProgressOpen] = useState(false);
   const assessRef = useRef(null);
   const careerRef = useRef(null);
   const progressRef = useRef(null);
@@ -75,7 +79,6 @@ export default function DashboardNav() {
   const links = [
     { name: "Dashboard", path: "/dashboard" },
     { name: "Reports", path: "/student/reports" },
-    { name: "Messages", path: "/student/messaging" },
   ];
 
   return (
@@ -338,8 +341,23 @@ export default function DashboardNav() {
 
         {/* Right Section */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* Theme Toggle */}
-          <ThemeToggle />
+          {/* Messages Icon - Desktop */}
+          <Link
+            to="/student/messaging"
+            className="hidden lg:flex items-center justify-center w-10 h-10 rounded-full bg-primary-1200/50 dark:bg-primary-1200/50 light:bg-gray-100 hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-200 transition-all duration-200 border border-transparent hover:border-primary-500/30 relative group"
+          >
+            <MessageSquare
+              size={20}
+              className={`${
+                location.pathname === '/student/messaging'
+                  ? 'text-primary-400 dark:text-primary-400 light:text-primary-600'
+                  : 'text-gray-300 dark:text-gray-300 light:text-gray-600 group-hover:text-primary-400 dark:group-hover:text-primary-400 light:group-hover:text-primary-600'
+              }`}
+            />
+            {location.pathname === '/student/messaging' && (
+              <div className="absolute inset-0 rounded-full border-2 border-primary-400 dark:border-primary-400 light:border-primary-600" />
+            )}
+          </Link>
 
           {/* Notification Bell - Desktop */}
           <div className="hidden lg:block">
@@ -398,6 +416,24 @@ export default function DashboardNav() {
             </AnimatePresence>
           </div>
 
+          {/* Messages Icon - Mobile/Tablet */}
+          <Link
+            to="/student/messaging"
+            className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full bg-primary-1200/50 dark:bg-primary-1200/50 light:bg-gray-100 hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-200 transition-all duration-200 relative"
+          >
+            <MessageSquare
+              size={20}
+              className={`${
+                location.pathname === '/student/messaging'
+                  ? 'text-primary-400 dark:text-primary-400 light:text-primary-600'
+                  : 'text-gray-300 dark:text-gray-300 light:text-gray-600'
+              }`}
+            />
+            {location.pathname === '/student/messaging' && (
+              <div className="absolute inset-0 rounded-full border-2 border-primary-400 dark:border-primary-400 light:border-primary-600" />
+            )}
+          </Link>
+
           {/* Notification Bell - Mobile/Tablet */}
           <div className="lg:hidden">
             <NotificationBell />
@@ -420,16 +456,18 @@ export default function DashboardNav() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="lg:hidden bg-primary-1400/95 backdrop-blur-xl px-4 sm:px-6 py-4 border-t border-white/10 max-h-[calc(100vh-80px)] overflow-y-auto"
+            className="lg:hidden bg-primary-1400/95 dark:bg-primary-1400/95 light:bg-white/95 backdrop-blur-xl px-4 sm:px-6 py-4 border-t border-white/10 dark:border-white/10 light:border-gray-200 max-h-[calc(100vh-80px)] overflow-y-auto"
           >
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-2">
               {links.map((link) => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
                     onClick={() => setMobileOpen(false)}
-                    className={`block py-2 transition ${
-                      location.pathname === link.path ? "text-primary-500 font-semibold" : "hover:text-primary-400"
+                    className={`block py-3 px-3 rounded-lg transition-colors ${
+                      location.pathname === link.path
+                        ? "text-primary-400 dark:text-primary-400 light:text-primary-600 font-semibold bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-50"
+                        : "text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100"
                     }`}
                   >
                     {link.name}
@@ -437,73 +475,196 @@ export default function DashboardNav() {
                 </li>
               ))}
 
+              {/* Career Collapsible */}
               <li className="flex flex-col">
-                <span className="text-primary-400 font-semibold mt-2 mb-1">Career</span>
-                <Link 
-                  to="/career-matches" 
-                  onClick={() => setMobileOpen(false)}
-                  className="ml-4 py-2 text-sm hover:text-primary-400"
+                <button
+                  onClick={() => setMobileCareerOpen(!mobileCareerOpen)}
+                  className={`flex items-center justify-between py-3 px-3 rounded-lg font-semibold transition-colors ${
+                    ['/career-matches', '/career-roadmap', '/student/learning-path'].includes(location.pathname)
+                      ? "text-primary-400 dark:text-primary-400 light:text-primary-600 bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-50"
+                      : "text-gray-200 dark:text-gray-200 light:text-gray-700 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100"
+                  }`}
                 >
-                  🎯 Career Matches
-                </Link>
-                <Link 
-                  to="/career-roadmap" 
-                  onClick={() => setMobileOpen(false)}
-                  className="ml-4 py-2 text-sm hover:text-primary-400"
-                >
-                  🗺️ Career Roadmap
-                </Link>
-                <Link 
-                  to="/student/learning-path" 
-                  onClick={() => setMobileOpen(false)}
-                  className="ml-4 py-2 text-sm hover:text-primary-400"
-                >
-                  📖 Learning Path
-                </Link>
+                  <span>Career</span>
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform duration-200 ${mobileCareerOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {mobileCareerOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="ml-4 mt-1 flex flex-col gap-1">
+                        <Link
+                          to="/career-matches"
+                          onClick={() => setMobileOpen(false)}
+                          className={`py-2 px-3 text-sm rounded-lg transition-colors ${
+                            location.pathname === '/career-matches'
+                              ? "text-primary-400 dark:text-primary-400 light:text-primary-600 bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-50"
+                              : "text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100"
+                          }`}
+                        >
+                          🎯 Career Matches
+                        </Link>
+                        <Link
+                          to="/career-roadmap"
+                          onClick={() => setMobileOpen(false)}
+                          className={`py-2 px-3 text-sm rounded-lg transition-colors ${
+                            location.pathname === '/career-roadmap'
+                              ? "text-primary-400 dark:text-primary-400 light:text-primary-600 bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-50"
+                              : "text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100"
+                          }`}
+                        >
+                          🗺️ Career Roadmap
+                        </Link>
+                        <Link
+                          to="/student/learning-path"
+                          onClick={() => setMobileOpen(false)}
+                          className={`py-2 px-3 text-sm rounded-lg transition-colors ${
+                            location.pathname === '/student/learning-path'
+                              ? "text-primary-400 dark:text-primary-400 light:text-primary-600 bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-50"
+                              : "text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100"
+                          }`}
+                        >
+                          📖 Learning Path
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </li>
 
+              {/* Assessments Collapsible */}
               <li className="flex flex-col">
-                <span className="text-primary-400 font-semibold mt-2 mb-1">Assessments</span>
-                <Link 
-                  to="/assessments?tab=academic" 
-                  onClick={() => setMobileOpen(false)}
-                  className="ml-4 py-2 text-sm hover:text-primary-400"
+                <button
+                  onClick={() => setMobileAssessOpen(!mobileAssessOpen)}
+                  className={`flex items-center justify-between py-3 px-3 rounded-lg font-semibold transition-colors ${
+                    location.pathname === '/assessments'
+                      ? "text-primary-400 dark:text-primary-400 light:text-primary-600 bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-50"
+                      : "text-gray-200 dark:text-gray-200 light:text-gray-700 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100"
+                  }`}
                 >
-                  📚 Academic
-                </Link>
-                <Link 
-                  to="/assessments?tab=technical" 
-                  onClick={() => setMobileOpen(false)}
-                  className="ml-4 py-2 text-sm hover:text-primary-400"
-                >
-                  ⚡ Technical
-                </Link>
-                <Link 
-                  to="/assessments?tab=personal" 
-                  onClick={() => setMobileOpen(false)}
-                  className="ml-4 py-2 text-sm hover:text-primary-400"
-                >
-                  🎯 Personal
-                </Link>
+                  <span>Assessments</span>
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform duration-200 ${mobileAssessOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {mobileAssessOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="ml-4 mt-1 flex flex-col gap-1">
+                        <Link
+                          to="/assessments?tab=academic"
+                          onClick={() => setMobileOpen(false)}
+                          className="py-2 px-3 text-sm rounded-lg text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100 transition-colors"
+                        >
+                          📚 Academic
+                        </Link>
+                        <Link
+                          to="/assessments?tab=technical"
+                          onClick={() => setMobileOpen(false)}
+                          className="py-2 px-3 text-sm rounded-lg text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100 transition-colors"
+                        >
+                          ⚡ Technical
+                        </Link>
+                        <Link
+                          to="/assessments?tab=personal"
+                          onClick={() => setMobileOpen(false)}
+                          className="py-2 px-3 text-sm rounded-lg text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100 transition-colors"
+                        >
+                          🎯 Personal
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </li>
 
+              {/* Progress Collapsible */}
               <li className="flex flex-col">
-                <span className="text-primary-400 font-semibold mt-2 mb-1">Progress</span>
-                <Link 
-                  to="/student/progress" 
-                  onClick={() => setMobileOpen(false)}
-                  className="ml-4 py-2 text-sm hover:text-primary-400"
+                <button
+                  onClick={() => setMobileProgressOpen(!mobileProgressOpen)}
+                  className={`flex items-center justify-between py-3 px-3 rounded-lg font-semibold transition-colors ${
+                    location.pathname === '/student/progress'
+                      ? "text-primary-400 dark:text-primary-400 light:text-primary-600 bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-50"
+                      : "text-gray-200 dark:text-gray-200 light:text-gray-700 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100"
+                  }`}
                 >
-                  📊 Overall Progress
-                </Link>
+                  <span>Progress</span>
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform duration-200 ${mobileProgressOpen ? 'rotate-180' : ''}`}
+                  />
+                </button>
+                <AnimatePresence>
+                  {mobileProgressOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="ml-4 mt-1 flex flex-col gap-1">
+                        <Link
+                          to="/student/progress"
+                          onClick={() => setMobileOpen(false)}
+                          className={`py-2 px-3 text-sm rounded-lg transition-colors ${
+                            location.pathname === '/student/progress'
+                              ? "text-primary-400 dark:text-primary-400 light:text-primary-600 bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-50"
+                              : "text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100"
+                          }`}
+                        >
+                          📊 Overall Progress
+                        </Link>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </li>
 
-              <hr className="border-white/10 my-2" />
+              <hr className="border-white/10 dark:border-white/10 light:border-gray-200 my-2" />
 
-              <Link to="/student/profile" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 py-2 text-sm hover:text-primary-400">
+              {/* User Profile Section */}
+              <div className="flex items-center gap-3 py-3 px-3 bg-primary-500/5 dark:bg-primary-500/5 light:bg-gray-50 rounded-lg mb-2">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-400 to-cyan-400 flex items-center justify-center text-white font-bold">
+                  {user?.firstName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-gray-100 dark:text-gray-100 light:text-gray-900 truncate">
+                    {user?.firstName && user?.lastName
+                      ? `${user.firstName} ${user.lastName}`
+                      : user?.email?.split('@')[0] || "User"}
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600 truncate">{user?.email}</p>
+                </div>
+              </div>
+
+              <Link
+                to="/student/profile"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-3 py-3 px-3 text-sm rounded-lg text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100 transition-colors"
+              >
                 <User size={16} /> Profile
               </Link>
-              <Link to="/student/settings" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 py-2 text-sm hover:text-primary-400">
+              <Link
+                to="/student/settings"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-3 py-3 px-3 text-sm rounded-lg text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100 transition-colors"
+              >
                 <Settings size={16} /> Settings
               </Link>
               <button
@@ -511,7 +672,7 @@ export default function DashboardNav() {
                   handleLogout();
                   setMobileOpen(false);
                 }}
-                className="flex items-center gap-2 py-2 text-sm text-red-400 hover:text-red-300"
+                className="flex items-center gap-3 py-3 px-3 text-sm rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors w-full text-left"
               >
                 <LogOut size={16} /> Logout
               </button>

@@ -1,7 +1,8 @@
 // src/pages/student/StudentSettings.jsx
 import { useState, useEffect } from 'react';
-import { User, Lock, Shield, Save, Eye, EyeOff, CheckCircle, AlertCircle, Loader, Trash2, Download, Bell } from 'lucide-react';
+import { User, Lock, Shield, Save, Eye, EyeOff, CheckCircle, AlertCircle, Loader, Trash2, Download, Bell, Palette, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../components/AuthContext';
+import { useTheme } from '../../components/ThemeContext';
 import { motion } from 'framer-motion';
 import DashboardNav from '../../components/dashboard/DashboardNav';
 import DashboardFooter from '../../components/dashboard/DashboardFooter';
@@ -231,6 +232,7 @@ export default function StudentSettings() {
 
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
+    { id: 'appearance', label: 'Appearance', icon: Palette },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'account', label: 'Security', icon: Shield }
   ];
@@ -325,6 +327,9 @@ export default function StudentSettings() {
                   loading={loading}
                 />
               )}
+
+              {/* Appearance Tab */}
+              {activeTab === 'appearance' && <AppearanceTab />}
 
               {/* Notifications Tab */}
               {activeTab === 'notifications' && (
@@ -775,6 +780,191 @@ function NotificationsTab({ notificationPrefs, setNotificationPrefs, handleSaveN
             </>
           )}
         </button>
+      </div>
+    </div>
+  );
+}
+
+// Appearance Tab Component
+function AppearanceTab() {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <div className="space-y-4 sm:space-y-6">
+      <div className="mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-white dark:text-white light:text-gray-900 mb-2">Appearance Settings</h2>
+        <p className="text-sm sm:text-base text-gray-400 dark:text-gray-400 light:text-gray-600">
+          Customize how DevPath looks for you. Choose between light and dark themes.
+        </p>
+      </div>
+
+      {/* Theme Selector */}
+      <div className="bg-gray-800/30 dark:bg-gray-800/30 light:bg-white rounded-xl border border-gray-700/50 dark:border-gray-700/50 light:border-gray-200 p-4 sm:p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex-1">
+            <h3 className="text-base sm:text-lg font-semibold text-white dark:text-white light:text-gray-900 mb-1 flex items-center gap-2">
+              <Palette size={20} className="text-primary-400" />
+              Color Theme
+            </h3>
+            <p className="text-xs sm:text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">
+              Select your preferred color scheme
+            </p>
+          </div>
+        </div>
+
+        {/* Theme Toggle Slider */}
+        <div className="space-y-4">
+          {/* Current Theme Display */}
+          <div className="flex items-center justify-between p-4 bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-50 rounded-xl border border-primary-500/30 dark:border-primary-500/30 light:border-primary-200">
+            <div className="flex items-center gap-3">
+              {theme === 'dark' ? (
+                <div className="p-2 bg-gray-800 dark:bg-gray-800 light:bg-gray-100 rounded-lg">
+                  <Moon size={20} className="text-primary-400" />
+                </div>
+              ) : (
+                <div className="p-2 bg-white dark:bg-white light:bg-gray-50 rounded-lg">
+                  <Sun size={20} className="text-yellow-500" />
+                </div>
+              )}
+              <div>
+                <p className="font-semibold text-white dark:text-white light:text-gray-900">
+                  {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">
+                  {theme === 'dark' ? 'Easy on the eyes' : 'Bright and clean'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium text-gray-400 dark:text-gray-400 light:text-gray-600">Active</span>
+              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+            </div>
+          </div>
+
+          {/* Toggle Switch */}
+          <div className="flex items-center justify-between p-4 sm:p-6 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 rounded-xl">
+            <div className="flex items-center gap-4">
+              <div className={`p-3 rounded-xl transition-colors ${theme === 'dark' ? 'bg-primary-500/20 text-primary-400' : 'bg-gray-700/50 text-gray-500'}`}>
+                <Moon size={24} />
+              </div>
+              <div className="text-sm font-medium">
+                <p className="text-white dark:text-white light:text-gray-900">Dark Mode</p>
+                <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">Reduced eye strain</p>
+              </div>
+            </div>
+
+            {/* Animated Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="relative inline-flex h-8 w-16 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+              style={{
+                backgroundColor: theme === 'dark' ? 'rgb(6 182 212)' : 'rgb(156 163 175)'
+              }}
+            >
+              <span
+                className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform duration-200 ease-in-out ${
+                  theme === 'dark' ? 'translate-x-9' : 'translate-x-1'
+                }`}
+              >
+                {theme === 'dark' ? (
+                  <Moon size={14} className="text-primary-400 m-auto mt-1" />
+                ) : (
+                  <Sun size={14} className="text-yellow-500 m-auto mt-1" />
+                )}
+              </span>
+            </button>
+
+            <div className="flex items-center gap-4">
+              <div className="text-sm font-medium text-right">
+                <p className="text-white dark:text-white light:text-gray-900">Light Mode</p>
+                <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">Bright interface</p>
+              </div>
+              <div className={`p-3 rounded-xl transition-colors ${theme === 'light' ? 'bg-yellow-500/20 text-yellow-500' : 'bg-gray-700/50 text-gray-500'}`}>
+                <Sun size={24} />
+              </div>
+            </div>
+          </div>
+
+          {/* Theme Preview Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+            {/* Dark Theme Preview */}
+            <button
+              onClick={() => theme !== 'dark' && toggleTheme()}
+              className={`relative group overflow-hidden rounded-xl border-2 transition-all ${
+                theme === 'dark'
+                  ? 'border-primary-500 shadow-lg shadow-primary-500/20'
+                  : 'border-gray-700 hover:border-gray-600'
+              }`}
+            >
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <Moon size={16} className="text-primary-400" />
+                  {theme === 'dark' && (
+                    <div className="flex items-center gap-1 text-xs font-semibold text-primary-400">
+                      <CheckCircle size={14} />
+                      Active
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <div className="h-2 bg-gray-700 rounded w-3/4"></div>
+                  <div className="h-2 bg-gray-700 rounded w-1/2"></div>
+                  <div className="h-8 bg-primary-500/20 rounded mt-3 flex items-center justify-center">
+                    <span className="text-xs text-primary-400 font-medium">Dark Theme</span>
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            {/* Light Theme Preview */}
+            <button
+              onClick={() => theme !== 'light' && toggleTheme()}
+              className={`relative group overflow-hidden rounded-xl border-2 transition-all ${
+                theme === 'light'
+                  ? 'border-yellow-500 shadow-lg shadow-yellow-500/20'
+                  : 'border-gray-700 hover:border-gray-600'
+              }`}
+            >
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <Sun size={16} className="text-yellow-500" />
+                  {theme === 'light' && (
+                    <div className="flex items-center gap-1 text-xs font-semibold text-yellow-600">
+                      <CheckCircle size={14} />
+                      Active
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <div className="h-2 bg-gray-300 rounded w-3/4"></div>
+                  <div className="h-2 bg-gray-300 rounded w-1/2"></div>
+                  <div className="h-8 bg-yellow-500/20 rounded mt-3 flex items-center justify-center">
+                    <span className="text-xs text-yellow-700 font-medium">Light Theme</span>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Additional Info */}
+      <div className="bg-blue-500/10 dark:bg-blue-500/10 light:bg-blue-50 border border-blue-500/30 dark:border-blue-500/30 light:border-blue-200 rounded-xl p-4">
+        <div className="flex gap-3">
+          <div className="flex-shrink-0">
+            <div className="p-2 bg-blue-500/20 dark:bg-blue-500/20 light:bg-blue-100 rounded-lg">
+              <AlertCircle size={18} className="text-blue-400 dark:text-blue-400 light:text-blue-600" />
+            </div>
+          </div>
+          <div>
+            <h4 className="text-sm font-semibold text-blue-400 dark:text-blue-400 light:text-blue-700 mb-1">
+              Your preference is automatically saved
+            </h4>
+            <p className="text-xs text-blue-300/80 dark:text-blue-300/80 light:text-blue-600">
+              The theme you select will be applied immediately and remembered across all your sessions.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
