@@ -29,6 +29,17 @@ export default function SignUpModal() {
   const [error, setError] = useState("");
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+
+  // Password validation checks
+  const passwordRequirements = {
+    minLength: inputs.password.length >= 8,
+    hasUppercase: /[A-Z]/.test(inputs.password),
+    hasLowercase: /[a-z]/.test(inputs.password),
+    hasNumber: /[0-9]/.test(inputs.password),
+  };
+
+  const isPasswordValid = Object.values(passwordRequirements).every(Boolean);
 
   function handleInputs(e) {
     setInputs((prevInputs) => ({
@@ -40,12 +51,17 @@ export default function SignUpModal() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    
+
     if (!checked) {
       setError("You must agree to the terms and policies to continue.");
       return;
     }
-    
+
+    if (!isPasswordValid) {
+      setError("Password does not meet all requirements");
+      return;
+    }
+
     if (inputs.password !== inputs.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -184,7 +200,9 @@ export default function SignUpModal() {
                   placeholder="Create a secure password"
                   value={inputs.password}
                   onChange={handleInputs}
-                  className="w-full rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3 pr-10 
+                  onFocus={() => setPasswordFocused(true)}
+                  onBlur={() => setPasswordFocused(false)}
+                  className="w-full rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3 pr-10
                   placeholder:opacity-40 focus:ring-2 focus:ring-primary-500 outline-none"
                   required
                   disabled={isLoading}
@@ -198,6 +216,52 @@ export default function SignUpModal() {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
+
+              {/* Password Requirements */}
+              {(passwordFocused || inputs.password) && (
+                <div className="mt-2 space-y-1.5 text-xs">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                      passwordRequirements.minLength ? 'bg-green-500' : 'bg-gray-600'
+                    }`}>
+                      {passwordRequirements.minLength && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                    </div>
+                    <span className={passwordRequirements.minLength ? 'text-green-400' : 'text-gray-400'}>
+                      At least 8 characters
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                      passwordRequirements.hasUppercase ? 'bg-green-500' : 'bg-gray-600'
+                    }`}>
+                      {passwordRequirements.hasUppercase && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                    </div>
+                    <span className={passwordRequirements.hasUppercase ? 'text-green-400' : 'text-gray-400'}>
+                      One uppercase letter (A-Z)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                      passwordRequirements.hasLowercase ? 'bg-green-500' : 'bg-gray-600'
+                    }`}>
+                      {passwordRequirements.hasLowercase && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                    </div>
+                    <span className={passwordRequirements.hasLowercase ? 'text-green-400' : 'text-gray-400'}>
+                      One lowercase letter (a-z)
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                      passwordRequirements.hasNumber ? 'bg-green-500' : 'bg-gray-600'
+                    }`}>
+                      {passwordRequirements.hasNumber && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                    </div>
+                    <span className={passwordRequirements.hasNumber ? 'text-green-400' : 'text-gray-400'}>
+                      One number (0-9)
+                    </span>
+                  </div>
+                </div>
+              )}
             </label>
 
             {/* Confirm Password */}
