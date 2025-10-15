@@ -767,10 +767,10 @@ const AssessmentCard = memo(function AssessmentCard({
         onClick={() => onStart(assessment, accessStatus)}
         className={`w-full py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold shadow-lg transition-all mt-4 sm:mt-6 hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 sm:gap-2 border-2
           ${!accessStatus.canAccess
-            ? 'bg-gray-700 dark:bg-gray-700 light:bg-gray-300 border-gray-600 dark:border-gray-600 light:border-gray-500 text-gray-400 dark:text-gray-400 light:text-gray-700 cursor-not-allowed opacity-70'
+            ? 'bg-gray-700 dark:bg-gray-700 light:bg-gray-400 border-gray-600 dark:border-gray-600 light:border-gray-600 text-gray-400 dark:text-gray-400 light:text-gray-800 cursor-not-allowed opacity-70'
             : isCompleted
-            ? 'bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-500 dark:to-purple-500 light:from-gray-700 light:to-gray-800 border-blue-600 dark:border-blue-600 light:border-gray-900 text-white hover:shadow-blue-500/50'
-            : 'bg-gradient-to-r from-primary-500 to-emerald-400 dark:from-primary-500 dark:to-emerald-400 light:from-gray-700 light:to-gray-800 border-primary-600 dark:border-primary-600 light:border-gray-900 text-white dark:text-primary-1300 light:text-white hover:shadow-primary-500/50'
+            ? 'bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-500 dark:to-purple-500 light:bg-blue-600 border-blue-600 dark:border-blue-600 light:border-blue-700 text-white hover:shadow-blue-500/50'
+            : 'bg-gradient-to-r from-primary-500 to-emerald-400 dark:from-primary-500 dark:to-emerald-400 light:bg-emerald-600 border-primary-600 dark:border-primary-600 light:border-emerald-700 text-white dark:text-primary-1300 light:text-white hover:shadow-primary-500/50'
           }`}
         disabled={!accessStatus.canAccess}
       >

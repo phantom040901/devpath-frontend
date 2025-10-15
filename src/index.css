@@ -504,6 +504,118 @@ html.light .text-transparent {
    ASSESSMENTS PAGE STYLING
    ======================================== */
 
+/* Assessment cards - clean gray background */
+html.light .bg-gray-900\/70 {
+  background: rgba(249, 250, 251, 0.9) !important;
+  backdrop-filter: blur(12px);
+  border: 2px solid rgba(0, 0, 0, 1) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Assessment card buttons - HIGH VISIBILITY */
+/* Retake Test button (completed assessments) - BLUE */
+html.light button.from-blue-500.to-purple-500,
+html.light button[class*="from-blue-500"][class*="to-purple-500"] {
+  background: linear-gradient(to right, #2563eb, #7c3aed) !important;
+  border-color: #1e40af !important;
+  color: white !important;
+}
+
+/* Start Test button (not started) - EMERALD GREEN */
+html.light button.from-primary-500.to-emerald-400,
+html.light button[class*="from-primary-500"][class*="to-emerald-400"] {
+  background: linear-gradient(to right, #10b981, #059669) !important;
+  border-color: #047857 !important;
+  color: white !important;
+}
+
+/* Locked button - GRAY */
+html.light button.bg-gray-700[disabled],
+html.light button[class*="bg-gray-700"][disabled] {
+  background: #9ca3af !important;
+  border-color: #6b7280 !important;
+  color: #1f2937 !important;
+  opacity: 0.7;
+}
+
+/* Assessment type badges (MCQ, Survey, etc.) - COLORFUL */
+/* Survey badge - Blue */
+html.light span.bg-blue-500\/20,
+html.light .bg-blue-500\/20.text-blue-300 {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+  border-color: #2563eb !important;
+  color: white !important;
+}
+
+/* MCQ badge - Purple */
+html.light span.bg-purple-500\/20,
+html.light .bg-purple-500\/20.text-purple-300 {
+  background: linear-gradient(135deg, #a855f7, #c084fc) !important;
+  border-color: #9333ea !important;
+  color: white !important;
+}
+
+/* Override any text color rules for badges */
+html.light span.rounded-full.text-blue-300,
+html.light span.rounded-full.text-purple-300 {
+  color: white !important;
+}
+
+/* Completed badge styling - Top right corner */
+html.light div.from-emerald-500.to-cyan-500,
+html.light .bg-gradient-to-br.from-emerald-500.to-cyan-500 {
+  background: linear-gradient(to right, #10b981, #06b6d4) !important;
+  color: white !important;
+}
+
+html.light div.from-emerald-500 span,
+html.light div.to-cyan-500 span {
+  color: white !important;
+}
+
+/* Threshold met badge */
+html.light div.from-yellow-500.to-orange-500,
+html.light .bg-gradient-to-br.from-yellow-500.to-orange-500 {
+  background: linear-gradient(to right, #f59e0b, #f97316) !important;
+  color: white !important;
+}
+
+/* Progress bars - COLORFUL GRADIENTS */
+html.light .bg-gradient-to-r.from-primary-500.to-cyan-500 {
+  background: linear-gradient(to right, #06b6d4, #3b82f6) !important;
+}
+
+html.light .bg-gradient-to-r.from-emerald-500.to-green-400 {
+  background: linear-gradient(to right, #10b981, #22c55e) !important;
+}
+
+html.light .bg-gradient-to-r.from-yellow-500.to-orange-400 {
+  background: linear-gradient(to right, #f59e0b, #fb923c) !important;
+}
+
+html.light .bg-gradient-to-r.from-red-500.to-pink-400 {
+  background: linear-gradient(to right, #ef4444, #f472b6) !important;
+}
+
+/* Progress bar background track - Light gray for contrast */
+html.light .bg-gray-800.rounded-full,
+html.light .rounded-full.bg-gray-800 {
+  background: #d1d5db !important;
+}
+
+/* Progress bar fills - Keep vibrant colors */
+html.light .bg-gradient-to-r.from-emerald-500.to-cyan-400 {
+  background: linear-gradient(to right, #10b981, #06b6d4) !important;
+}
+
+html.light .bg-gradient-to-r.from-yellow-500.to-emerald-400 {
+  background: linear-gradient(to right, #f59e0b, #10b981) !important;
+}
+
+html.light .bg-gradient-to-r.from-blue-500.to-cyan-400 {
+  background: linear-gradient(to right, #3b82f6, #06b6d4) !important;
+}
+
 /* Assessment cards - blend with background */
 html.light .bg-white,
 html.light .bg-white\/95,
@@ -956,4 +1068,74 @@ html.light .text-red-400 {
 
 html.light .hover\:bg-red-500\/20:hover {
   background: rgba(239, 68, 68, 0.15) !important;
+}
+
+/* ========================================
+   FINAL OVERRIDES - ASSESSMENT BADGES
+   Must be last to override conflicting rules
+   ======================================== */
+
+/* MCQ and Survey badges - FORCE COLORFUL BACKGROUNDS */
+html.light .bg-gray-900\/70 span.bg-blue-500\/20,
+html.light .bg-gray-900\/70 span.bg-purple-500\/20 {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+html.light .bg-gray-900\/70 span.bg-blue-500\/20.text-blue-300,
+html.light span.font-semibold.rounded-full.bg-blue-500\/20 {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa) !important;
+  border-color: #2563eb !important;
+  color: white !important;
+}
+
+html.light .bg-gray-900\/70 span.bg-purple-500\/20.text-purple-300,
+html.light span.font-semibold.rounded-full.bg-purple-500\/20 {
+  background: linear-gradient(135deg, #a855f7, #c084fc) !important;
+  border-color: #9333ea !important;
+  color: white !important;
+}
+
+/* ========================================
+   STUDENT DASHBOARD PROGRESS BARS
+   Make progress bars visible in light mode
+   ======================================== */
+
+/* Progress bar containers */
+html.light .bg-gray-800\/50 {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Progress bar track (background) - ALL variations */
+html.light .bg-gray-700.rounded-full,
+html.light .bg-gray-800.rounded-full,
+html.light .rounded-full.bg-gray-700,
+html.light .rounded-full.bg-gray-800 {
+  background: #d1d5db !important;
+}
+
+/* Progress bar fills - ensure visibility */
+html.light .from-blue-500.to-cyan-400 {
+  background: linear-gradient(to right, #3b82f6, #06b6d4) !important;
+}
+
+html.light .from-purple-500.to-pink-400 {
+  background: linear-gradient(to right, #a855f7, #ec4899) !important;
+}
+
+html.light .from-emerald-500.to-teal-400 {
+  background: linear-gradient(to right, #10b981, #14b8a6) !important;
+}
+
+html.light .from-yellow-500.to-orange-400 {
+  background: linear-gradient(to right, #f59e0b, #fb923c) !important;
+}
+
+html.light .from-primary-500.to-emerald-400 {
+  background: linear-gradient(to right, #06b6d4, #10b981) !important;
+}
+
+html.light .from-emerald-500.via-teal-400.to-cyan-400 {
+  background: linear-gradient(to right, #10b981, #14b8a6, #06b6d4) !important;
 }
