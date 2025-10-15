@@ -41,6 +41,27 @@ export default function SignUpModal() {
 
   const isPasswordValid = Object.values(passwordRequirements).every(Boolean);
 
+  // Calculate password strength
+  const calculatePasswordStrength = () => {
+    let strength = 0;
+    if (passwordRequirements.minLength) strength++;
+    if (passwordRequirements.hasUppercase) strength++;
+    if (passwordRequirements.hasLowercase) strength++;
+    if (passwordRequirements.hasNumber) strength++;
+    return strength;
+  };
+
+  const passwordStrength = calculatePasswordStrength();
+  const getStrengthLabel = () => {
+    if (passwordStrength === 0) return { text: "Very Weak", color: "text-red-500" };
+    if (passwordStrength === 1) return { text: "Weak", color: "text-orange-500" };
+    if (passwordStrength === 2) return { text: "Fair", color: "text-yellow-500" };
+    if (passwordStrength === 3) return { text: "Good", color: "text-blue-500" };
+    return { text: "Strong", color: "text-green-500" };
+  };
+
+  const strengthLabel = getStrengthLabel();
+
   function handleInputs(e) {
     setInputs((prevInputs) => ({
       ...prevInputs,
@@ -219,46 +240,80 @@ export default function SignUpModal() {
 
               {/* Password Requirements */}
               {(passwordFocused || inputs.password) && (
-                <div className="mt-2 space-y-1.5 text-xs">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                      passwordRequirements.minLength ? 'bg-green-500' : 'bg-gray-600'
-                    }`}>
-                      {passwordRequirements.minLength && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                <div className="mt-2 space-y-2">
+                  {/* Password Strength Meter */}
+                  {inputs.password && (
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-primary-200">Password Strength:</span>
+                        <span className={`text-xs font-semibold ${strengthLabel.color}`}>
+                          {strengthLabel.text}
+                        </span>
+                      </div>
+                      <div className="flex gap-1 h-1.5">
+                        {[...Array(4)].map((_, index) => (
+                          <div
+                            key={index}
+                            className={`flex-1 rounded-full transition-all duration-300 ${
+                              index < passwordStrength
+                                ? passwordStrength === 1
+                                  ? 'bg-orange-500'
+                                  : passwordStrength === 2
+                                  ? 'bg-yellow-500'
+                                  : passwordStrength === 3
+                                  ? 'bg-blue-500'
+                                  : 'bg-green-500'
+                                : 'bg-gray-600'
+                            }`}
+                          />
+                        ))}
+                      </div>
                     </div>
-                    <span className={passwordRequirements.minLength ? 'text-green-400' : 'text-gray-400'}>
-                      At least 8 characters
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                      passwordRequirements.hasUppercase ? 'bg-green-500' : 'bg-gray-600'
-                    }`}>
-                      {passwordRequirements.hasUppercase && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                  )}
+
+                  {/* Requirements Checklist */}
+                  <div className="space-y-1.5 text-xs pt-1">
+                    <p className="text-primary-200 font-medium mb-1.5">Your password must contain:</p>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                        passwordRequirements.minLength ? 'bg-green-500' : 'bg-gray-600'
+                      }`}>
+                        {passwordRequirements.minLength && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                      </div>
+                      <span className={passwordRequirements.minLength ? 'text-green-400' : 'text-gray-400'}>
+                        At least 8 characters
+                      </span>
                     </div>
-                    <span className={passwordRequirements.hasUppercase ? 'text-green-400' : 'text-gray-400'}>
-                      One uppercase letter (A-Z)
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                      passwordRequirements.hasLowercase ? 'bg-green-500' : 'bg-gray-600'
-                    }`}>
-                      {passwordRequirements.hasLowercase && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                    <div className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                        passwordRequirements.hasUppercase ? 'bg-green-500' : 'bg-gray-600'
+                      }`}>
+                        {passwordRequirements.hasUppercase && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                      </div>
+                      <span className={passwordRequirements.hasUppercase ? 'text-green-400' : 'text-gray-400'}>
+                        One uppercase letter (A-Z)
+                      </span>
                     </div>
-                    <span className={passwordRequirements.hasLowercase ? 'text-green-400' : 'text-gray-400'}>
-                      One lowercase letter (a-z)
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                      passwordRequirements.hasNumber ? 'bg-green-500' : 'bg-gray-600'
-                    }`}>
-                      {passwordRequirements.hasNumber && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                    <div className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                        passwordRequirements.hasLowercase ? 'bg-green-500' : 'bg-gray-600'
+                      }`}>
+                        {passwordRequirements.hasLowercase && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                      </div>
+                      <span className={passwordRequirements.hasLowercase ? 'text-green-400' : 'text-gray-400'}>
+                        One lowercase letter (a-z)
+                      </span>
                     </div>
-                    <span className={passwordRequirements.hasNumber ? 'text-green-400' : 'text-gray-400'}>
-                      One number (0-9)
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
+                        passwordRequirements.hasNumber ? 'bg-green-500' : 'bg-gray-600'
+                      }`}>
+                        {passwordRequirements.hasNumber && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
+                      </div>
+                      <span className={passwordRequirements.hasNumber ? 'text-green-400' : 'text-gray-400'}>
+                        One number (0-9)
+                      </span>
+                    </div>
                   </div>
                 </div>
               )}
