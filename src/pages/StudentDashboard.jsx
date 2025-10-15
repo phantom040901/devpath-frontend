@@ -35,13 +35,18 @@ import {
 } from "lucide-react";
 
 export default function StudentDashboard() {
-  useNotifications(); 
+  useNotifications();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedCareer, setSelectedCareer] = useState(null);
   const [progressSummary, setProgressSummary] = useState(null);
   const [roadmapProgress, setRoadmapProgress] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Scroll to top when component mounts (especially important for mobile after login)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, []);
 
   useEffect(() => {
     if (!user) return;

@@ -23,7 +23,14 @@ export default function LoginModal() {
     if (loginSuccess && user) {
       setInputs(initialState);
       setActiveModal(""); // close modal
-      navigate("/dashboard", { replace: true }); // redirect to dashboard
+
+      // Scroll to top before navigating (helps with mobile UX)
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Small delay to ensure smooth transition
+      setTimeout(() => {
+        navigate("/dashboard", { replace: true }); // redirect to dashboard
+      }, 100);
     }
   }, [loginSuccess, user, navigate, setActiveModal]);
 

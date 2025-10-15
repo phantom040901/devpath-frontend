@@ -101,6 +101,10 @@ export default function SignUpModal() {
       setInputs(initialState);
       setChecked(false);
       setActiveModal("");
+
+      // Scroll to top before navigating (helps with mobile UX)
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
       // Small delay to ensure modal closes before navigation
       setTimeout(() => {
         navigate("/dashboard");
