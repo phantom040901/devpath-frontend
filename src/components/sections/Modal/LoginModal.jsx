@@ -55,8 +55,8 @@ export default function LoginModal() {
       {/* Left panel */}
       <div
         className="relative hidden sm:flex flex-col justify-center gap-y-6 p-10 text-center
-        bg-primary-1300/60 bg-[url('../src/assets/Noise.webp')] bg-repeat
-        backdrop-blur-2xl sm:border-r border-white/10 shadow-xl shadow-black/40 rounded-l-2xl"
+        bg-primary-1300 bg-[url('../src/assets/Noise.webp')] bg-repeat
+        sm:border-r border-white/10 shadow-xl shadow-black/40 rounded-l-2xl"
       >
         <h4 className="text-primary-50 text-4xl sm:text-3xl font-extrabold tracking-tight drop-shadow-md">
           Welcome Back
@@ -69,9 +69,9 @@ export default function LoginModal() {
 
       {/* Right panel (form) */}
       <div
-        className="relative flex flex-col bg-primary-1400/60
-        bg-[url('../src/assets/Noise.webp')] bg-repeat 
-        backdrop-blur-xl p-8 sm:p-10
+        className="relative flex flex-col bg-primary-1400
+        bg-[url('../src/assets/Noise.webp')] bg-repeat
+        p-8 sm:p-10
         shadow-xl shadow-black/30
         sm:border-l border-white/10 rounded-r-2xl sm:rounded-none
         max-sm:rounded-2xl w-full"

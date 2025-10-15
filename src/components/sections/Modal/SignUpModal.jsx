@@ -122,9 +122,9 @@ export default function SignUpModal() {
       <section className="grid sm:grid-cols-2 grid-cols-1 max-w-5xl rounded-3xl overflow-hidden shadow-2xl w-full">
         {/* Left panel (hidden on mobile) */}
         <div
-          className="relative flex flex-col justify-center gap-y-6 p-10 text-center 
-          bg-primary-1300/60 bg-[url('../src/assets/Noise.webp')] bg-repeat
-          backdrop-blur-2xl border-r border-white/10 shadow-xl shadow-black/40 
+          className="relative flex flex-col justify-center gap-y-6 p-10 text-center
+          bg-primary-1300 bg-[url('../src/assets/Noise.webp')] bg-repeat
+          border-r border-white/10 shadow-xl shadow-black/40
           rounded-l-2xl max-sm:hidden"
         >
           <h4 className="text-primary-50 text-4xl max-md:text-3xl max-sm:text-2xl font-extrabold tracking-tight drop-shadow-md">
@@ -138,9 +138,9 @@ export default function SignUpModal() {
 
         {/* Right panel (form) */}
         <div
-          className="relative flex flex-col bg-primary-1400/60 
-          bg-[url('../src/assets/Noise.webp')] bg-repeat 
-          backdrop-blur-xl p-10 max-md:px-6 max-md:py-8 max-sm:p-6
+          className="relative flex flex-col bg-primary-1400
+          bg-[url('../src/assets/Noise.webp')] bg-repeat
+          p-10 max-md:px-6 max-md:py-8 max-sm:p-6
           border-l border-white/10 rounded-r-2xl shadow-xl shadow-black/30"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-primary-1200/30 via-transparent to-primary-1300/40 pointer-events-none rounded-r-2xl" />

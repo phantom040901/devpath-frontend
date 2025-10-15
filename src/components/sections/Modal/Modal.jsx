@@ -1,10 +1,26 @@
 import { useModalContext } from "../../../contexts/ModalContext";
 import { motion } from "motion/react";
+import { useEffect } from "react";
 import LoginModal from "./LoginModal";
 import SignUpModal from "./SignUpModal";
 
 export default function Modal() {
   const { activeModal, setActiveModal } = useModalContext();
+
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (activeModal) {
+      // Save the original overflow style
+      const originalOverflow = document.body.style.overflow;
+      // Prevent scrolling
+      document.body.style.overflow = 'hidden';
+
+      // Cleanup: restore original overflow when modal closes
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [activeModal]);
 
   // Pick which modal to render
   let content = null;
