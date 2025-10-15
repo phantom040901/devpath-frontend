@@ -346,15 +346,15 @@ export default function AssessmentsList() {
               </motion.button>
             </div>
 
-            <div className="hidden md:flex flex-col gap-4 bg-gray-900/80 backdrop-blur-sm border border-gray-700/50 rounded-full p-3 shadow-xl">
+            <div className="hidden md:flex flex-col gap-4 bg-gray-900/80 dark:bg-gray-900/80 light:bg-white/90 backdrop-blur-sm border border-gray-700/50 dark:border-gray-700/50 light:border-gray-300 rounded-full p-3 shadow-xl">
               <motion.button
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => scrollToSection(academicHeaderRef)}
-                className="group relative w-3 h-3 rounded-full bg-primary-400 hover:bg-primary-300 transition-all"
+                className="group relative w-3 h-3 rounded-full bg-primary-400 hover:bg-primary-300 dark:bg-primary-400 dark:hover:bg-primary-300 light:bg-primary-600 light:hover:bg-primary-500 transition-all shadow-lg"
                 title="Academic"
               >
-                <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
                   Academic
                 </span>
               </motion.button>
@@ -362,10 +362,10 @@ export default function AssessmentsList() {
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => scrollToSection(technicalHeaderRef)}
-                className="group relative w-3 h-3 rounded-full bg-purple-400 hover:bg-purple-300 transition-all"
+                className="group relative w-3 h-3 rounded-full bg-purple-400 hover:bg-purple-300 dark:bg-purple-400 dark:hover:bg-purple-300 light:bg-purple-600 light:hover:bg-purple-500 transition-all shadow-lg"
                 title="Technical"
               >
-                <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
                   Technical
                 </span>
               </motion.button>
@@ -373,10 +373,10 @@ export default function AssessmentsList() {
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => scrollToSection(personalHeaderRef)}
-                className="group relative w-3 h-3 rounded-full bg-emerald-400 hover:bg-emerald-300 transition-all"
+                className="group relative w-3 h-3 rounded-full bg-emerald-400 hover:bg-emerald-300 dark:bg-emerald-400 dark:hover:bg-emerald-300 light:bg-emerald-600 light:hover:bg-emerald-500 transition-all shadow-lg"
                 title="Personal"
               >
-                <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
                   Personal
                 </span>
               </motion.button>
@@ -514,12 +514,12 @@ const AssessmentCard = memo(function AssessmentCard({
   };
 
   return (
-    <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl backdrop-blur-sm transition-all group flex flex-col h-full hover:-translate-y-1 relative overflow-hidden
+    <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-sm transition-all group flex flex-col h-full hover:-translate-y-1 relative overflow-hidden
       ${isCompleted
-        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border-2 border-emerald-500/50 hover:border-emerald-400/70'
+        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border-2 border-emerald-500/50 hover:border-emerald-400/70 shadow-xl dark:shadow-emerald-500/20 light:shadow-emerald-200/50'
         : !accessStatus.canAccess && accessStatus.reason === 'threshold_met_incomplete_resources'
-        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border-2 border-yellow-500/50 hover:border-yellow-400/70'
-        : 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border border-gray-700/40 dark:border-gray-700/40 light:border-gray-300 hover:border-primary-500/50'
+        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border-2 border-yellow-500/50 hover:border-yellow-400/70 shadow-xl dark:shadow-yellow-500/20 light:shadow-yellow-200/50'
+        : 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border border-gray-700/40 dark:border-gray-700/40 light:border-gray-300 hover:border-primary-500/50 shadow-xl dark:shadow-black/40 light:shadow-gray-300/50'
       }`}
     >
       {/* Threshold Met Badge */}
@@ -767,10 +767,10 @@ const AssessmentCard = memo(function AssessmentCard({
         onClick={() => onStart(assessment, accessStatus)}
         className={`w-full py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold shadow-lg transition-all mt-4 sm:mt-6 hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 sm:gap-2
           ${!accessStatus.canAccess
-            ? 'bg-gray-700 text-gray-400 cursor-not-allowed opacity-60'
+            ? 'bg-gray-700 dark:bg-gray-700 light:bg-gray-300 text-gray-400 dark:text-gray-400 light:text-gray-600 cursor-not-allowed opacity-60'
             : isCompleted
-            ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:shadow-blue-500/50'
-            : 'bg-gradient-to-r from-primary-500 to-emerald-400 text-primary-1300 hover:shadow-primary-500/50'
+            ? 'bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-500 dark:to-purple-500 light:from-blue-600 light:to-purple-600 text-white hover:shadow-blue-500/50'
+            : 'bg-gradient-to-r from-primary-500 to-emerald-400 dark:from-primary-500 dark:to-emerald-400 light:from-primary-600 light:to-emerald-500 text-white dark:text-primary-1300 light:text-white hover:shadow-primary-500/50'
           }`}
         disabled={!accessStatus.canAccess}
       >
