@@ -80,13 +80,13 @@ export default function DashboardNav() {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 w-full backdrop-blur-md bg-primary-1400/90 transition-shadow duration-300"
+      className="fixed top-0 left-0 right-0 w-full backdrop-blur-md bg-primary-1400/90 dark:bg-primary-1400/90 light:bg-white/95 transition-shadow duration-300 border-b border-gray-800/50 dark:border-gray-800/50 light:border-gray-200"
       style={{
         boxShadow: scrollY > 10 ? "0 8px 25px rgba(0,0,0,0.4)" : "none",
         zIndex: 9000,
       }}
     >
-      <div className="m-auto flex max-w-[90rem] justify-between items-center px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-primary-50 w-full">
+      <div className="m-auto flex max-w-[90rem] justify-between items-center px-4 sm:px-6 lg:px-8 py-3 sm:py-4 text-primary-50 dark:text-primary-50 light:text-gray-900 w-full">
         {/* Logo */}
         <Link to="/dashboard" className="flex items-center gap-x-2 sm:gap-x-4 group">
           <div className="relative">
@@ -119,13 +119,20 @@ export default function DashboardNav() {
             <li key={link.path}>
               <Link
                 to={link.path}
-                className={`transition text-sm xl:text-base ${
+                className={`relative transition-all duration-200 text-sm xl:text-base font-medium hover:scale-105 ${
                   location.pathname === link.path
-                    ? "text-primary-500 font-semibold"
-                    : "hover:text-primary-400"
+                    ? "text-primary-400 dark:text-primary-400 light:text-primary-600 font-bold"
+                    : "text-gray-300 dark:text-gray-300 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600"
                 }`}
               >
                 {link.name}
+                {location.pathname === link.path && (
+                  <motion.div
+                    layoutId="activeNav"
+                    className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400 to-cyan-400 rounded-full"
+                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                  />
+                )}
               </Link>
             </li>
           ))}
@@ -145,15 +152,18 @@ export default function DashboardNav() {
           >
             <button
               onClick={() => setCareerOpen((v) => !v)}
-              className={`flex items-center gap-1 transition text-sm xl:text-base ${
+              className={`relative flex items-center gap-1 transition-all duration-200 text-sm xl:text-base font-medium hover:scale-105 ${
                 ['/career-matches', '/career-roadmap', '/student/learning-path'].includes(location.pathname)
-                  ? "text-primary-500 font-semibold"
-                  : "hover:text-primary-400"
+                  ? "text-primary-400 dark:text-primary-400 light:text-primary-600 font-bold"
+                  : "text-gray-300 dark:text-gray-300 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600"
               }`}
               aria-haspopup="menu"
               aria-expanded={careerOpen}
             >
-              Career <ChevronDown size={14} />
+              Career <ChevronDown size={14} className={`transition-transform duration-200 ${careerOpen ? 'rotate-180' : ''}`} />
+              {['/career-matches', '/career-roadmap', '/student/learning-path'].includes(location.pathname) && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400 to-cyan-400 rounded-full" />
+              )}
             </button>
 
             <AnimatePresence>
@@ -162,8 +172,8 @@ export default function DashboardNav() {
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.12 }}
-                  className="absolute left-0 top-full mt-2 bg-primary-1400 border border-white/10 rounded-lg shadow-lg w-52 py-2"
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 top-full mt-3 bg-primary-1400/95 dark:bg-primary-1400/95 light:bg-white/95 backdrop-blur-xl border border-white/10 dark:border-white/10 light:border-gray-200 rounded-xl shadow-2xl w-56 py-2 overflow-hidden"
                   style={{ zIndex: 9100 }}
                   onMouseEnter={() => {
                     if (careerTimeout.current) clearTimeout(careerTimeout.current);
@@ -177,21 +187,21 @@ export default function DashboardNav() {
                   <Link
                     to="/career-matches"
                     onClick={() => setCareerOpen(false)}
-                    className="block px-4 py-2 text-sm hover:bg-primary-1200"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
                   >
                     🎯 Career Matches
                   </Link>
                   <Link
                     to="/career-roadmap"
                     onClick={() => setCareerOpen(false)}
-                    className="block px-4 py-2 text-sm hover:bg-primary-1200"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
                   >
                     🗺️ Career Roadmap
                   </Link>
                   <Link
                     to="/student/learning-path"
                     onClick={() => setCareerOpen(false)}
-                    className="block px-4 py-2 text-sm hover:bg-primary-1200"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
                   >
                     📖 Learning Path
                   </Link>
@@ -215,11 +225,11 @@ export default function DashboardNav() {
           >
             <button
               onClick={() => setAssessOpen((v) => !v)}
-              className="flex items-center gap-1 hover:text-primary-400 text-sm xl:text-base"
+              className="relative flex items-center gap-1 transition-all duration-200 text-sm xl:text-base font-medium hover:scale-105 text-gray-300 dark:text-gray-300 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600"
               aria-haspopup="menu"
               aria-expanded={assessOpen}
             >
-              Assessments <ChevronDown size={14} />
+              Assessments <ChevronDown size={14} className={`transition-transform duration-200 ${assessOpen ? 'rotate-180' : ''}`} />
             </button>
 
             <AnimatePresence>
@@ -228,8 +238,8 @@ export default function DashboardNav() {
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.12 }}
-                  className="absolute left-0 top-full mt-2 bg-primary-1400 border border-white/10 rounded-lg shadow-lg w-52 py-2"
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 top-full mt-3 bg-primary-1400/95 dark:bg-primary-1400/95 light:bg-white/95 backdrop-blur-xl border border-white/10 dark:border-white/10 light:border-gray-200 rounded-xl shadow-2xl w-56 py-2 overflow-hidden"
                   style={{ zIndex: 9100 }}
                   onMouseEnter={() => {
                     if (assessTimeout.current) clearTimeout(assessTimeout.current);
@@ -243,21 +253,21 @@ export default function DashboardNav() {
                   <Link
                     to="/assessments?tab=academic"
                     onClick={() => setAssessOpen(false)}
-                    className="block px-4 py-2 text-sm hover:bg-primary-1200"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
                   >
                     📚 Academic
                   </Link>
                   <Link
                     to="/assessments?tab=technical"
                     onClick={() => setAssessOpen(false)}
-                    className="block px-4 py-2 text-sm hover:bg-primary-1200"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
                   >
                     ⚡ Technical
                   </Link>
                   <Link
                     to="/assessments?tab=personal"
                     onClick={() => setAssessOpen(false)}
-                    className="block px-4 py-2 text-sm hover:bg-primary-1200"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
                   >
                     🎯 Personal
                   </Link>
@@ -281,15 +291,18 @@ export default function DashboardNav() {
           >
             <button
               onClick={() => setProgressOpen((v) => !v)}
-              className={`flex items-center gap-1 transition text-sm xl:text-base ${
+              className={`relative flex items-center gap-1 transition-all duration-200 text-sm xl:text-base font-medium hover:scale-105 ${
                 location.pathname === '/student/progress'
-                  ? "text-primary-500 font-semibold"
-                  : "hover:text-primary-400"
+                  ? "text-primary-400 dark:text-primary-400 light:text-primary-600 font-bold"
+                  : "text-gray-300 dark:text-gray-300 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600"
               }`}
               aria-haspopup="menu"
               aria-expanded={progressOpen}
             >
-              Progress <ChevronDown size={14} />
+              Progress <ChevronDown size={14} className={`transition-transform duration-200 ${progressOpen ? 'rotate-180' : ''}`} />
+              {location.pathname === '/student/progress' && (
+                <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400 to-cyan-400 rounded-full" />
+              )}
             </button>
 
             <AnimatePresence>
@@ -298,8 +311,8 @@ export default function DashboardNav() {
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.12 }}
-                  className="absolute left-0 top-full mt-2 bg-primary-1400 border border-white/10 rounded-lg shadow-lg w-52 py-2"
+                  transition={{ duration: 0.15 }}
+                  className="absolute left-0 top-full mt-3 bg-primary-1400/95 dark:bg-primary-1400/95 light:bg-white/95 backdrop-blur-xl border border-white/10 dark:border-white/10 light:border-gray-200 rounded-xl shadow-2xl w-56 py-2 overflow-hidden"
                   style={{ zIndex: 9100 }}
                   onMouseEnter={() => {
                     if (progressTimeout.current) clearTimeout(progressTimeout.current);
@@ -313,7 +326,7 @@ export default function DashboardNav() {
                   <Link
                     to="/student/progress"
                     onClick={() => setProgressOpen(false)}
-                    className="block px-4 py-2 text-sm hover:bg-primary-1200"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
                   >
                     📊 Overall Progress
                   </Link>
@@ -337,11 +350,15 @@ export default function DashboardNav() {
           <div className="relative hidden lg:block" ref={dropdownRef}>
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex items-center gap-2 rounded-full bg-primary-1200/50 px-3 py-2 hover:bg-primary-1200 transition"
+              className="flex items-center gap-2 rounded-full bg-primary-1200/50 dark:bg-primary-1200/50 light:bg-gray-100 px-3 py-2 hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-200 transition-all duration-200 border border-transparent hover:border-primary-500/30"
             >
-              <User size={18} />
-              <span className="hidden xl:inline text-sm max-w-[120px] truncate">{user?.email || "User"}</span>
-              <ChevronDown size={16} className="opacity-70" />
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-cyan-400 flex items-center justify-center text-white font-bold text-sm">
+                {user?.firstName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || "U"}
+              </div>
+              <span className="hidden xl:inline text-sm max-w-[120px] truncate font-medium text-gray-200 dark:text-gray-200 light:text-gray-700">
+                {user?.firstName || user?.email?.split('@')[0] || "User"}
+              </span>
+              <ChevronDown size={16} className={`opacity-70 transition-transform duration-200 ${menuOpen ? 'rotate-180' : ''}`} />
             </button>
 
             <AnimatePresence>
@@ -350,22 +367,32 @@ export default function DashboardNav() {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
-                  className="absolute right-0 mt-2 w-48 rounded-xl bg-primary-1400 shadow-lg border border-white/10 overflow-hidden"
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 mt-3 w-56 rounded-xl bg-primary-1400/95 dark:bg-primary-1400/95 light:bg-white/95 backdrop-blur-xl shadow-2xl border border-white/10 dark:border-white/10 light:border-gray-200 overflow-hidden"
                   style={{ zIndex: 9100 }}
                 >
-                  <Link to="/student/profile" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-primary-1200">
+                  <div className="px-4 py-3 border-b border-white/10 dark:border-white/10 light:border-gray-200">
+                    <p className="text-sm font-semibold text-white dark:text-white light:text-gray-900 truncate">
+                      {user?.firstName && user?.lastName
+                        ? `${user.firstName} ${user.lastName}`
+                        : user?.email?.split('@')[0] || "User"}
+                    </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600 truncate mt-0.5">{user?.email}</p>
+                  </div>
+                  <Link to="/student/profile" className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors text-gray-200 dark:text-gray-200 light:text-gray-700 font-medium">
                     <User size={16} /> Profile
                   </Link>
-                  <Link to="/student/settings" className="flex items-center gap-2 px-4 py-2 text-sm hover:bg-primary-1200">
+                  <Link to="/student/settings" className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors text-gray-200 dark:text-gray-200 light:text-gray-700 font-medium">
                     <Settings size={16} /> Settings
                   </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-red-500/20"
-                  >
-                    <LogOut size={16} /> Logout
-                  </button>
+                  <div className="border-t border-white/10 dark:border-white/10 light:border-gray-200">
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-red-500/20 transition-colors font-medium"
+                    >
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
