@@ -274,12 +274,12 @@ export default function AssessmentsList() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-center mb-16 sm:mb-20 mt-20 sm:mt-24"
+        className="text-center mb-12 sm:mb-16 lg:mb-20 mt-16 sm:mt-20 lg:mt-24 px-4"
       >
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-primary-400 via-emerald-300 to-cyan-400 bg-clip-text text-transparent mb-4">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-primary-400 via-emerald-300 to-cyan-400 bg-clip-text text-transparent mb-3 sm:mb-4">
           Assessments
         </h1>
-        <p className="text-gray-300 text-sm sm:text-base max-w-2xl mx-auto">
+        <p className="text-gray-300 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
           Test your knowledge and track your progress across academic and technical skills
         </p>
       </motion.div>
@@ -456,14 +456,14 @@ const Section = memo(function Section({
       transition={{ duration: 0.5 }}
       className="relative"
     >
-      <div ref={headerRef} className="scroll-mt-32 mb-8">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="text-primary-400">{icon}</div>
-          <h2 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary-400 to-emerald-300 bg-clip-text text-transparent">
+      <div ref={headerRef} className="scroll-mt-24 sm:scroll-mt-32 mb-6 sm:mb-8">
+        <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+          <div className="text-primary-400 scale-75 sm:scale-100">{icon}</div>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary-400 to-emerald-300 bg-clip-text text-transparent">
             {title}
           </h2>
         </div>
-        <div className="h-1 w-20 bg-gradient-to-r from-primary-400 to-transparent rounded-full"></div>
+        <div className="h-1 w-16 sm:w-20 bg-gradient-to-r from-primary-400 to-transparent rounded-full"></div>
       </div>
 
       {items.length === 0 ? (
@@ -514,9 +514,9 @@ const AssessmentCard = memo(function AssessmentCard({
   };
 
   return (
-    <div className={`rounded-2xl p-6 shadow-xl backdrop-blur-sm transition-all group flex flex-col h-full hover:-translate-y-1 relative overflow-hidden
-      ${isCompleted 
-        ? 'bg-gray-900/70 border-2 border-emerald-500/50 hover:border-emerald-400/70' 
+    <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl backdrop-blur-sm transition-all group flex flex-col h-full hover:-translate-y-1 relative overflow-hidden
+      ${isCompleted
+        ? 'bg-gray-900/70 border-2 border-emerald-500/50 hover:border-emerald-400/70'
         : !accessStatus.canAccess && accessStatus.reason === 'threshold_met_incomplete_resources'
         ? 'bg-gray-900/70 border-2 border-yellow-500/50 hover:border-yellow-400/70'
         : 'bg-gray-900/70 border border-gray-700/40 hover:border-primary-500/50'
@@ -524,20 +524,22 @@ const AssessmentCard = memo(function AssessmentCard({
     >
       {/* Threshold Met Badge */}
       {!isCompleted && accessStatus.reason === 'threshold_met_incomplete_resources' && (
-        <div className="absolute -top-1 -right-1">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-bl-xl rounded-tr-xl font-bold text-xs bg-gradient-to-br from-yellow-500 to-orange-500 text-white">
-            <Target size={14} />
-            <span>THRESHOLD MET</span>
+        <div className="absolute -top-1 -right-1 z-10">
+          <div className="flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-bl-lg sm:rounded-bl-xl rounded-tr-lg sm:rounded-tr-xl font-bold text-[10px] sm:text-xs bg-gradient-to-br from-yellow-500 to-orange-500 text-white">
+            <Target size={12} className="sm:w-3.5 sm:h-3.5" />
+            <span className="hidden sm:inline">THRESHOLD MET</span>
+            <span className="sm:hidden">MET</span>
           </div>
         </div>
       )}
 
       {/* Completion Badge */}
       {isCompleted && (
-        <div className="absolute -top-1 -right-1">
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-bl-xl rounded-tr-xl font-bold text-xs bg-gradient-to-br from-emerald-500 to-cyan-500 text-white">
-            <Trophy size={14} />
-            <span>COMPLETED</span>
+        <div className="absolute -top-1 -right-1 z-10">
+          <div className="flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-bl-lg sm:rounded-bl-xl rounded-tr-lg sm:rounded-tr-xl font-bold text-[10px] sm:text-xs bg-gradient-to-br from-emerald-500 to-cyan-500 text-white">
+            <Trophy size={12} className="sm:w-3.5 sm:h-3.5" />
+            <span className="hidden sm:inline">COMPLETED</span>
+            <span className="sm:hidden">DONE</span>
           </div>
         </div>
       )}
@@ -546,20 +548,20 @@ const AssessmentCard = memo(function AssessmentCard({
         <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent pointer-events-none rounded-2xl" />
       )}
 
-      <div className="flex items-start justify-between mb-4">
-        <div className={`p-3 rounded-xl transition relative
-          ${isCompleted 
-            ? 'bg-emerald-500/20 text-emerald-400' 
+      <div className="flex items-start justify-between mb-3 sm:mb-4">
+        <div className={`p-2 sm:p-3 rounded-lg sm:rounded-xl transition relative
+          ${isCompleted
+            ? 'bg-emerald-500/20 text-emerald-400'
             : 'bg-primary-500/10 text-primary-400 group-hover:bg-primary-500/20'
           }`}
         >
-          <Icon size={28} />
+          <Icon size={24} className="sm:w-7 sm:h-7" />
           {isCompleted && (
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full border-2 border-gray-900 animate-pulse" />
+            <div className="absolute -top-0.5 -right-0.5 sm:-top-1 sm:-right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-emerald-400 rounded-full border-2 border-gray-900 animate-pulse" />
           )}
         </div>
-        
-        <span className={`text-xs font-semibold px-3 py-1 rounded-full
+
+        <span className={`text-[10px] sm:text-xs font-semibold px-2 py-0.5 sm:px-3 sm:py-1 rounded-full
           ${isSurvey
             ? "bg-blue-500/20 text-blue-300 border border-blue-400/40"
             : "bg-purple-500/20 text-purple-300 border border-purple-400/40"
@@ -569,42 +571,42 @@ const AssessmentCard = memo(function AssessmentCard({
         </span>
       </div>
 
-      <h3 className={`text-xl font-bold mb-2 transition line-clamp-2
-        ${isCompleted 
-          ? 'text-emerald-300 group-hover:text-emerald-200' 
+      <h3 className={`text-lg sm:text-xl font-bold mb-2 transition line-clamp-2
+        ${isCompleted
+          ? 'text-emerald-300 group-hover:text-emerald-200'
           : 'text-white group-hover:text-primary-400'
         }`}
       >
         {assessment.title}
       </h3>
 
-      <p className="text-gray-400 text-sm leading-relaxed mb-4 line-clamp-2">
+      <p className="text-gray-400 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4 line-clamp-2">
         {assessment.description}
       </p>
 
       <div className="flex-1">
         {isCompleted ? (
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {!isSurvey && assessment.result?.score !== undefined && (
-              <div className={`p-4 rounded-xl border-2 ${getScoreColor(assessment.result.score)}`}>
+              <div className={`p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 ${getScoreColor(assessment.result.score)}`}>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium opacity-90">Your Score</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-3xl font-bold">{assessment.result.score}</span>
-                    <span className="text-lg opacity-75">%</span>
+                  <span className="text-xs sm:text-sm font-medium opacity-90">Your Score</span>
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <span className="text-2xl sm:text-3xl font-bold">{assessment.result.score}</span>
+                    <span className="text-base sm:text-lg opacity-75">%</span>
                   </div>
                 </div>
               </div>
             )}
-            
+
             {/* Status for MCQ */}
             {!isSurvey && (
               <div className="space-y-2">
                 {/* Attempts Progress */}
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-400 flex items-center gap-2">
-                    <Target size={14} />
-                    Attempts
+                <div className="flex items-center justify-between text-xs sm:text-sm">
+                  <span className="text-gray-400 flex items-center gap-1.5 sm:gap-2">
+                    <Target size={12} className="sm:w-3.5 sm:h-3.5" />
+                    <span>Attempts</span>
                   </span>
                   <span className="font-bold text-emerald-400">
                     {assessment.attempts ?? 0}/2
@@ -620,52 +622,52 @@ const AssessmentCard = memo(function AssessmentCard({
 
                 {/* Status Cards */}
                 {accessStatus.reason === "resources_completed" && (
-                  <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-                    <div className="flex items-center gap-2 text-emerald-400 text-sm">
-                      <Unlock size={16} />
+                  <div className="p-2 sm:p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-400 text-xs sm:text-sm">
+                      <Unlock size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="font-medium">Unlocked via learning!</span>
                     </div>
                   </div>
                 )}
 
                 {accessStatus.reason === "time_elapsed" && (
-                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
-                    <div className="flex items-center gap-2 text-blue-400 text-sm">
-                      <Clock size={16} />
+                  <div className="p-2 sm:p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-blue-400 text-xs sm:text-sm">
+                      <Clock size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="font-medium">Unlocked via time</span>
                     </div>
                   </div>
                 )}
 
                 {accessStatus.reason === "locked" && (
-                  <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+                  <div className="p-2 sm:p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
                     <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-yellow-400 text-sm">
-                        <Lock size={16} />
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-yellow-400 text-xs sm:text-sm">
+                        <Lock size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
                         <span className="font-medium">2nd Attempt Locked</span>
                       </div>
-                      
+
                       {/* Progress bars */}
                       <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-xs text-gray-400">
-                          <span>Learning Progress</span>
-                          <span className="text-yellow-400 font-bold">
+                        <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-400">
+                          <span className="truncate pr-1">Learning Progress</span>
+                          <span className="text-yellow-400 font-bold whitespace-nowrap">
                             {accessStatus.completedResources || 0}/{accessStatus.requiredCompletion}
                           </span>
                         </div>
                         <div className="w-full bg-gray-800 rounded-full h-1.5">
-                          <div 
+                          <div
                             className="h-full bg-gradient-to-r from-yellow-500 to-emerald-400 rounded-full transition-all"
                             style={{ width: `${accessStatus.completionPercentage}%` }}
                           />
                         </div>
-                        
-                        <div className="flex items-center justify-between text-xs text-gray-400 pt-1">
-                          <span>Time Remaining</span>
-                          <span className="text-blue-400 font-bold">{accessStatus.daysRemaining}d</span>
+
+                        <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-400 pt-1">
+                          <span className="truncate pr-1">Time Remaining</span>
+                          <span className="text-blue-400 font-bold whitespace-nowrap">{accessStatus.daysRemaining}d</span>
                         </div>
                         <div className="w-full bg-gray-800 rounded-full h-1.5">
-                          <div 
+                          <div
                             className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full transition-all"
                             style={{ width: `${((7 - accessStatus.daysRemaining) / 7) * 100}%` }}
                           />
@@ -676,9 +678,9 @@ const AssessmentCard = memo(function AssessmentCard({
                 )}
 
                 {accessStatus.reason === "max_attempts" && (
-                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30">
-                    <div className="flex items-center gap-2 text-red-400 text-sm">
-                      <X size={16} />
+                  <div className="p-2 sm:p-3 rounded-lg bg-red-500/10 border border-red-500/30">
+                    <div className="flex items-center gap-1.5 sm:gap-2 text-red-400 text-xs sm:text-sm">
+                      <X size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
                       <span className="font-medium">Max attempts reached</span>
                     </div>
                   </div>
@@ -688,23 +690,23 @@ const AssessmentCard = memo(function AssessmentCard({
 
             {/* Survey can be retaken anytime */}
             {isSurvey && (
-              <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
-                <div className="flex items-center gap-2 text-blue-400 text-sm">
-                  <RefreshCw size={16} />
+              <div className="p-2 sm:p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-blue-400 text-xs sm:text-sm">
+                  <RefreshCw size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
                   <span className="font-medium">Can update responses anytime</span>
                 </div>
               </div>
             )}
 
-            <div className="flex items-center gap-2 text-xs text-gray-500 pt-1">
-              <CheckCircle size={14} className="text-emerald-400" />
-              <span>
+            <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-500 pt-1">
+              <CheckCircle size={12} className="sm:w-3.5 sm:h-3.5 text-emerald-400 flex-shrink-0" />
+              <span className="truncate">
                 {assessment.result?.submittedAt
                   ? (() => {
-                      const date = assessment.result.submittedAt?.toDate 
-                        ? assessment.result.submittedAt.toDate() 
+                      const date = assessment.result.submittedAt?.toDate
+                        ? assessment.result.submittedAt.toDate()
                         : new Date(assessment.result.submittedAt);
-                      
+
                       return date.toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
@@ -716,30 +718,30 @@ const AssessmentCard = memo(function AssessmentCard({
             </div>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-2 sm:space-y-3">
             {/* Not started yet - show threshold met status */}
             {accessStatus.reason === 'threshold_met_incomplete_resources' && (
               <div className="space-y-2">
-                <div className="p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
-                  <div className="flex items-center gap-2 text-yellow-400 text-sm mb-2">
-                    <Trophy size={16} />
+                <div className="p-2 sm:p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-yellow-400 text-xs sm:text-sm mb-2">
+                    <Trophy size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
                     <span className="font-medium">Threshold Already Met!</span>
                   </div>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-[10px] sm:text-xs text-gray-400">
                     Score: {accessStatus.currentScore}% (Target: {accessStatus.threshold}%)
                   </p>
                 </div>
 
-                <div className="p-3 rounded-lg bg-gray-800/50 border border-gray-700/30">
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-gray-400">
-                      <span>Complete Resources to Unlock</span>
-                      <span className="text-yellow-400 font-bold">
+                <div className="p-2 sm:p-3 rounded-lg bg-gray-800/50 border border-gray-700/30">
+                  <div className="space-y-1.5 sm:space-y-2">
+                    <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-400">
+                      <span className="truncate pr-1">Complete Resources to Unlock</span>
+                      <span className="text-yellow-400 font-bold whitespace-nowrap">
                         {accessStatus.completedResources}/{accessStatus.requiredCompletion}
                       </span>
                     </div>
                     <div className="w-full bg-gray-800 rounded-full h-1.5">
-                      <div 
+                      <div
                         className="h-full bg-gradient-to-r from-yellow-500 to-emerald-400 rounded-full transition-all"
                         style={{ width: `${accessStatus.completionPercentage}%` }}
                       />
@@ -750,9 +752,9 @@ const AssessmentCard = memo(function AssessmentCard({
             )}
 
             {accessStatus.reason !== 'threshold_met_incomplete_resources' && (
-              <div className="py-4 px-4 rounded-lg bg-gray-800/50 border border-gray-700/30">
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <Clock size={16} />
+              <div className="py-3 sm:py-4 px-3 sm:px-4 rounded-lg bg-gray-800/50 border border-gray-700/30">
+                <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-gray-400">
+                  <Clock size={14} className="sm:w-4 sm:h-4 flex-shrink-0" />
                   <span>Not started yet</span>
                 </div>
               </div>
@@ -763,7 +765,7 @@ const AssessmentCard = memo(function AssessmentCard({
 
       <button
         onClick={() => onStart(assessment, accessStatus)}
-        className={`w-full py-3 rounded-xl font-semibold shadow-lg transition-all mt-6 hover:scale-105 active:scale-95 flex items-center justify-center gap-2
+        className={`w-full py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold shadow-lg transition-all mt-4 sm:mt-6 hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 sm:gap-2
           ${!accessStatus.canAccess
             ? 'bg-gray-700 text-gray-400 cursor-not-allowed opacity-60'
             : isCompleted
@@ -774,20 +776,20 @@ const AssessmentCard = memo(function AssessmentCard({
       >
         {!accessStatus.canAccess ? (
           <>
-            <Lock size={18} />
-            <span>
-              {accessStatus.reason === 'threshold_met_incomplete_resources' 
-                ? 'Complete Resources' 
+            <Lock size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <span className="truncate">
+              {accessStatus.reason === 'threshold_met_incomplete_resources'
+                ? 'Complete Resources'
                 : 'Locked'}
             </span>
           </>
         ) : isCompleted ? (
           <>
-            {accessStatus.reason === "resources_completed" && <Zap size={18} />}
-            <span>{isSurvey ? "Update Responses" : "Retake Test"}</span>
+            {accessStatus.reason === "resources_completed" && <Zap size={16} className="sm:w-[18px] sm:h-[18px]" />}
+            <span className="truncate">{isSurvey ? "Update Responses" : "Retake Test"}</span>
           </>
         ) : (
-          <span>{isSurvey ? "Start Survey" : "Start Test"}</span>
+          <span className="truncate">{isSurvey ? "Start Survey" : "Start Test"}</span>
         )}
       </button>
     </div>
