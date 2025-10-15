@@ -85,8 +85,8 @@ export default function WelcomeBanner() {
     <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-white/10 backdrop-blur-md max-sm:rounded-xl">
       {/* Background Effects */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary-1200 via-primary-1100 to-primary-1000 opacity-90" />
-      <div className="absolute top-0 right-0 w-96 h-96 bg-primary-500/10 rounded-full blur-[100px] max-sm:w-48 max-sm:h-48" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-[100px] max-sm:w-48 max-sm:h-48" />
+      <div className="absolute top-0 -right-24 sm:right-0 w-48 h-48 sm:w-96 sm:h-96 bg-primary-500/10 rounded-full blur-[80px] sm:blur-[100px]" />
+      <div className="absolute -bottom-24 -left-24 sm:bottom-0 sm:left-0 w-48 h-48 sm:w-96 sm:h-96 bg-purple-500/10 rounded-full blur-[80px] sm:blur-[100px]" />
 
       {/* Content */}
       <div className="relative p-6 md:p-8 max-sm:p-4">
