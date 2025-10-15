@@ -516,10 +516,10 @@ const AssessmentCard = memo(function AssessmentCard({
   return (
     <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-sm transition-all group flex flex-col h-full hover:-translate-y-1 relative overflow-hidden
       ${isCompleted
-        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border-2 border-emerald-500/50 hover:border-emerald-400/70 shadow-xl dark:shadow-emerald-500/20 light:shadow-emerald-200/50'
+        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-gray-50 border-2 dark:border-emerald-500/50 light:border-black hover:border-emerald-400/70 shadow-xl dark:shadow-emerald-500/20 light:shadow-lg'
         : !accessStatus.canAccess && accessStatus.reason === 'threshold_met_incomplete_resources'
-        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border-2 border-yellow-500/50 hover:border-yellow-400/70 shadow-xl dark:shadow-yellow-500/20 light:shadow-yellow-200/50'
-        : 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border border-gray-700/40 dark:border-gray-700/40 light:border-gray-300 hover:border-primary-500/50 shadow-xl dark:shadow-black/40 light:shadow-gray-300/50'
+        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-gray-50 border-2 dark:border-yellow-500/50 light:border-black hover:border-yellow-400/70 shadow-xl dark:shadow-yellow-500/20 light:shadow-lg'
+        : 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-gray-50 border-2 dark:border-gray-700/40 light:border-black hover:border-primary-500/50 shadow-xl dark:shadow-black/40 light:shadow-lg'
       }`}
     >
       {/* Threshold Met Badge */}
@@ -765,12 +765,12 @@ const AssessmentCard = memo(function AssessmentCard({
 
       <button
         onClick={() => onStart(assessment, accessStatus)}
-        className={`w-full py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold shadow-lg transition-all mt-4 sm:mt-6 hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 sm:gap-2
+        className={`w-full py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold shadow-lg transition-all mt-4 sm:mt-6 hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5 sm:gap-2 border-2
           ${!accessStatus.canAccess
-            ? 'bg-gray-700 dark:bg-gray-700 light:bg-gray-300 text-gray-400 dark:text-gray-400 light:text-gray-600 cursor-not-allowed opacity-60'
+            ? 'bg-gray-700 dark:bg-gray-700 light:bg-gray-300 border-gray-600 dark:border-gray-600 light:border-gray-500 text-gray-400 dark:text-gray-400 light:text-gray-700 cursor-not-allowed opacity-70'
             : isCompleted
-            ? 'bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-500 dark:to-purple-500 light:from-blue-600 light:to-purple-600 text-white hover:shadow-blue-500/50'
-            : 'bg-gradient-to-r from-primary-500 to-emerald-400 dark:from-primary-500 dark:to-emerald-400 light:from-primary-600 light:to-emerald-500 text-white dark:text-primary-1300 light:text-white hover:shadow-primary-500/50'
+            ? 'bg-gradient-to-r from-blue-500 to-purple-500 dark:from-blue-500 dark:to-purple-500 light:from-gray-700 light:to-gray-800 border-blue-600 dark:border-blue-600 light:border-gray-900 text-white hover:shadow-blue-500/50'
+            : 'bg-gradient-to-r from-primary-500 to-emerald-400 dark:from-primary-500 dark:to-emerald-400 light:from-gray-700 light:to-gray-800 border-primary-600 dark:border-primary-600 light:border-gray-900 text-white dark:text-primary-1300 light:text-white hover:shadow-primary-500/50'
           }`}
         disabled={!accessStatus.canAccess}
       >
