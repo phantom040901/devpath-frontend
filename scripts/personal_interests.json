@@ -1,0 +1,54 @@
+{
+  "title": "Personal Interests Survey",
+  "description": "Share your interests and preferences outside of academics.",
+  "questions": [
+    {
+      "id": "q1",
+      "prompt": "What type of books do you prefer reading?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Cookbooks", "value": "Cookbooks" },
+        { "label": "Technical", "value": "Technical" },
+        { "label": "Science Fiction", "value": "Science fiction" },
+        { "label": "Mystery", "value": "Mystery" },
+        { "label": "Self-Help", "value": "Self help" },
+        { "label": "Fantasy", "value": "Fantasy" },
+        { "label": "Biographies", "value": "Biographies" }
+      ]
+    },
+    {
+      "id": "q2",
+      "prompt": "Are you interested in gaming?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Yes", "value": "yes" },
+        { "label": "No", "value": "no" }
+      ]
+    },
+    {
+      "id": "q3",
+      "prompt": "Rate your public speaking skills (1-5)",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "1 - Very Poor", "value": 1 },
+        { "label": "2 - Poor", "value": 2 },
+        { "label": "3 - Average", "value": 3 },
+        { "label": "4 - Good", "value": 4 },
+        { "label": "5 - Excellent", "value": 5 }
+      ]
+    },
+    {
+      "id": "q4",
+      "prompt": "How would you describe your work style?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Hard Worker (Put in long hours)", "value": "hard worker" },
+        { "label": "Smart Worker (Work efficiently)", "value": "smart worker" }
+      ]
+    }
+  ]
+}

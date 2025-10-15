@@ -1,0 +1,75 @@
+{
+  "title": "Electronics Subjects",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is voltage measured in?",
+      "options": ["Watts (W)", "Ohms (Ω)", "Volts (V)", "Amps (A)"],
+      "answer": "Volts (V)",
+      "type": "mcq"
+    },
+    {
+      "id": 2,
+      "question": "What is current measured in?",
+      "options": ["Volts (V)", "Ohms (Ω)", "Amperes (A)", "Joules (J)"],
+      "answer": "Amperes (A)",
+      "type": "mcq"
+    },
+    {
+      "id": 3,
+      "question": "What does a resistor do?",
+      "options": ["Convert AC to DC", "Store electrical charge", "Limit the flow of electrical current", "Increase current"],
+      "answer": "Limit the flow of electrical current",
+      "type": "mcq"
+    },
+    {
+      "id": 4,
+      "question": "What is a capacitor used for?",
+      "options": ["Switch circuits", "Amplify signals", "Measure resistance", "Store electrical charge"],
+      "answer": "Store electrical charge",
+      "type": "mcq"
+    },
+    {
+      "id": 5,
+      "question": "What is an LED?",
+      "options": ["Low Energy Display", "Large Emitting Device", "Light Emitting Diode", "Light Energy Driver"],
+      "answer": "Light Emitting Diode",
+      "type": "mcq"
+    },
+    {
+      "id": 6,
+      "question": "Which device converts AC to DC?",
+      "options": ["Resistor", "Rectifier", "Inductor", "Capacitor"],
+      "answer": "Rectifier",
+      "type": "mcq"
+    },
+    {
+      "id": 7,
+      "question": "What is an oscillator used for?",
+      "options": ["Generating repeating signals", "Filtering signals", "Storing memory", "Measuring voltage"],
+      "answer": "Generating repeating signals",
+      "type": "mcq"
+    },
+    {
+      "id": 8,
+      "question": "What is a transistor?",
+      "options": ["A power source", "A semiconductor device used to amplify or switch electronic signals", "A storage device", "A type of sensor"],
+      "answer": "A semiconductor device used to amplify or switch electronic signals",
+      "type": "mcq"
+    },
+    {
+      "id": 9,
+      "question": "What is an inductor used for?",
+      "options": ["Store energy in electric field", "Store energy in magnetic field", "Amplify signals", "Resist current"],
+      "answer": "Store energy in magnetic field",
+      "type": "mcq"
+    },
+    {
+      "id": 10,
+      "question": "What is Ohm's law?",
+      "options": ["E = mc²", "P = V × I", "V = I × R", "F = ma"],
+      "answer": "V = I × R",
+      "type": "mcq"
+    }
+  ]
+}

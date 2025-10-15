@@ -1,0 +1,125 @@
+{
+  "title": "Computer Networks",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is a network?",
+      "options": [
+        "A database",
+        "A collection of computers connected to share resources",
+        "A file system",
+        "A programming language"
+      ],
+      "answer": "A collection of computers connected to share resources",
+      "type": "mcq"
+    },
+    {
+      "id": 2,
+      "question": "What does IP stand for?",
+      "options": [
+        "Internet Provider",
+        "Internet Protocol",
+        "Interface Port",
+        "Internal Program"
+      ],
+      "answer": "Internet Protocol",
+      "type": "mcq"
+    },
+    {
+      "id": 3,
+      "question": "What is a router used for?",
+      "options": [
+        "Designing websites",
+        "Forwarding data packets between networks",
+        "Compiling code",
+        "Storing files"
+      ],
+      "answer": "Forwarding data packets between networks",
+      "type": "mcq"
+    },
+    {
+      "id": 4,
+      "question": "What is Wi-Fi?",
+      "options": [
+        "A type of storage",
+        "A security protocol",
+        "A wireless networking technology",
+        "A programming framework"
+      ],
+      "answer": "A wireless networking technology",
+      "type": "mcq"
+    },
+    {
+      "id": 5,
+      "question": "What is an IP address?",
+      "options": [
+        "A unique identifier for a device on a network",
+        "An email address",
+        "A web domain",
+        "A username"
+      ],
+      "answer": "A unique identifier for a device on a network",
+      "type": "mcq"
+    },
+    {
+      "id": 6,
+      "question": "Which protocol is used for secure web browsing?",
+      "options": [
+        "SMTP",
+        "FTP",
+        "TELNET",
+        "HTTPS"
+      ],
+      "answer": "HTTPS",
+      "type": "mcq"
+    },
+    {
+      "id": 7,
+      "question": "What is bandwidth?",
+      "options": [
+        "A type of cable",
+        "A CPU metric",
+        "The capacity of a network connection to carry data",
+        "A storage capacity"
+      ],
+      "answer": "The capacity of a network connection to carry data",
+      "type": "mcq"
+    },
+    {
+      "id": 8,
+      "question": "What is latency in networking?",
+      "options": [
+        "Number of users",
+        "Type of cable",
+        "Amount of data transferred",
+        "Delay before data transfer begins"
+      ],
+      "answer": "Delay before data transfer begins",
+      "type": "mcq"
+    },
+    {
+      "id": 9,
+      "question": "What is a LAN?",
+      "options": [
+        "Local Access Node",
+        "Long Area Network",
+        "Local Area Network",
+        "Linked Application Node"
+      ],
+      "answer": "Local Area Network",
+      "type": "mcq"
+    },
+    {
+      "id": 10,
+      "question": "What is DHCP used for?",
+      "options": [
+        "Encrypting data",
+        "Translating domain names",
+        "Routing packets",
+        "Automatically assigning IP addresses to devices"
+      ],
+      "answer": "Automatically assigning IP addresses to devices",
+      "type": "mcq"
+    }
+  ]
+}

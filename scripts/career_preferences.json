@@ -1,0 +1,60 @@
+{
+  "title": "Career Preferences Survey",
+  "description": "Tell us about your career interests and preferred work environment.",
+  "questions": [
+    {
+      "id": "q1",
+      "prompt": "Which technical subjects interest you the most?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Networks", "value": "networks" },
+        { "label": "Cloud Computing", "value": "cloud computing" },
+        { "label": "Hacking/Security", "value": "hacking" },
+        { "label": "Parallel Computing", "value": "parallel computing" },
+        { "label": "Software Engineering", "value": "Software Engineering" },
+        { "label": "Computer Architecture", "value": "Computer Architecture" },
+        { "label": "IoT (Internet of Things)", "value": "IOT" },
+        { "label": "Management", "value": "Management" }
+      ]
+    },
+    {
+      "id": "q2",
+      "prompt": "What career area interests you?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Cloud Computing", "value": "cloud computing" },
+        { "label": "Data Engineering", "value": "data engineering" },
+        { "label": "System Developer", "value": "system developer" },
+        { "label": "Security", "value": "security" },
+        { "label": "Business Process Analyst", "value": "Business process analyst" },
+        { "label": "Testing", "value": "testing" }
+      ]
+    },
+    {
+      "id": "q3",
+      "prompt": "What type of company do you want to work for?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Product Development", "value": "product development" },
+        { "label": "Product Based", "value": "Product based" },
+        { "label": "Service Based", "value": "Service Based" },
+        { "label": "Cloud Services", "value": "Cloud Services" },
+        { "label": "Web Services", "value": "Web Services" },
+        { "label": "SaaS Services", "value": "SAaaS services" }
+      ]
+    },
+    {
+      "id": "q4",
+      "prompt": "Do you prefer Management or Technical roles?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Technical", "value": "Technical" },
+        { "label": "Management", "value": "Management" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "title": "Coding Skills Assessment",
+  "description": "A beginner-friendly coding test across multiple languages. Select the correct option to complete each code snippet.",
+  "questions": [
+    {
+      "id": "q1",
+      "type": "multiple-choice",
+      "language": "python",
+      "prompt": "Complete the code to print 'Hello World' in Python.",
+      "snippet": "___(\"Hello World\")",
+      "options": ["echo", "printf", "print", "console.log"],
+      "answer": "print",
+      "image": "/assets/assessments/coding/q1.png"
+    },
+    {
+      "id": "q2",
+      "type": "multiple-choice",
+      "language": "html",
+      "prompt": "Complete the HTML image tag.",
+      "snippet": "___ src=\"cat.png\" alt=\"A cat\">",
+      "options": ["<img", "<image>", "<src>", "<pic>"],
+      "answer": "<img",
+      "image": "/assets/assessments/coding/q2.png"
+    },
+    {
+      "id": "q3",
+      "type": "multiple-choice",
+      "language": "javascript",
+      "prompt": "Select the correct keyword to define a function in JavaScript.",
+      "snippet": "___ greet() {\n  console.log(\"Hello!\");\n}\n\ngreet();",
+      "options": ["def", "function", "func", "method"],
+      "answer": "function",
+      "image": "/assets/assessments/coding/q3.png"
+    },
+    {
+      "id": "q4",
+      "type": "multiple-choice",
+      "language": "c",
+      "prompt": "Complete the for-loop syntax in C.",
+      "snippet": "#include <stdio.h>\n\nint main() {\n    ___ (int i = 0; i < 3; i++) {\n        printf(\"%d\\n\", i);\n    }\n    return 0;\n}",
+      "options": ["for", "loop", "repeat", "iterate"],
+      "answer": "for",
+      "image": "/assets/assessments/coding/q4.png"
+    },
+    {
+      "id": "q5",
+      "type": "multiple-choice",
+      "language": "java",
+      "prompt": "Complete the return statement in Java.",
+      "snippet": "static int add(int a, int b) {\n    ___ a + b;\n}",
+      "options": ["output", "yield", "return", "result"],
+      "answer": "return",
+      "image": "/assets/assessments/coding/q5.png"
+    }
+  ]
+}

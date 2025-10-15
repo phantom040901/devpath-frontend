@@ -1,0 +1,125 @@
+{
+  "title": "Communication Skills",
+  "questions": [
+    {
+      "id": 1,
+      "question": "How should you start a presentation?",
+      "options": [
+        "Apologizing often",
+        "Standing silently",
+        "With a clear introduction and goal",
+        "By reading your slides loudly"
+      ],
+      "answer": "With a clear introduction and goal",
+      "type": "mcq"
+    },
+    {
+      "id": 2,
+      "question": "What is active listening?",
+      "options": [
+        "Reading silently",
+        "Paying attention, asking clarifying questions, and summarizing what someone speaks",
+        "Writing notes while ignoring the speaker",
+        "Interrupting frequently"
+      ],
+      "answer": "Paying attention, asking clarifying questions, and summarizing what someone speaks",
+      "type": "mcq"
+    },
+    {
+      "id": 3,
+      "question": "Which is good body language during talk?",
+      "options": [
+        "Eye contact and open posture",
+        "Facing the wall",
+        "Slouching",
+        "Arms crossed and looking away"
+      ],
+      "answer": "Eye contact and open posture",
+      "type": "mcq"
+    },
+    {
+      "id": 4,
+      "question": "How should feedback be given?",
+      "options": [
+        "Constructively and respectfully with examples",
+        "Aggressively",
+        "Only in public",
+        "Not at all"
+      ],
+      "answer": "Constructively and respectfully with examples",
+      "type": "mcq"
+    },
+    {
+      "id": 5,
+      "question": "What is a presentation's main purpose?",
+      "options": [
+        "Show off slides",
+        "Communicate ideas clearly to an audience",
+        "Avoid questions",
+        "Use complex words"
+      ],
+      "answer": "Communicate ideas clearly to an audience",
+      "type": "mcq"
+    },
+    {
+      "id": 6,
+      "question": "What is nonverbal communication?",
+      "options": [
+        "Reports",
+        "Body language and facial expressions",
+        "Phone calls",
+        "Email messages"
+      ],
+      "answer": "Body language and facial expressions",
+      "type": "mcq"
+    },
+    {
+      "id": 7,
+      "question": "What is persuasion?",
+      "options": [
+        "Using reasoning or emotion to influence others",
+        "Ignoring feedback",
+        "Shouting",
+        "Forcing others"
+      ],
+      "answer": "Using reasoning or emotion to influence others",
+      "type": "mcq"
+    },
+    {
+      "id": 8,
+      "question": "What is clarity in communication?",
+      "options": [
+        "Being clear and precise in your message",
+        "Using long sentences",
+        "Talking quietly",
+        "Avoiding eye contact"
+      ],
+      "answer": "Being clear and precise in your message",
+      "type": "mcq"
+    },
+    {
+      "id": 9,
+      "question": "What does empathy in communication mean?",
+      "options": [
+        "Ignoring others",
+        "Agreeing with everything",
+        "Giving orders",
+        "Understanding and sharing feelings of others"
+      ],
+      "answer": "Understanding and sharing feelings of others",
+      "type": "mcq"
+    },
+    {
+      "id": 10,
+      "question": "What is feedback used for?",
+      "options": [
+        "Confuse the team",
+        "Hurt others",
+        "Improve performance and clarify expectations",
+        "Avoid responsibility"
+      ],
+      "answer": "Improve performance and clarify expectations",
+      "type": "mcq"
+    }
+  ]
+}

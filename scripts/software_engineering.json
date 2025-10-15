@@ -1,0 +1,125 @@
+{
+  "title": "Software Engineering",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What does SDLC stand for?",
+      "options": [
+        "System Data Link Code",
+        "System Design Local Cache",
+        "Software Deployment Log Case",
+        "Software Development Life Cycle"
+      ],
+      "answer": "Software Development Life Cycle",
+      "type": "mcq"
+    },
+    {
+      "id": 2,
+      "question": "What is requirement gathering?",
+      "options": [
+        "Installing the OS",
+        "Collecting what clients/users need from the software",
+        "Designing the logo",
+        "Writing code immediately"
+      ],
+      "answer": "Collecting what clients/users need from the software",
+      "type": "mcq"
+    },
+    {
+      "id": 3,
+      "question": "What is testing in software?",
+      "options": [
+        "Checking the software for defects",
+        "Formatting documentation",
+        "Deploying to production",
+        "Compiling code"
+      ],
+      "answer": "Checking the software for defects",
+      "type": "mcq"
+    },
+    {
+      "id": 4,
+      "question": "What is version control?",
+      "options": [
+        "A deployment tool",
+        "A system for managing changes to source code",
+        "A project management method",
+        "A testing framework"
+      ],
+      "answer": "A system for managing changes to source code",
+      "type": "mcq"
+    },
+    {
+      "id": 5,
+      "question": "What is a bug?",
+      "options": [
+        "A type of test",
+        "A feature request",
+        "An error or flaw in software",
+        "A deployment step"
+      ],
+      "answer": "An error or flaw in software",
+      "type": "mcq"
+    },
+    {
+      "id": 6,
+      "question": "What is an agile methodology?",
+      "options": [
+        "A design tool",
+        "An iterative approach to software development",
+        "A programming language",
+        "A type of database"
+      ],
+      "answer": "An iterative approach to software development",
+      "type": "mcq"
+    },
+    {
+      "id": 7,
+      "question": "What is a use case?",
+      "options": [
+        "A coding standard",
+        "A deployment environment",
+        "A UI layout",
+        "A description of how users will interact with the system"
+      ],
+      "answer": "A description of how users will interact with the system",
+      "type": "mcq"
+    },
+    {
+      "id": 8,
+      "question": "What is deployment?",
+      "options": [
+        "Releasing the software to users or production",
+        "Designing architecture",
+        "Monitoring performance",
+        "Writing tests"
+      ],
+      "answer": "Releasing the software to users or production",
+      "type": "mcq"
+    },
+    {
+      "id": 9,
+      "question": "What is code review?",
+      "options": [
+        "Automated testing",
+        "Peer examination of source code to improve quality",
+        "Compiling code",
+        "Creating documentation"
+      ],
+      "answer": "Peer examination of source code to improve quality",
+      "type": "mcq"
+    },
+    {
+      "id": 10,
+      "question": "Why is documentation important?",
+      "options": [
+        "It makes code run faster",
+        "It installs dependencies",
+        "It helps users and developers understand the system",
+        "It replaces testing"
+      ],
+      "answer": "It helps users and developers understand the system",
+      "type": "mcq"
+    }
+  ]
+}

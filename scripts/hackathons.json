@@ -1,0 +1,42 @@
+{
+  "title": "Hackathon Experience Survey",
+  "description": "Survey about the student's participation and experience in hackathons.",
+  "questions": [
+    {
+      "id": "q1",
+      "prompt": "How many hackathons have you participated in?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "None", "value": 0 },
+        { "label": "1-2", "value": 1 },
+        { "label": "3-5", "value": 4 },
+        { "label": "More than 5", "value": 7 }
+      ]
+    },
+    {
+      "id": "q2",
+      "prompt": "What role do you usually take during hackathons?",
+      "type": "single-choice",
+      "options": [
+        { "label": "Coder/Developer", "value": "coder" },
+        { "label": "UI/UX Designer", "value": "designer" },
+        { "label": "Project Manager", "value": "manager" },
+        { "label": "Idea/Strategy Contributor", "value": "strategist" },
+        { "label": "Other", "value": "other" }
+      ]
+    },
+    {
+      "id": "q3",
+      "prompt": "What is your biggest takeaway from hackathon experiences?",
+      "type": "multi-choice",
+      "options": [
+        { "label": "Teamwork", "value": "teamwork" },
+        { "label": "Problem-solving", "value": "problem_solving" },
+        { "label": "Time management", "value": "time_mgmt" },
+        { "label": "Technical skills", "value": "tech_skills" },
+        { "label": "Networking", "value": "networking" }
+      ]
+    }
+  ]
+}

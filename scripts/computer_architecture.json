@@ -1,0 +1,125 @@
+{
+  "title": "Computer Architecture",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What does CPU stand for?",
+      "options": [
+        "Core Process Utility",
+        "Central Power Unit",
+        "Central Processing Unit",
+        "Computer Performance Unit"
+      ],
+      "answer": "Central Processing Unit",
+      "type": "mcq"
+    },
+    {
+      "id": 2,
+      "question": "What is RAM?",
+      "options": [
+        "Random Access Memory",
+        "Read-only memory only",
+        "Readily Available Memory",
+        "A GPU unit"
+      ],
+      "answer": "Random Access Memory",
+      "type": "mcq"
+    },
+    {
+      "id": 3,
+      "question": "What is a core in a CPU?",
+      "options": [
+        "A storage area",
+        "An independent processing unit within a CPU",
+        "A network component",
+        "A memory module"
+      ],
+      "answer": "An independent processing unit within a CPU",
+      "type": "mcq"
+    },
+    {
+      "id": 4,
+      "question": "What is a clock speed measured in?",
+      "options": [
+        "Bits",
+        "Hertz (Hz)",
+        "Watts",
+        "Bytes"
+      ],
+      "answer": "Hertz (Hz)",
+      "type": "mcq"
+    },
+    {
+      "id": 5,
+      "question": "What is cache memory used for?",
+      "options": [
+        "Fast temporary storage to speed up access to frequently used data",
+        "Storing graphics",
+        "Long-term storage",
+        "Storing files on disk"
+      ],
+      "answer": "Fast temporary storage to speed up access to frequently used data",
+      "type": "mcq"
+    },
+    {
+      "id": 6,
+      "question": "What is pipelining in CPU architecture?",
+      "options": [
+        "A storage method",
+        "Processing multiple instruction steps in parallel stages",
+        "A networking technique",
+        "A type of memory"
+      ],
+      "answer": "Processing multiple instruction steps in parallel stages",
+      "type": "mcq"
+    },
+    {
+      "id": 7,
+      "question": "What is the purpose of the motherboard?",
+      "options": [
+        "Provides cooling",
+        "Connects and allows communication between components",
+        "Processes network packets",
+        "Stores data permanently"
+      ],
+      "answer": "Connects and allows communication between components",
+      "type": "mcq"
+    },
+    {
+      "id": 8,
+      "question": "What is an instruction set architecture (ISA)?",
+      "options": [
+        "The network protocol set",
+        "A type of software license",
+        "The file system specification",
+        "The set of commands a CPU can execute"
+      ],
+      "answer": "The set of commands a CPU can execute",
+      "type": "mcq"
+    },
+    {
+      "id": 9,
+      "question": "What is a GPU mainly used for?",
+      "options": [
+        "Storage management",
+        "Graphics processing",
+        "Network routing",
+        "Power distribution"
+      ],
+      "answer": "Graphics processing",
+      "type": "mcq"
+    },
+    {
+      "id": 10,
+      "question": "What is virtualization?",
+      "options": [
+        "A type of compiler",
+        "Creating virtual versions of hardware to run multiple OS instances",
+        "Graphic rendering technique",
+        "Network virtualization only"
+      ],
+      "answer": "Creating virtual versions of hardware to run multiple OS instances",
+      "type": "mcq"
+    }
+  ]
+}

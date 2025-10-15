@@ -1,0 +1,80 @@
+{
+  "title": "Mathematics",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is 7 × 6?",
+      "options": ["48", "42", "36", "56"],
+      "answer": "42",
+      "type": "mcq"
+    },
+    {
+      "id": 2,
+      "question": "What is 15 ÷ 3?",
+      "options": ["6", "4", "5", "3"],
+      "answer": "5",
+      "type": "mcq"
+    },
+    {
+      "id": 3,
+      "question": "What is the value of π (approx)?",
+      "options": ["4.13", "1.62", "3.14", "2.71"],
+      "answer": "3.14",
+      "type": "mcq"
+    },
+    {
+      "id": 4,
+      "question": "What is a prime number?",
+      "options": [
+        "A number divisible by 2",
+        "A decimal number",
+        "A number greater than 1 with only two divisors: 1 and itself",
+        "A negative number"
+      ],
+      "answer": "A number greater than 1 with only two divisors: 1 and itself",
+      "type": "mcq"
+    },
+    {
+      "id": 5,
+      "question": "What is 2 + 2 × 3?",
+      "options": ["14", "10", "8", "12"],
+      "answer": "8",
+      "type": "mcq"
+    },
+    {
+      "id": 6,
+      "question": "What is the square root of 81?",
+      "options": ["8", "9", "7", "6"],
+      "answer": "9",
+      "type": "mcq"
+    },
+    {
+      "id": 7,
+      "question": "What is 10% of 200?",
+      "options": ["200", "20", "10", "2"],
+      "answer": "20",
+      "type": "mcq"
+    },
+    {
+      "id": 8,
+      "question": "If x + 5 = 12, what is x?",
+      "options": ["17", "12", "5", "7"],
+      "answer": "7",
+      "type": "mcq"
+    },
+    {
+      "id": 9,
+      "question": "What is 3²?",
+      "options": ["12", "9", "6", "3"],
+      "answer": "9",
+      "type": "mcq"
+    },
+    {
+      "id": 10,
+      "question": "What is the value of 0 factorial (0!)?",
+      "options": ["-1", "1", "Undefined", "0"],
+      "answer": "1",
+      "type": "mcq"
+    }
+  ]
+}

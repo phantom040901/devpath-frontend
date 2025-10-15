@@ -1,0 +1,66 @@
+{
+  "title": "Personality & Work Style Survey",
+  "description": "Help us understand your personality and how you approach work.",
+  "questions": [
+    {
+      "id": "q1",
+      "prompt": "How would you describe your behavior?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Gentle", "value": "gentle" },
+        { "label": "Stubborn/Assertive", "value": "stubborn" }
+      ]
+    },
+    {
+      "id": "q2",
+      "prompt": "Do you consider yourself an introvert?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Yes", "value": "yes" },
+        { "label": "No", "value": "no" }
+      ]
+    },
+    {
+      "id": "q3",
+      "prompt": "Are you currently in a relationship?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Yes", "value": "yes" },
+        { "label": "No", "value": "no" }
+      ]
+    },
+    {
+      "id": "q4",
+      "prompt": "Have you worked in teams before?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Yes", "value": "yes" },
+        { "label": "No", "value": "no" }
+      ]
+    },
+    {
+      "id": "q5",
+      "prompt": "Do you take inputs from seniors or elders?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Yes", "value": "yes" },
+        { "label": "No", "value": "no" }
+      ]
+    },
+    {
+      "id": "q6",
+      "prompt": "What motivates you more?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Salary", "value": "salary" },
+        { "label": "Work Satisfaction", "value": "work" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "title": "Memory Passage Test",
+  "description": "Read the passage carefully. It will disappear after a few seconds, and then you'll be asked 5 questions about it.",
+  "passage": {
+    "text": "Yesterday, Sarah went to the market and bought apples, oranges, and bananas. She met her friend James there, and they decided to have lunch together at a small café nearby. After lunch, Sarah returned home and read a book while James went to play basketball with his friends.",
+    "displayTime": 12
+  },
+  "questions": [
+    {
+      "id": 1,
+      "question": "Who went to the market?",
+      "options": ["Sarah", "James", "Michael", "Anna"],
+      "answer": "Sarah"
+    },
+    {
+      "id": 2,
+      "question": "Which fruits did Sarah buy?",
+      "options": [
+        "Apples and bananas",
+        "Apples, oranges, and bananas",
+        "Oranges only",
+        "Mangoes"
+      ],
+      "answer": "Apples, oranges, and bananas"
+    },
+    {
+      "id": 3,
+      "question": "Where did Sarah and James have lunch?",
+      "options": ["At home", "At a café", "At the park", "At school"],
+      "answer": "At a café"
+    },
+    {
+      "id": 4,
+      "question": "What did Sarah do after lunch?",
+      "options": [
+        "Played basketball",
+        "Went shopping again",
+        "Read a book",
+        "Visited James’ house"
+      ],
+      "answer": "Read a book"
+    },
+    {
+      "id": 5,
+      "question": "What did James do after lunch?",
+      "options": [
+        "Went home",
+        "Read a book",
+        "Played basketball",
+        "Went shopping"
+      ],
+      "answer": "Played basketball"
+    }
+  ]
+}

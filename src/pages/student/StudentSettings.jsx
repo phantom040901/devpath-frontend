@@ -1,0 +1,837 @@
+// src/pages/student/StudentSettings.jsx
+import { useState, useEffect } from 'react';
+import { User, Lock, Shield, Save, Eye, EyeOff, CheckCircle, AlertCircle, Loader, Trash2, Download, Bell } from 'lucide-react';
+import { useAuth } from '../../components/AuthContext';
+import { motion } from 'framer-motion';
+import DashboardNav from '../../components/dashboard/DashboardNav';
+import DashboardFooter from '../../components/dashboard/DashboardFooter';
+import {
+  getUserSettings,
+  updatePersonalInfo,
+  updateUserPassword,
+  validatePassword,
+  deleteUserAccount,
+  exportUserData,
+  updateNotificationPreferences
+} from '../../services/settingsService';
+
+export default function StudentSettings() {
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('profile');
+  const [loading, setLoading] = useState(false);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [saveStatus, setSaveStatus] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  
+  // Personal Info State
+  const [personalInfo, setPersonalInfo] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    course: '',
+    yearLevel: '',
+    phoneNumber: '',
+    dateOfBirth: '',
+    address: ''
+  });
+
+  // Career from Assessment (Read-only)
+  const [careerFromAssessment, setCareerFromAssessment] = useState({
+    careerCategory: '',
+    selectedCareerJobRole: '',
+    selectedCareerMatchScore: ''
+  });
+
+  // Account Settings State
+  const [accountSettings, setAccountSettings] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+
+  // Password validation state
+  const [passwordValidation, setPasswordValidation] = useState(null);
+
+  // Notification Preferences State
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    assessmentReminders: true,
+    careerMatches: true,
+    milestones: true,
+    progressUpdates: true,
+    newModules: true,
+    recommendations: true,
+    maintenance: true,
+    security: true
+  });
+
+  // Load user data on mount
+  useEffect(() => {
+    const loadUserData = async () => {
+      if (!user?.uid) return;
+
+      try {
+        setInitialLoading(true);
+        const userData = await getUserSettings(user.uid);
+
+        setPersonalInfo({
+          firstName: userData.firstName || '',
+          lastName: userData.lastName || '',
+          email: userData.email || '',
+          course: userData.course || '',
+          yearLevel: userData.yearLevel || '',
+          phoneNumber: userData.phoneNumber || '',
+          dateOfBirth: userData.dateOfBirth || '',
+          address: userData.address || ''
+        });
+
+        setCareerFromAssessment({
+          careerCategory: userData.careerCategory || 'Not set',
+          selectedCareerJobRole: userData.selectedCareerJobRole || 'Not set',
+          selectedCareerMatchScore: userData.selectedCareerMatchScore || 'N/A'
+        });
+
+        // Load notification preferences
+        if (userData.settings?.notifications) {
+          setNotificationPrefs({
+            ...notificationPrefs,
+            ...userData.settings.notifications
+          });
+        }
+      } catch (error) {
+        setSaveStatus({ type: 'error', message: 'Failed to load user settings' });
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    loadUserData();
+  }, [user]);
+
+  // Validate password as user types
+  useEffect(() => {
+    if (accountSettings.newPassword) {
+      const validation = validatePassword(accountSettings.newPassword);
+      setPasswordValidation(validation);
+    } else {
+      setPasswordValidation(null);
+    }
+  }, [accountSettings.newPassword]);
+
+  const handleSavePersonalInfo = async () => {
+    setLoading(true);
+    setSaveStatus(null);
+    
+    try {
+      await updatePersonalInfo(user.uid, personalInfo);
+      setSaveStatus({ type: 'success', message: 'Personal information updated successfully!' });
+      setTimeout(() => setSaveStatus(null), 3000);
+    } catch (error) {
+      setSaveStatus({ type: 'error', message: error.message || 'Failed to save settings' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    if (accountSettings.newPassword !== accountSettings.confirmPassword) {
+      setSaveStatus({ type: 'error', message: 'New passwords do not match' });
+      return;
+    }
+
+    const validation = validatePassword(accountSettings.newPassword);
+    if (!validation.isValid) {
+      setSaveStatus({ type: 'error', message: 'Password does not meet requirements' });
+      return;
+    }
+
+    setLoading(true);
+    setSaveStatus(null);
+    
+    try {
+      await updateUserPassword(accountSettings.currentPassword, accountSettings.newPassword);
+      setSaveStatus({ type: 'success', message: 'Password updated successfully!' });
+      
+      setAccountSettings({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+      
+      setTimeout(() => setSaveStatus(null), 3000);
+    } catch (error) {
+      setSaveStatus({ type: 'error', message: error.message || 'Failed to update password' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExportData = async () => {
+    setLoading(true);
+    setSaveStatus(null);
+    
+    try {
+      const data = await exportUserData(user.uid);
+      
+      // Create downloadable JSON file
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `devpath-data-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      setSaveStatus({ type: 'success', message: 'Data exported successfully!' });
+      setTimeout(() => setSaveStatus(null), 3000);
+    } catch (error) {
+      setSaveStatus({ type: 'error', message: 'Failed to export data' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      setSaveStatus({ type: 'error', message: 'Please enter your password' });
+      return;
+    }
+
+    setLoading(true);
+    setSaveStatus(null);
+
+    try {
+      await deleteUserAccount(user.uid, deletePassword);
+    } catch (error) {
+      setSaveStatus({ type: 'error', message: error.message || 'Failed to delete account' });
+      setShowDeleteModal(false);
+      setDeletePassword('');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveNotificationPreferences = async () => {
+    setLoading(true);
+    setSaveStatus(null);
+
+    try {
+      await updateNotificationPreferences(user.uid, notificationPrefs);
+      setSaveStatus({ type: 'success', message: 'Notification preferences updated successfully!' });
+      setTimeout(() => setSaveStatus(null), 3000);
+    } catch (error) {
+      setSaveStatus({ type: 'error', message: error.message || 'Failed to save notification preferences' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const tabs = [
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'account', label: 'Security', icon: Shield }
+  ];
+
+  if (initialLoading) {
+    return (
+      <div className="bg-gradient-to-b from-primary-1400 via-primary-1500 to-black min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <Loader size={48} className="animate-spin text-primary-400 mx-auto mb-4" />
+          <p className="text-gray-400">Loading settings...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-gradient-to-b from-primary-1400 via-primary-1500 to-black min-h-screen text-primary-50 flex flex-col">
+      <DashboardNav />
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 flex-grow w-full">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 sm:mb-8"
+        >
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-2">Settings</h1>
+          <p className="text-sm sm:text-base text-gray-400">Manage your account settings and preferences</p>
+        </motion.div>
+
+        {/* Status Messages */}
+        {saveStatus && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${
+              saveStatus.type === 'success' 
+                ? 'bg-emerald-500/20 border border-emerald-500/50 text-emerald-400' 
+                : 'bg-red-500/20 border border-red-500/50 text-red-400'
+            }`}
+          >
+            {saveStatus.type === 'success' ? <CheckCircle size={20} /> : <AlertCircle size={20} />}
+            <span>{saveStatus.message}</span>
+          </motion.div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
+          {/* Sidebar Tabs - Horizontal on mobile, vertical on desktop */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-1"
+          >
+            <div className="bg-gray-900/70 border border-gray-700/40 rounded-2xl p-2">
+              {/* Mobile: Horizontal scroll */}
+              <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible scrollbar-hide">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex-shrink-0 lg:flex-shrink flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl text-left transition-all whitespace-nowrap ${
+                        activeTab === tab.id
+                          ? 'bg-primary-500/20 text-primary-400 border border-primary-500/50'
+                          : 'text-gray-400 hover:bg-gray-800/50 hover:text-white'
+                      }`}
+                    >
+                      <Icon size={18} />
+                      <span className="font-medium text-sm sm:text-base">{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Content Area */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="lg:col-span-3"
+          >
+            <div className="bg-gray-900/70 border border-gray-700/40 rounded-2xl p-4 sm:p-6">
+              {/* Profile Tab */}
+              {activeTab === 'profile' && (
+                <ProfileTab
+                  personalInfo={personalInfo}
+                  setPersonalInfo={setPersonalInfo}
+                  careerFromAssessment={careerFromAssessment}
+                  handleSavePersonalInfo={handleSavePersonalInfo}
+                  loading={loading}
+                />
+              )}
+
+              {/* Notifications Tab */}
+              {activeTab === 'notifications' && (
+                <NotificationsTab
+                  notificationPrefs={notificationPrefs}
+                  setNotificationPrefs={setNotificationPrefs}
+                  handleSaveNotificationPreferences={handleSaveNotificationPreferences}
+                  loading={loading}
+                />
+              )}
+
+              {/* Account Tab */}
+              {activeTab === 'account' && (
+                <AccountTab
+                  accountSettings={accountSettings}
+                  setAccountSettings={setAccountSettings}
+                  showPassword={showPassword}
+                  setShowPassword={setShowPassword}
+                  passwordValidation={passwordValidation}
+                  handleUpdatePassword={handleUpdatePassword}
+                  handleExportData={handleExportData}
+                  setShowDeleteModal={setShowDeleteModal}
+                  loading={loading}
+                />
+              )}
+            </div>
+          </motion.div>
+        </div>
+      </main>
+
+      {/* Delete Account Modal */}
+      {showDeleteModal && (
+        <DeleteModal
+          deletePassword={deletePassword}
+          setDeletePassword={setDeletePassword}
+          setShowDeleteModal={setShowDeleteModal}
+          handleDeleteAccount={handleDeleteAccount}
+          loading={loading}
+        />
+      )}
+
+      <DashboardFooter />
+    </div>
+  );
+}
+
+// Profile Tab Component
+function ProfileTab({ personalInfo, setPersonalInfo, careerFromAssessment, handleSavePersonalInfo, loading }) {
+  return (
+    <div className="space-y-4 sm:space-y-6">
+      <div>
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Profile Information</h2>
+        <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6">Update your personal details</p>
+      </div>
+
+      {/* Personal Information Fields */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+          <input
+            type="text"
+            value={personalInfo.firstName}
+            onChange={(e) => setPersonalInfo({...personalInfo, firstName: e.target.value})}
+            className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+          <input
+            type="text"
+            value={personalInfo.lastName}
+            onChange={(e) => setPersonalInfo({...personalInfo, lastName: e.target.value})}
+            className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+          <input
+            type="email"
+            value={personalInfo.email}
+            onChange={(e) => setPersonalInfo({...personalInfo, email: e.target.value})}
+            className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+          <input
+            type="tel"
+            value={personalInfo.phoneNumber}
+            onChange={(e) => setPersonalInfo({...personalInfo, phoneNumber: e.target.value})}
+            placeholder="+63 XXX XXX XXXX"
+            className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Course</label>
+          <select
+            value={personalInfo.course}
+            onChange={(e) => setPersonalInfo({...personalInfo, course: e.target.value})}
+            className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition"
+          >
+            <option value="">Select Course</option>
+            <option value="BS Information Systems">BS Information Systems</option>
+            <option value="BS Computer Science">BS Computer Science</option>
+            <option value="BS Information Technology">BS Information Technology</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Year Level</label>
+          <select
+            value={personalInfo.yearLevel}
+            onChange={(e) => setPersonalInfo({...personalInfo, yearLevel: e.target.value})}
+            className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition"
+          >
+            <option value="">Select Year</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-2">Date of Birth</label>
+          <input
+            type="date"
+            value={personalInfo.dateOfBirth}
+            onChange={(e) => setPersonalInfo({...personalInfo, dateOfBirth: e.target.value})}
+            className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition"
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">Address</label>
+          <textarea
+            value={personalInfo.address}
+            onChange={(e) => setPersonalInfo({...personalInfo, address: e.target.value})}
+            rows={3}
+            className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition resize-none"
+            placeholder="Enter your complete address"
+          />
+        </div>
+      </div>
+
+      {/* Career from Assessment (Read-only) */}
+      <div className="pt-4 border-t border-gray-700/40">
+        <h3 className="text-xl font-semibold text-white mb-4">Career Match Results</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Career Category</label>
+            <input
+              type="text"
+              value={careerFromAssessment.careerCategory}
+              disabled
+              className="w-full px-4 py-2.5 bg-gray-800/30 border border-gray-700 rounded-lg text-gray-500 cursor-not-allowed"
+            />
+            <p className="text-xs text-gray-500 mt-1">Based on assessment results</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Recommended Career Role</label>
+            <input
+              type="text"
+              value={careerFromAssessment.selectedCareerJobRole}
+              disabled
+              className="w-full px-4 py-2.5 bg-gray-800/30 border border-gray-700 rounded-lg text-gray-500 cursor-not-allowed"
+            />
+            <p className="text-xs text-gray-500 mt-1">Match Score: {careerFromAssessment.selectedCareerMatchScore}%</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end pt-4">
+        <button
+          onClick={handleSavePersonalInfo}
+          disabled={loading}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <>
+              <Loader size={18} className="animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save size={18} />
+              Save Changes
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Account Tab Component
+function AccountTab({ accountSettings, setAccountSettings, showPassword, setShowPassword, passwordValidation, handleUpdatePassword, handleExportData, setShowDeleteModal, loading }) {
+  return (
+    <div className="space-y-4 sm:space-y-6">
+      <div>
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Account Security</h2>
+        <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6">Manage your password and account data</p>
+      </div>
+
+      {/* Password Change Section */}
+      <div className="bg-gray-800/30 rounded-xl border border-gray-700/50 p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-white mb-4">Change Password</h3>
+        
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-6">
+          <div className="flex gap-3">
+            <AlertCircle className="text-yellow-400 flex-shrink-0 mt-0.5" size={20} />
+            <div>
+              <h4 className="text-yellow-400 font-medium mb-2">Password Requirements</h4>
+              <ul className="text-sm text-yellow-300/80 space-y-1">
+                <li className={passwordValidation?.errors.minLength === false ? 'text-emerald-400' : ''}>
+                  • At least 8 characters long
+                </li>
+                <li className={passwordValidation?.errors.hasUpperCase === false ? 'text-emerald-400' : ''}>
+                  • Include uppercase and lowercase letters
+                </li>
+                <li className={passwordValidation?.errors.hasNumber === false ? 'text-emerald-400' : ''}>
+                  • Include at least one number
+                </li>
+                <li className={passwordValidation?.errors.hasSpecialChar === false ? 'text-emerald-400' : ''}>
+                  • Include at least one special character
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Current Password</label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={accountSettings.currentPassword}
+                onChange={(e) => setAccountSettings({...accountSettings, currentPassword: e.target.value})}
+                className="w-full px-4 py-2.5 pr-12 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition"
+                placeholder="Enter current password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">New Password</label>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={accountSettings.newPassword}
+              onChange={(e) => setAccountSettings({...accountSettings, newPassword: e.target.value})}
+              className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition"
+              placeholder="Enter new password"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">Confirm New Password</label>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={accountSettings.confirmPassword}
+              onChange={(e) => setAccountSettings({...accountSettings, confirmPassword: e.target.value})}
+              className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition"
+              placeholder="Confirm new password"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end pt-4">
+          <button
+            onClick={handleUpdatePassword}
+            disabled={loading || !accountSettings.currentPassword || !accountSettings.newPassword || !accountSettings.confirmPassword}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <>
+                <Loader size={18} className="animate-spin" />
+                Updating...
+              </>
+            ) : (
+              <>
+                <Lock size={18} />
+                Update Password
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Data Export Section */}
+      <div className="bg-gray-800/30 rounded-xl border border-gray-700/50 p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-white mb-2 flex items-center gap-2">
+          <Download size={18} sm:size={20} className="text-primary-400" />
+          Export Your Data
+        </h3>
+        <p className="text-gray-400 text-xs sm:text-sm mb-4">
+          Download all your data including profile information, assessment results, and progress tracking.
+        </p>
+        <button
+          onClick={handleExportData}
+          disabled={loading}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/50 text-blue-400 font-medium rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <>
+              <Loader size={16} className="animate-spin" />
+              Exporting...
+            </>
+          ) : (
+            <>
+              <Download size={16} />
+              Download Data (JSON)
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* Danger Zone */}
+      <div className="bg-red-500/10 rounded-xl border border-red-500/30 p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-red-400 mb-2">Danger Zone</h3>
+        <p className="text-gray-400 text-xs sm:text-sm mb-4">
+          Once you delete your account, there is no going back. Please be certain.
+        </p>
+        <button
+          onClick={() => setShowDeleteModal(true)}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-400 font-medium rounded-lg transition-all"
+        >
+          <Trash2 size={16} />
+          Delete Account
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Notifications Tab Component
+function NotificationsTab({ notificationPrefs, setNotificationPrefs, handleSaveNotificationPreferences, loading }) {
+  const togglePref = (key) => {
+    setNotificationPrefs({ ...notificationPrefs, [key]: !notificationPrefs[key] });
+  };
+
+  const toggleAll = (enabled) => {
+    const updatedPrefs = {};
+    Object.keys(notificationPrefs).forEach(key => {
+      updatedPrefs[key] = enabled;
+    });
+    setNotificationPrefs(updatedPrefs);
+  };
+
+  const notificationCategories = [
+    {
+      title: 'Learning & Progress',
+      icon: '📚',
+      items: [
+        { key: 'assessmentReminders', label: 'Assessment Reminders', description: 'Get notified to start your assessments and continue your learning journey' },
+        { key: 'progressUpdates', label: 'Progress Updates', description: 'Important updates about your learning progress and achievements' },
+        { key: 'milestones', label: 'Achievement Milestones', description: 'Celebrate when you reach important milestones and complete goals' }
+      ]
+    },
+    {
+      title: 'Career Guidance',
+      icon: '🎯',
+      items: [
+        { key: 'careerMatches', label: 'Career Matches', description: 'Receive notifications about personalized career recommendations' },
+        { key: 'newModules', label: 'New Learning Modules', description: 'Get notified when new career-related modules become available' },
+        { key: 'recommendations', label: 'Personalized Recommendations', description: 'Tailored suggestions to improve your skills and career readiness' }
+      ]
+    },
+    {
+      title: 'System Notifications',
+      icon: '🔔',
+      items: [
+        { key: 'maintenance', label: 'System Maintenance', description: 'Important alerts about scheduled system maintenance' },
+        { key: 'security', label: 'Security Alerts', description: 'Critical security notifications and account updates (Always Enabled)', locked: true }
+      ]
+    }
+  ];
+
+  return (
+    <div className="space-y-4 sm:space-y-6">
+      <div className="mb-4 sm:mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Notification Preferences</h2>
+        <p className="text-sm sm:text-base text-gray-400">Manage your essential notifications. We'll only send you important updates to keep you on track.</p>
+      </div>
+
+      {notificationCategories.map((category, idx) => (
+        <div key={idx} className="bg-gray-800/30 rounded-xl border border-gray-700/50 p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-white mb-3 sm:mb-4 flex items-center gap-2">
+            <span className="text-xl sm:text-2xl">{category.icon}</span>
+            <span className="text-sm sm:text-base">{category.title}</span>
+          </h3>
+          <div className="space-y-3 sm:space-y-4">
+            {category.items.map((item) => (
+              <div key={item.key} className="flex items-start gap-3 py-2 sm:py-3 border-b border-gray-700/30 last:border-0">
+                <div className="flex-1 min-w-0">
+                  <label htmlFor={item.key} className={`text-white font-medium text-sm sm:text-base ${item.locked ? 'cursor-default' : 'cursor-pointer'}`}>
+                    {item.label}
+                  </label>
+                  <p className="text-xs sm:text-sm text-gray-400 mt-1 leading-relaxed">{item.description}</p>
+                </div>
+                <button
+                  id={item.key}
+                  onClick={() => !item.locked && togglePref(item.key)}
+                  disabled={item.locked}
+                  className={`flex-shrink-0 relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    item.locked || notificationPrefs[item.key] ? 'bg-primary-500' : 'bg-gray-600'
+                  } ${item.locked ? 'opacity-50 cursor-not-allowed' : ''}`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      item.locked || notificationPrefs[item.key] ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+
+      <div className="flex justify-end pt-4">
+        <button
+          onClick={handleSaveNotificationPreferences}
+          disabled={loading}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <>
+              <Loader size={18} className="animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save size={18} />
+              Save Preferences
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Delete Modal Component
+function DeleteModal({ deletePassword, setDeletePassword, setShowDeleteModal, handleDeleteAccount, loading }) {
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-gray-900 border border-gray-700 rounded-2xl max-w-md w-full p-6"
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-red-500/20 rounded-lg">
+            <AlertCircle className="text-red-400" size={24} />
+          </div>
+          <h3 className="text-xl font-bold text-white">Delete Account</h3>
+        </div>
+        
+        <p className="text-gray-400 mb-4">
+          This action cannot be undone. All your data, progress, and assessments will be permanently deleted.
+        </p>
+
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
+            Enter your password to confirm
+          </label>
+          <input
+            type="password"
+            value={deletePassword}
+            onChange={(e) => setDeletePassword(e.target.value)}
+            className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700 rounded-lg text-white focus:border-red-500 focus:ring-2 focus:ring-red-500/20 outline-none transition"
+            placeholder="Enter your password"
+          />
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              setShowDeleteModal(false);
+              setDeletePassword('');
+            }}
+            className="flex-1 px-4 py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-lg transition"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleDeleteAccount}
+            disabled={loading || !deletePassword}
+            className="flex-1 px-4 py-2.5 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Deleting...' : 'Delete Account'}
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}

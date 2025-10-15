@@ -1,0 +1,115 @@
+{
+  "title": "Operating Systems",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is an operating system (OS)?",
+      "options": [
+        "Software that manages computer hardware and software resources",
+        "A programming language",
+        "A game",
+        "A kind of web page"
+      ],
+      "answer": "Software that manages computer hardware and software resources",
+      "type": "mcq"
+    },
+    {
+      "id": 2,
+      "question": "Which of the following is an OS?",
+      "options": ["Google", "PowerPoint", "Windows", "Excel"],
+      "answer": "Windows",
+      "type": "mcq"
+    },
+    {
+      "id": 3,
+      "question": "What does the OS kernel do?",
+      "options": [
+        "Manages hardware and core services",
+        "Edits photos",
+        "Writes code automatically",
+        "Sends emails"
+      ],
+      "answer": "Manages hardware and core services",
+      "type": "mcq"
+    },
+    {
+      "id": 4,
+      "question": "What is multitasking?",
+      "options": [
+        "Installing two OS at same time",
+        "Using two monitors",
+        "Deleting files",
+        "Running several programs at once"
+      ],
+      "answer": "Running several programs at once",
+      "type": "mcq"
+    },
+    {
+      "id": 5,
+      "question": "What is a process in an OS?",
+      "options": [
+        "A screen image",
+        "A saved file",
+        "A network cable",
+        "A running program"
+      ],
+      "answer": "A running program",
+      "type": "mcq"
+    },
+    {
+      "id": 6,
+      "question": "Which interface shows icons and windows?",
+      "options": [
+        "USB",
+        "CLI (Command Line Interface)",
+        "GUI (Graphical User Interface)",
+        "API"
+      ],
+      "answer": "GUI (Graphical User Interface)",
+      "type": "mcq"
+    },
+    {
+      "id": 7,
+      "question": "What is file system used for?",
+      "options": [
+        "Designing websites",
+        "Organizing files on storage",
+        "Compressing photos",
+        "Calculating sums"
+      ],
+      "answer": "Organizing files on storage",
+      "type": "mcq"
+    },
+    {
+      "id": 8,
+      "question": "What is a device driver?",
+      "options": [
+        "A person who drives cars",
+        "Software that helps the OS talk to hardware",
+        "A file backup tool",
+        "An internet connection"
+      ],
+      "answer": "Software that helps the OS talk to hardware",
+      "type": "mcq"
+    },
+    {
+      "id": 9,
+      "question": "Which OS is commonly used on servers and is open-source?",
+      "options": ["Linux", "Windows Phone", "Android", "iOS"],
+      "answer": "Linux",
+      "type": "mcq"
+    },
+    {
+      "id": 10,
+      "question": "What does “boot” mean?",
+      "options": [
+        "Format the hard drive",
+        "Shut down the computer",
+        "Install an app",
+        "Start the computer and load the OS"
+      ],
+      "answer": "Start the computer and load the OS",
+      "type": "mcq"
+    }
+  ]
+}

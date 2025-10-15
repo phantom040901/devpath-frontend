@@ -1,0 +1,128 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return request.auth != null &&
+             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Helper function to check if user owns the document
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    // ========== SYSTEM SETTINGS (NEW - MAINTENANCE MODE) ==========
+    // All authenticated users can read, only admins can write
+    match /systemSettings/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ========== MAINTENANCE HISTORY (NEW) ==========
+    // Only admins can read and write maintenance history
+    match /maintenanceHistory/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ========== SYSTEM LOGS (NEW) ==========
+    // Only admins can read and write system logs
+    match /systemLogs/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ========== USERS COLLECTION ==========
+    // Users can read their own data, admins can read all
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow write: if isAuthenticated() && (isOwner(userId) || isAdmin());
+
+      // User subcollections (results, selectedCareer, etc.)
+      match /{subcollection}/{document=**} {
+        allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+        allow write: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      }
+    }
+
+    // ========== ASSESSMENTS ==========
+    // Everyone can read, only admins can write
+    match /assessments/{assessmentId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /technicalAssessments/{assessmentId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /personalAssessments/{assessmentId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ========== NOTIFICATIONS ==========
+    // Users can read their own notifications, admins can read all
+    match /notifications/{notificationId} {
+      allow read: if isAuthenticated() &&
+                    (resource.data.userId == request.auth.uid || isAdmin());
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() &&
+                              (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // ========== ROADMAP PROGRESS ==========
+    // Users can read/write their own progress, admins can read all
+    match /roadmapProgress/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow write: if isAuthenticated() && (isOwner(userId) || isAdmin());
+    }
+
+    // ========== CAREER DATA ==========
+    // All authenticated users can read
+    match /careers/{careerId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /jobRoles/{roleId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ========== RESOURCES ==========
+    // All authenticated users can read, admins can write
+    match /resources/{resourceId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    match /learningResources/{resourceId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // ========== ADMIN COLLECTIONS ==========
+    // Only admins can access
+    match /adminSettings/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /analytics/{document=**} {
+      allow read, write: if isAdmin();
+    }
+
+    // ========== FALLBACK RULE ==========
+    // For any other collections not explicitly defined
+    // Default to authenticated users can read/write (your current behavior)
+    match /{document=**} {
+      allow read, write: if isAuthenticated();
+    }
+  }
+}

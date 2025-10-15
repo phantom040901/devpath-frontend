@@ -1,0 +1,125 @@
+{
+  "title": "Programming Concepts",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is a variable?",
+      "options": [
+        "A type of program",
+        "A function that prints text",
+        "A file format",
+        "A storage location with a name that holds a value"
+      ],
+      "answer": "A storage location with a name that holds a value",
+      "type": "mcq"
+    },
+    {
+      "id": 2,
+      "question": "What is a function?",
+      "options": [
+        "A printer setting",
+        "A design tool",
+        "A computer brand",
+        "A named block of code designed to perform a task"
+      ],
+      "answer": "A named block of code designed to perform a task",
+      "type": "mcq"
+    },
+    {
+      "id": 3,
+      "question": "What is debugging?",
+      "options": [
+        "Finding and fixing errors in code",
+        "Formatting a hard drive",
+        "Cleaning hardware",
+        "Installing software updates"
+      ],
+      "answer": "Finding and fixing errors in code",
+      "type": "mcq"
+    },
+    {
+      "id": 4,
+      "question": "What is a string?",
+      "options": [
+        "A data structure for images",
+        "A sequence of characters (text)",
+        "A number type",
+        "A type of loop"
+      ],
+      "answer": "A sequence of characters (text)",
+      "type": "mcq"
+    },
+    {
+      "id": 5,
+      "question": "What does 'compile' mean (in compiled languages)?",
+      "options": [
+        "Translate code to machine code so it runs on the computer",
+        "Print code",
+        "Move files to cloud",
+        "Download libraries"
+      ],
+      "answer": "Translate code to machine code so it runs on the computer",
+      "type": "mcq"
+    },
+    {
+      "id": 6,
+      "question": "What is an array?",
+      "options": [
+        "A sequence of characters",
+        "A graphics card",
+        "A collection of items stored at contiguous memory locations",
+        "A display format"
+      ],
+      "answer": "A collection of items stored at contiguous memory locations",
+      "type": "mcq"
+    },
+    {
+      "id": 7,
+      "question": "What is a loop used for?",
+      "options": [
+        "Store files",
+        "Repeat code until a condition",
+        "Design web pages",
+        "Encrypt data"
+      ],
+      "answer": "Repeat code until a condition",
+      "type": "mcq"
+    },
+    {
+      "id": 8,
+      "question": "What is a conditional statement?",
+      "options": [
+        "A math function",
+        "A file system operation",
+        "Code that runs based on a true/false condition",
+        "A networking protocol"
+      ],
+      "answer": "Code that runs based on a true/false condition",
+      "type": "mcq"
+    },
+    {
+      "id": 9,
+      "question": "What is object-oriented programming (OOP)?",
+      "options": [
+        "A database concept",
+        "A programming style based on objects and classes",
+        "A markup language",
+        "A server-side technology"
+      ],
+      "answer": "A programming style based on objects and classes",
+      "type": "mcq"
+    },
+    {
+      "id": 10,
+      "question": "What is 'syntax' in programming?",
+      "options": [
+        "Execution speed",
+        "A filename extension",
+        "Rules for writing valid code",
+        "Memory usage"
+      ],
+      "answer": "Rules for writing valid code",
+      "type": "mcq"
+    }
+  ]
+}

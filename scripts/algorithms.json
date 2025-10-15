@@ -1,0 +1,125 @@
+{
+  "title": "Algorithms",
+  "questions": [
+    {
+      "id": 1,
+      "question": "What is an algorithm?",
+      "options": [
+        "A type of computer",
+        "A step-by-step procedure for solving a problem",
+        "A music playlist",
+        "A design for a webpage"
+      ],
+      "answer": "A step-by-step procedure for solving a problem",
+      "type": "mcq"
+    },
+    {
+      "id": 2,
+      "question": "What does \"sorting\" mean?",
+      "options": [
+        "Running a game",
+        "Deleting files",
+        "Arranging items in order (e.g., ascending)",
+        "Opening a program"
+      ],
+      "answer": "Arranging items in order (e.g., ascending)",
+      "type": "mcq"
+    },
+    {
+      "id": 3,
+      "question": "Which is a very simple sorting algorithm?",
+      "options": [
+        "RSA",
+        "HTTP",
+        "Bubble sort",
+        "AES"
+      ],
+      "answer": "Bubble sort",
+      "type": "mcq"
+    },
+    {
+      "id": 4,
+      "question": "What is 'searching' in algorithms?",
+      "options": [
+        "Compressing files",
+        "Finding a value inside a list or array",
+        "Designing UI",
+        "Sending data over network"
+      ],
+      "answer": "Finding a value inside a list or array",
+      "type": "mcq"
+    },
+    {
+      "id": 5,
+      "question": "Which is faster for searching in a sorted list?",
+      "options": [
+        "Binary search",
+        "Sequential scan",
+        "Linear search",
+        "Random search"
+      ],
+      "answer": "Binary search",
+      "type": "mcq"
+    },
+    {
+      "id": 6,
+      "question": "What is time complexity?",
+      "options": [
+        "A screen refresh rate",
+        "A measure of how running time grows with input size",
+        "A clock speed",
+        "A memory size"
+      ],
+      "answer": "A measure of how running time grows with input size",
+      "type": "mcq"
+    },
+    {
+      "id": 7,
+      "question": "If an algorithm always checks every item, its complexity is?",
+      "options": [
+        "O(1)",
+        "O(n²)",
+        "O(n)",
+        "O(log n)"
+      ],
+      "answer": "O(n)",
+      "type": "mcq"
+    },
+    {
+      "id": 8,
+      "question": "Which data structure is good for First-In-First-Out?",
+      "options": [
+        "Tree",
+        "Queue",
+        "Graph",
+        "Stack"
+      ],
+      "answer": "Queue",
+      "type": "mcq"
+    },
+    {
+      "id": 9,
+      "question": "What is recursion?",
+      "options": [
+        "A data type",
+        "A loop structure",
+        "A sorting method",
+        "A function calling itself"
+      ],
+      "answer": "A function calling itself",
+      "type": "mcq"
+    },
+    {
+      "id": 10,
+      "question": "To compare two values for equality you use?",
+      "options": [
+        "/* */",
+        "== (or equivalent)",
+        "++",
+        "--"
+      ],
+      "answer": "== (or equivalent)",
+      "type": "mcq"
+    }
+  ]
+}

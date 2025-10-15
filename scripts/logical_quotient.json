@@ -1,0 +1,43 @@
+{
+  "title": "Logical Quotient Test",
+  "description": "Evaluate your logical reasoning and problem-solving ability.",
+  "questions": [
+    {
+      "id": 1,
+      "question": "If 5 workers take 5 days to build 5 houses, how many days would 10 workers take to build 10 houses?",
+      "options": ["5", "10", "2.5", "1"],
+      "answer": "5"
+    },
+    {
+      "id": 2,
+      "question": "Which number comes next in the sequence? 2, 6, 12, 20, 30, ?",
+      "options": ["36", "40", "42", "48"],
+      "answer": "42"
+    },
+    {
+      "id": 3,
+      "question": "If all Bloops are Razzies and all Razzies are Lazzies, then all Bloops are definitely Lazzies?",
+      "options": ["True", "False"],
+      "answer": "True"
+    },
+    {
+      "id": 4,
+      "question": "Find the odd one out: Dog, Cat, Rabbit, Carrot",
+      "options": ["Dog", "Cat", "Rabbit", "Carrot"],
+      "answer": "Carrot"
+    },
+    {
+      "id": 5,
+      "question": "A clock shows the time as 3:15. What is the angle between the hour and minute hand?",
+      "options": ["0°", "7.5°", "15°", "30°"],
+      "answer": "7.5°"
+    }
+  ],
+  "mapping": {
+    "1": "Very Low Logical Quotient",
+    "2": "Low Logical Quotient",
+    "3": "Average Logical Quotient",
+    "4": "Good Logical Quotient",
+    "5": "Excellent Logical Quotient"
+  }
+}

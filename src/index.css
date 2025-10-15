@@ -1,0 +1,959 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary-50: #ecfcfd;
+  --color-primary-75: #dafafa;
+  --color-primary-100: #c7f7f8;
+  --color-primary-150: #b4f5f5;
+  --color-primary-200: #a2f2f3;
+  --color-primary-250: #8feff1;
+  --color-primary-300: #7cedee;
+  --color-primary-350: #69eaec;
+  --color-primary-400: #57e8e9;
+  --color-primary-500: #44e5e7;
+  --color-primary-600: #3dced0;
+  --color-primary-700: #36b7b9;
+  --color-primary-800: #30a0a2;
+  --color-primary-900: #29898b;
+  --color-primary-1000: #227374;
+  --color-primary-1100: #1b5c5c;
+  --color-primary-1200: #144545;
+  --color-primary-1300: #0e2e2e;
+  --color-primary-1400: #071717;
+  --color-primary-1500: #061212;
+
+  --font-sans: "Poppins", sans-serif;
+
+  --color-primary-glow: rgba(68, 229, 231, 0.2);
+  --color-primary-50-glow: rgba(236, 252, 253, 0.2);
+}
+
+/* ✅ Theme-aware backgrounds */
+html, body {
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode (default) */
+html:not(.light), html.dark {
+  background-color: var(--color-primary-1400);
+  color: var(--color-primary-50);
+}
+
+/* Light mode - Clean gray gradients */
+html.light {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 50%, #d3d7de 100%);
+  color: #1f2937;
+}
+
+body {
+  min-height: 100vh;
+}
+
+/* ✅ Backgrounds with noise + gradient */
+.bg-gradient-to-bottom {
+  background-image: url('../src/assets/Noise.webp'),
+    linear-gradient(to bottom, var(--color-primary-1500), var(--color-primary-1300));
+  background-repeat: repeat;
+}
+
+.bg-gradient-to-top {
+  background-image: url('../src/assets/Noise.webp'),
+    linear-gradient(to top, var(--color-primary-1500), var(--color-primary-1300));
+  background-repeat: repeat;
+}
+
+/* ✅ Utilities */
+.transition-properties {
+  @apply transition-all duration-150;
+}
+
+.primary-glow {
+  @apply drop-shadow-[0_0px_25px_var(--color-primary-glow)];
+}
+
+.primary-glow-hover {
+  @apply hover:drop-shadow-[0_0px_25px_var(--color-primary-50-glow)];
+}
+
+/* ✅ Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
+/* ✅ Shimmer animation for progress bars */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* ========================================
+   LIGHT MODE THEME OVERRIDES
+   ======================================== */
+
+/* Main gradient background */
+html.light .bg-gradient-to-b {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4e7eb 50%, #d3d7de 100%) !important;
+}
+
+/* Page backgrounds */
+html.light .bg-primary-1400,
+html.light .bg-primary-1500,
+html.light .bg-primary-1200,
+html.light .bg-primary-1100,
+html.light .bg-primary-1000,
+html.light .from-primary-1400,
+html.light .via-primary-1500,
+html.light .from-primary-1200,
+html.light .via-primary-1100,
+html.light .to-primary-1000,
+html.light .to-black {
+  background: transparent !important;
+}
+
+/* Navigation bar */
+html.light .bg-primary-1400\/90 {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Fix logo visibility and remove unwanted borders in light mode */
+html.light img[alt*="Logo"],
+html.light img[alt*="logo"],
+html.light img[src*="logo"] {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(51%) saturate(2878%) hue-rotate(161deg) brightness(97%) contrast(97%) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove border from logo container */
+html.light .flex.items-center.gap-x-2,
+html.light .flex.items-center.gap-x-4 {
+  border: none !important;
+}
+
+/* Card backgrounds - Clean white/light gray */
+html.light .bg-gray-900,
+html.light .bg-gray-900\/70,
+html.light .bg-gray-900\/50 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(10px);
+}
+
+html.light .bg-gray-800,
+html.light .bg-gray-800\/50,
+html.light .bg-gray-800\/40 {
+  background-color: rgba(248, 250, 252, 0.9) !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+html.light .bg-gray-950 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+html.light .bg-gray-700,
+html.light .bg-gray-700\/40 {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Welcome banner - Soft pastel design matching UI */
+html.light .bg-teal-700,
+html.light .bg-teal-800,
+html.light .bg-teal-700\/80,
+html.light .bg-teal-800\/80,
+html.light .bg-teal-600,
+html.light .bg-teal-900,
+html.light .bg-gradient-to-r,
+html.light .from-primary-1200,
+html.light .via-primary-1100,
+html.light .to-primary-1000 {
+  background: linear-gradient(135deg,
+    rgba(191, 219, 254, 0.5) 0%,    /* Soft blue */
+    rgba(233, 213, 255, 0.5) 50%,   /* Soft lavender */
+    rgba(254, 215, 170, 0.5) 100%   /* Soft peach */
+  ) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05) !important;
+  opacity: 1 !important;
+}
+
+/* Welcome banner container - override all backgrounds */
+html.light .rounded-2xl.overflow-hidden.shadow-2xl > .absolute.inset-0 {
+  background: linear-gradient(135deg,
+    rgba(191, 219, 254, 0.5) 0%,
+    rgba(233, 213, 255, 0.5) 50%,
+    rgba(254, 215, 170, 0.5) 100%
+  ) !important;
+  opacity: 1 !important;
+}
+
+/* Welcome banner - Make ALL text visible in light mode */
+html.light .rounded-2xl .text-white,
+html.light .rounded-2xl.overflow-hidden .text-white,
+html.light .rounded-2xl h2,
+html.light .rounded-2xl h1,
+html.light .rounded-2xl p,
+html.light .rounded-2xl span {
+  color: #111827 !important;
+}
+
+/* Welcome banner - Accent colors visible in light mode */
+html.light .rounded-2xl .text-primary-100,
+html.light .rounded-2xl .text-primary-200,
+html.light .rounded-2xl .text-primary-300 {
+  color: #4b5563 !important;
+}
+
+html.light .rounded-2xl .text-primary-400,
+html.light .rounded-2xl .text-cyan-400 {
+  color: #0891b2 !important;
+}
+
+html.light .rounded-2xl .text-emerald-400 {
+  color: #059669 !important;
+}
+
+html.light .rounded-2xl .text-yellow-400 {
+  color: #f59e0b !important;
+}
+
+/* Override inline text colors in light mode */
+html.light .bg-teal-700 *,
+html.light .bg-teal-800 *,
+html.light .bg-gradient-to-r * {
+  color: inherit !important;
+}
+
+/* Stat cards with colors */
+html.light .bg-blue-500\/10 {
+  background: rgba(59, 130, 246, 0.12) !important;
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
+}
+
+html.light .bg-green-500\/10,
+html.light .bg-emerald-500\/10,
+html.light .bg-emerald-500\/20 {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+}
+
+html.light .bg-yellow-500\/10,
+html.light .bg-yellow-600\/20 {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+}
+
+html.light .bg-purple-500\/10,
+html.light .bg-purple-600\/20 {
+  background: rgba(168, 85, 247, 0.12) !important;
+  border: 1px solid rgba(168, 85, 247, 0.25) !important;
+}
+
+html.light .bg-primary-500\/20,
+html.light .bg-primary-600\/20 {
+  background: rgba(6, 182, 212, 0.12) !important;
+  border: 1px solid rgba(6, 182, 212, 0.25) !important;
+}
+
+/* Text colors */
+html.light .text-white {
+  color: #111827 !important;
+}
+
+html.light .text-primary-50 {
+  color: #111827 !important;
+}
+
+html.light .text-gray-300 {
+  color: #4b5563 !important;
+}
+
+html.light .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+html.light .text-gray-200 {
+  color: #374151 !important;
+}
+
+html.light .text-gray-500 {
+  color: #6b7280 !important;
+}
+
+/* Keep these colors unchanged in light mode */
+html.light .text-primary-400,
+html.light .text-cyan-400,
+html.light .text-blue-400 {
+  color: #0ea5e9 !important;
+}
+
+html.light .text-emerald-400 {
+  color: #10b981 !important;
+}
+
+html.light .text-yellow-400 {
+  color: #f59e0b !important;
+}
+
+html.light .text-purple-400 {
+  color: #a855f7 !important;
+}
+
+/* Borders */
+html.light .border-gray-700,
+html.light .border-gray-700\/50 {
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light .border-gray-800 {
+  border-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light .border-primary-500\/30 {
+  border-color: rgba(6, 182, 212, 0.3) !important;
+}
+
+html.light .border-emerald-500\/30 {
+  border-color: rgba(16, 185, 129, 0.3) !important;
+}
+
+html.light .border-yellow-500\/30 {
+  border-color: rgba(245, 158, 11, 0.3) !important;
+}
+
+html.light .border-purple-500\/30 {
+  border-color: rgba(168, 85, 247, 0.3) !important;
+}
+
+/* Hover states */
+html.light .hover\:bg-gray-600:hover,
+html.light .hover\:bg-gray-700:hover {
+  background-color: rgba(243, 244, 246, 0.8) !important;
+}
+
+html.light .hover\:bg-gray-800:hover,
+html.light .hover\:bg-gray-800\/50:hover {
+  background-color: rgba(249, 250, 251, 0.9) !important;
+}
+
+html.light .hover\:bg-primary-500\/30:hover {
+  background: rgba(6, 182, 212, 0.2) !important;
+}
+
+/* Shadows */
+html.light .shadow-lg {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light .shadow-xl {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+html.light .shadow-md {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Dropdown menus */
+html.light .bg-gray-600 {
+  background-color: rgba(255, 255, 255, 0.98) !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Icons - keep vibrant colors */
+html.light .text-cyan-400,
+html.light .text-teal-400 {
+  color: #06b6d4 !important;
+}
+
+/* Logo and branding */
+html.light .text-primary-400 {
+  color: #0ea5e9 !important;
+}
+
+/* Learning Progress / Career Overview page text visibility */
+html.light h1,
+html.light h2,
+html.light h3,
+html.light h4,
+html.light .text-3xl,
+html.light .text-2xl,
+html.light .text-xl {
+  color: #111827 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Section headings and labels */
+html.light .font-bold,
+html.light .font-semibold {
+  color: #1f2937 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Remove all text backgrounds and borders in light mode */
+html.light span,
+html.light p,
+html.light div {
+  background: inherit;
+  border-color: inherit;
+}
+
+/* ========================================
+   EXCLUDE LANDING PAGE FROM LIGHT MODE
+   Keep landing page always dark
+   ======================================== */
+
+/* Disable light mode on landing page (root route "/") */
+html.light[data-route="/"] {
+  background: #0a1628 !important;
+}
+
+html.light[data-route="/"] body,
+html.light[data-route="/"] .bg-gradient-to-b,
+html.light[data-route="/"] main,
+html.light[data-route="/"] section {
+  background: inherit !important;
+}
+
+html.light[data-route="/"] h1,
+html.light[data-route="/"] h2,
+html.light[data-route="/"] h3,
+html.light[data-route="/"] h4,
+html.light[data-route="/"] p,
+html.light[data-route="/"] span,
+html.light[data-route="/"] .text-white,
+html.light[data-route="/"] .text-gray-300,
+html.light[data-route="/"] .text-gray-400 {
+  color: white !important;
+}
+
+/* Performance cards and subject cards */
+html.light .bg-emerald-500\/10,
+html.light .bg-cyan-500\/10,
+html.light .bg-blue-600\/10 {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border: 1px solid rgba(16, 185, 129, 0.25) !important;
+}
+
+html.light .bg-cyan-500\/10 {
+  background: rgba(6, 182, 212, 0.15) !important;
+  border: 1px solid rgba(6, 182, 212, 0.25) !important;
+}
+
+/* Fix page header banners with pastel gradients */
+html.light .bg-gradient-to-r.from-blue-500\/10,
+html.light .bg-gradient-to-r.via-purple-500\/10,
+html.light .bg-gradient-to-r.to-pink-500\/10 {
+  background: linear-gradient(to right,
+    rgba(191, 219, 254, 0.5),
+    rgba(233, 213, 255, 0.5),
+    rgba(254, 215, 215, 0.5)
+  ) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+}
+
+/* Fix gradient text headings - remove border effect */
+html.light .bg-gradient-to-r.from-primary-400,
+html.light .bg-gradient-to-r.via-emerald-300,
+html.light .bg-gradient-to-r.to-cyan-400,
+html.light .bg-clip-text {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: unset !important;
+  color: #111827 !important;
+  text-shadow: none !important;
+  border: none !important;
+}
+
+/* Override text-transparent in light mode */
+html.light .text-transparent {
+  color: #111827 !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+/* ========================================
+   ASSESSMENTS PAGE STYLING
+   ======================================== */
+
+/* Assessment cards - blend with background */
+html.light .bg-white,
+html.light .bg-white\/95,
+html.light .bg-white\/90 {
+  background: rgba(248, 250, 252, 0.6) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Completely remove colored backgrounds from icon containers and labels */
+html.light .bg-emerald-50,
+html.light .bg-emerald-100,
+html.light .bg-blue-50,
+html.light .bg-blue-100,
+html.light .bg-purple-50,
+html.light .bg-purple-100,
+html.light .bg-cyan-50,
+html.light .bg-cyan-100,
+html.light .bg-teal-50,
+html.light .bg-teal-100,
+html.light .bg-pink-50,
+html.light .bg-pink-100,
+html.light .bg-orange-50,
+html.light .bg-orange-100 {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Make ALL assessment text highly visible - AGGRESSIVE */
+html.light .bg-white *,
+html.light .bg-white\/95 *,
+html.light .bg-white\/90 * {
+  color: inherit;
+}
+
+html.light .text-gray-700,
+html.light .text-gray-800,
+html.light .text-gray-900,
+html.light .text-gray-600 {
+  color: #111827 !important;
+}
+
+html.light .text-gray-500 {
+  color: #4b5563 !important;
+}
+
+html.light .text-gray-400 {
+  color: #6b7280 !important;
+}
+
+html.light .text-gray-300 {
+  color: #9ca3af !important;
+}
+
+/* Force assessment titles to be dark and visible */
+html.light .bg-white h3,
+html.light .bg-white h4,
+html.light .bg-white .text-xl,
+html.light .bg-white .text-lg,
+html.light h3.text-gray-700,
+html.light h3.text-gray-800 {
+  color: #111827 !important;
+  font-weight: 600 !important;
+}
+
+/* All font weights should be dark */
+html.light .font-semibold,
+html.light .font-medium,
+html.light .font-bold {
+  color: #1f2937 !important;
+}
+
+/* Keep assessment scores and icons visible with original colors */
+html.light .text-emerald-600 {
+  color: #059669 !important;
+}
+
+html.light .text-blue-600 {
+  color: #2563eb !important;
+}
+
+html.light .text-purple-600 {
+  color: #9333ea !important;
+}
+
+html.light .text-cyan-600,
+html.light .text-teal-600 {
+  color: #0891b2 !important;
+}
+
+html.light .text-pink-600 {
+  color: #db2777 !important;
+}
+
+html.light .text-orange-600 {
+  color: #ea580c !important;
+}
+
+/* ========================================
+   QUICK ACTIONS & ACTION BUTTONS
+   Better visibility in light mode
+   ======================================== */
+
+/* Quick Actions background cards with colored tints */
+html.light .bg-blue-500\/20 {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light .bg-emerald-500\/20 {
+  background: rgba(16, 185, 129, 0.15) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light .bg-purple-500\/20 {
+  background: rgba(168, 85, 247, 0.15) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light .bg-yellow-500\/20,
+html.light .bg-orange-500\/20 {
+  background: rgba(245, 158, 11, 0.15) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Action button text colors - keep bold and visible */
+html.light .text-blue-400 {
+  color: #2563eb !important;
+}
+
+html.light .text-emerald-400 {
+  color: #10b981 !important;
+}
+
+html.light .text-purple-400 {
+  color: #9333ea !important;
+}
+
+html.light .text-yellow-400 {
+  color: #f59e0b !important;
+}
+
+html.light .text-orange-400 {
+  color: #f97316 !important;
+}
+
+/* ========================================
+   CAREER REPORT HEADER CARDS
+   Info cards styling
+   ======================================== */
+
+/* Info cards with light blue/purple tints */
+html.light .bg-gray-900\/30 {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Main section cards (Assessment Categories, Study Analytics, etc.) */
+html.light .bg-gray-900\/70 {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Metric cards / readiness cards - ALL GRADIENT COMBINATIONS */
+html.light .bg-gradient-to-br.from-primary-500\/20 {
+  background: linear-gradient(to bottom right, rgba(59, 130, 246, 0.25), rgba(96, 165, 250, 0.15)) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light .bg-gradient-to-br.from-yellow-500\/20 {
+  background: linear-gradient(to bottom right, rgba(245, 158, 11, 0.25), rgba(251, 191, 36, 0.15)) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light .bg-gradient-to-br.from-emerald-500\/20 {
+  background: linear-gradient(to bottom right, rgba(16, 185, 129, 0.25), rgba(52, 211, 153, 0.15)) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light .bg-gradient-to-br.from-purple-500\/20 {
+  background: linear-gradient(to bottom right, rgba(168, 85, 247, 0.25), rgba(192, 132, 252, 0.15)) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+html.light .bg-gradient-to-br.from-blue-500\/20 {
+  background: linear-gradient(to bottom right, rgba(59, 130, 246, 0.25), rgba(96, 165, 250, 0.15)) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Override the "to-" part of gradients */
+html.light .bg-gradient-to-br.to-primary-600\/20,
+html.light .bg-gradient-to-br.to-emerald-600\/20,
+html.light .bg-gradient-to-br.to-yellow-600\/20,
+html.light .bg-gradient-to-br.to-purple-600\/20,
+html.light .bg-gradient-to-br.to-cyan-600\/20,
+html.light .bg-gradient-to-br.to-blue-600\/20,
+html.light .bg-gradient-to-br.to-teal-600\/20,
+html.light .bg-gradient-to-br.to-pink-600\/20,
+html.light .bg-gradient-to-br.to-orange-600\/20 {
+  /* Let the from- class handle the gradient */
+}
+
+/* Student info card labels */
+html.light .text-xs.text-gray-500 {
+  color: #6b7280 !important;
+  font-weight: 500;
+}
+
+/* Make all text in report header visible */
+html.light .bg-gradient-to-r.from-primary-500\/10 h1,
+html.light .bg-gradient-to-r.from-primary-500\/10 p,
+html.light .bg-gradient-to-r.from-primary-500\/10 span {
+  color: #111827 !important;
+}
+
+/* ========================================
+   METRIC CARDS TEXT VISIBILITY
+   Ensure all text in colored metric cards is visible
+   ======================================== */
+
+/* Metric card labels (small gray text) */
+html.light .bg-gradient-to-br .text-xs.font-medium.text-gray-400 {
+  color: #4b5563 !important;
+  font-weight: 600;
+}
+
+/* Metric card subtitles */
+html.light .bg-gradient-to-br .text-xs.text-gray-400 {
+  color: #6b7280 !important;
+}
+
+/* Metric card values (large numbers) */
+html.light .bg-gradient-to-br .text-3xl.font-bold.text-white,
+html.light .bg-gradient-to-br .text-2xl.font-bold {
+  color: #111827 !important;
+}
+
+/* Icon backgrounds in metric cards */
+html.light .bg-gradient-to-br .bg-gray-900\/50 {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Keep icon colors vibrant */
+html.light .text-primary-400,
+html.light .text-cyan-400 {
+  color: #06b6d4 !important;
+}
+
+html.light .text-teal-400 {
+  color: #14b8a6 !important;
+}
+
+/* ========================================
+   PROGRESS PAGE COMPONENTS
+   Assessment Categories, Study Analytics sections
+   ======================================== */
+
+/* Section headers with icons */
+html.light h2.text-xl.font-bold.text-white,
+html.light h2.text-lg.font-bold.text-white,
+html.light h3.text-lg.font-bold.text-white {
+  color: #111827 !important;
+}
+
+/* Assessment category titles */
+html.light h3.text-white.font-semibold {
+  color: #111827 !important;
+}
+
+/* Stat labels and descriptions */
+html.light .text-sm.text-gray-400,
+html.light span.text-gray-400 {
+  color: #6b7280 !important;
+}
+
+/* Analytics item backgrounds */
+html.light .bg-gray-800\/50 {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(8px);
+}
+
+/* Bold values in analytics */
+html.light .text-sm.font-bold.text-white,
+html.light .font-bold.text-white {
+  color: #111827 !important;
+}
+
+/* Progress section completion text */
+html.light .text-xs.text-gray-500 {
+  color: #6b7280 !important;
+}
+
+html.light .text-xs.font-semibold.text-gray-300 {
+  color: #374151 !important;
+}
+
+/* ========================================
+   SUBJECT PERFORMANCE CARDS
+   Performance by Subject section cards
+   ======================================== */
+
+/* Subject performance cards with colored gradients */
+html.light .bg-gradient-to-br.from-emerald-500\/20.to-teal-500\/20,
+html.light .bg-gradient-to-br.from-blue-500\/20.to-cyan-500\/20,
+html.light .bg-gradient-to-br.from-yellow-500\/20.to-orange-500\/20,
+html.light .bg-gradient-to-br.from-red-500\/20.to-pink-500\/20 {
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* General catch-all for any gradient cards */
+html.light [class*="bg-gradient-to-br"][class*="from-"] {
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* ========================================
+   FIX COLORED TEXT BADGES/LABELS
+   Remove colored backgrounds from text labels
+   ======================================== */
+
+/* Remove colored backgrounds from subject type badges */
+html.light .bg-blue-50,
+html.light .bg-emerald-50,
+html.light .bg-purple-50,
+html.light .bg-yellow-50,
+html.light .bg-red-50,
+html.light .bg-pink-50,
+html.light .bg-orange-50,
+html.light .bg-cyan-50,
+html.light .bg-teal-50,
+html.light .bg-indigo-50 {
+  background: transparent !important;
+}
+
+/* Remove colored backgrounds from category labels */
+html.light .px-2.py-0\.5.rounded-full.bg-gray-800\/70,
+html.light .px-2.py-1.rounded-full.capitalize {
+  background: transparent !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  color: #374151 !important;
+}
+
+/* Academic/Technical badge text */
+html.light .text-xs.text-gray-400.capitalize {
+  color: #6b7280 !important;
+  background: transparent !important;
+}
+
+/* Subject badges inside performance cards */
+html.light .rounded-full.px-2.py-0\.5.text-xs {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  color: #374151 !important;
+}
+
+/* Performance card "Academic" / "Technical" labels */
+html.light .text-xs.capitalize.px-2.py-0\.5.rounded-full {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 1px solid rgba(0, 0, 0, 0.15) !important;
+  color: #374151 !important;
+  font-weight: 600;
+}
+
+/* Best score and average labels in subject cards */
+html.light .text-xs.text-gray-400,
+html.light .text-xs.font-bold.text-white {
+  background: transparent !important;
+}
+
+/* "1 attempt" text should not have colored background */
+html.light .flex.items-center.gap-2.text-xs.text-gray-400 span {
+  background: transparent !important;
+  color: #6b7280 !important;
+}
+
+/* Remove all bg-*-50 colored tints from small labels */
+html.light [class*="bg-"][class*="-50"] {
+  background: transparent !important;
+}
+
+/* ========================================
+   DASHBOARD NAVIGATION DROPDOWN FIXES
+   Better hover visibility in light mode
+   ======================================== */
+
+/* Dropdown menu backgrounds */
+html.light .bg-primary-1400 {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 2px solid rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  backdrop-filter: blur(12px);
+}
+
+/* Dropdown menu item hover */
+html.light .hover\:bg-primary-1200:hover {
+  background: rgba(59, 130, 246, 0.15) !important;
+  color: #1f2937 !important;
+}
+
+/* Dropdown links - default state */
+html.light nav a.block.px-4.py-2 {
+  color: #1f2937 !important;
+  font-weight: 500;
+}
+
+/* User dropdown button */
+html.light .bg-primary-1200\/50 {
+  background: rgba(229, 231, 235, 0.8) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+html.light .bg-primary-1200\/50:hover {
+  background: rgba(209, 213, 219, 0.9) !important;
+}
+
+/* Active/selected nav items */
+html.light nav .text-primary-500 {
+  color: #3b82f6 !important;
+  font-weight: 600;
+}
+
+/* Nav item hover state */
+html.light nav .hover\:text-primary-400:hover {
+  color: #2563eb !important;
+}
+
+/* Logout button in dropdown */
+html.light .text-red-400 {
+  color: #dc2626 !important;
+}
+
+html.light .hover\:bg-red-500\/20:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+}

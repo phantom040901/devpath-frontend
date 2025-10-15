@@ -1,0 +1,40 @@
+{
+  "title": "Study Habits Survey",
+  "description": "Survey about the student's daily work/study habits.",
+  "questions": [
+    {
+      "id": "q1",
+      "prompt": "On average, how many hours per day do you spend studying or working on technical skills?",
+      "type": "single-choice",
+      "mapToModel": true,
+      "options": [
+        { "label": "Less than 2 hours", "value": 1 },
+        { "label": "2-4 hours", "value": 3 },
+        { "label": "4-6 hours", "value": 5 },
+        { "label": "6-8 hours", "value": 7 },
+        { "label": "More than 8 hours", "value": 9 }
+      ]
+    },
+    {
+      "id": "q2",
+      "prompt": "When you study/work, how focused are you usually?",
+      "type": "single-choice",
+      "options": [
+        { "label": "I get distracted often", "value": "distracted" },
+        { "label": "Somewhat focused", "value": "somewhat" },
+        { "label": "Mostly focused", "value": "mostly" },
+        { "label": "Very focused", "value": "very" }
+      ]
+    },
+    {
+      "id": "q3",
+      "prompt": "Do you prefer working consistently every day or in long sprints occasionally?",
+      "type": "single-choice",
+      "options": [
+        { "label": "Consistently every day", "value": "consistent" },
+        { "label": "Long sprints occasionally", "value": "sprints" },
+        { "label": "Mix of both", "value": "mix" }
+      ]
+    }
+  ]
+}

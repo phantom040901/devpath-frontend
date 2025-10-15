@@ -1,0 +1,11 @@
+This folder needs 5 PNG screenshot files:
+
+1. assessment-preview.png - Screenshot of /assessments page
+2. career-matches-preview.png - Screenshot of /career-matches page
+3. dashboard-preview.png - Screenshot of /student-dashboard page
+4. reports-preview.png - Screenshot of /student/reports page
+5. learning-path-preview.png - Screenshot of /student/learning-path page
+
+See README.md for detailed instructions on how to capture these screenshots.
+
+The component will show placeholder boxes until you add the actual screenshots.
