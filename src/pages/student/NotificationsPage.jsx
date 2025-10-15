@@ -134,39 +134,41 @@ export default function NotificationsPage() {
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-6 sm:mb-8"
         >
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="p-3 bg-primary-500/20 rounded-xl">
-                <Bell size={28} className="text-primary-400" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-2 sm:p-3 bg-primary-500/20 rounded-xl flex-shrink-0">
+                <Bell size={20} className="sm:w-7 sm:h-7 text-primary-400" />
               </div>
-              <div>
-                <h1 className="text-4xl font-bold text-white">Notifications</h1>
-                <p className="text-gray-400 mt-1">
+              <div className="min-w-0">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white">Notifications</h1>
+                <p className="text-gray-400 mt-0.5 sm:mt-1 text-sm sm:text-base">
                   {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}` : 'All caught up!'}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               {unreadCount > 0 && (
                 <button
                   onClick={handleMarkAllRead}
-                  className="flex items-center gap-2 px-4 py-2 bg-primary-500/20 hover:bg-primary-500/30 border border-primary-500/50 text-primary-400 rounded-lg transition"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-primary-500/20 hover:bg-primary-500/30 border border-primary-500/50 text-primary-400 rounded-lg transition text-sm sm:text-base"
                 >
-                  <Check size={16} />
-                  Mark all read
+                  <Check size={14} className="sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Mark all read</span>
+                  <span className="sm:hidden">Mark read</span>
                 </button>
               )}
 
               {notifications.length > 0 && (
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-400 rounded-lg transition"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/50 text-red-400 rounded-lg transition text-sm sm:text-base"
                 >
-                  <Trash2 size={16} />
-                  Delete all
+                  <Trash2 size={14} className="sm:w-4 sm:h-4" />
+                  <span className="hidden sm:inline">Delete all</span>
+                  <span className="sm:hidden">Delete</span>
                 </button>
               )}
             </div>
@@ -178,7 +180,7 @@ export default function NotificationsPage() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="flex gap-2 mb-6 bg-gray-900/70 border border-gray-700/40 rounded-xl p-2 w-fit"
+          className="flex gap-2 mb-4 sm:mb-6 bg-gray-900/70 border border-gray-700/40 rounded-xl p-1.5 sm:p-2 w-full sm:w-fit overflow-x-auto"
         >
           {[
             { value: 'all', label: 'All', count: notifications.length },
@@ -188,7 +190,7 @@ export default function NotificationsPage() {
             <button
               key={tab.value}
               onClick={() => setFilter(tab.value)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap ${
                 filter === tab.value
                   ? 'bg-primary-500/20 text-primary-400 border border-primary-500/50'
                   : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
@@ -231,49 +233,49 @@ export default function NotificationsPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => handleNotificationClick(notification)}
-                className={`bg-gray-900/70 border rounded-xl p-5 cursor-pointer transition-all hover:border-primary-500/50 hover:bg-gray-900/90 ${
-                  !notification.read 
-                    ? 'border-primary-500/30 bg-primary-500/5' 
+                className={`bg-gray-900/70 border rounded-xl p-3 sm:p-5 cursor-pointer transition-all hover:border-primary-500/50 hover:bg-gray-900/90 ${
+                  !notification.read
+                    ? 'border-primary-500/30 bg-primary-500/5'
                     : 'border-gray-700/40'
                 }`}
               >
-                <div className="flex gap-4">
+                <div className="flex gap-3 sm:gap-4">
                   {/* Icon */}
-                  <div className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-2xl border ${getPriorityColor(notification.priority)}`}>
+                  <div className={`flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-xl sm:text-2xl border ${getPriorityColor(notification.priority)}`}>
                     {notification.icon || '📢'}
                   </div>
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <h3 className={`text-lg font-semibold ${!notification.read ? 'text-white' : 'text-gray-300'}`}>
+                    <div className="flex items-start justify-between gap-2 sm:gap-3 mb-1.5 sm:mb-2">
+                      <h3 className={`text-base sm:text-lg font-semibold ${!notification.read ? 'text-white' : 'text-gray-300'}`}>
                         {notification.title}
                       </h3>
                       {!notification.read && (
-                        <div className="flex-shrink-0 w-2.5 h-2.5 bg-primary-400 rounded-full mt-2"></div>
+                        <div className="flex-shrink-0 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-primary-400 rounded-full mt-1.5 sm:mt-2"></div>
                       )}
                     </div>
 
-                    <p className="text-gray-400 mb-3 leading-relaxed">
+                    <p className="text-sm sm:text-base text-gray-400 mb-2 sm:mb-3 leading-relaxed">
                       {notification.message}
                     </p>
 
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-500">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+                      <span className="text-xs sm:text-sm text-gray-500">
                         {formatTime(notification.createdAt)}
                       </span>
 
                       {notification.link && (
-                        <div className="flex items-center gap-1 text-sm text-primary-400">
+                        <div className="flex items-center gap-1 text-xs sm:text-sm text-primary-400">
                           <span>View</span>
-                          <ExternalLink size={14} />
+                          <ExternalLink size={12} className="sm:w-3.5 sm:h-3.5" />
                         </div>
                       )}
                     </div>
 
                     {/* Priority Badge */}
                     {notification.priority === 'high' && (
-                      <div className="inline-flex items-center gap-1 mt-3 px-2 py-1 bg-red-500/20 border border-red-500/50 rounded-md text-xs text-red-400 font-medium">
+                      <div className="inline-flex items-center gap-1 mt-2 sm:mt-3 px-2 py-1 bg-red-500/20 border border-red-500/50 rounded-md text-xs text-red-400 font-medium">
                         High Priority
                       </div>
                     )}
