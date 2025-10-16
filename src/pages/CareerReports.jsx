@@ -548,7 +548,7 @@ export default function CareerReports() {
       };
 
       try {
-        const response = await fetch("http://localhost:8000/predict", {
+        const response = await fetch("https://devpath-backend.onrender.com/predict", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
