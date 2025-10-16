@@ -1,13 +1,16 @@
 import { motion, AnimatePresence } from "motion/react";
 import Close from "../../icons/Close";
 import { navigationLinks } from "../../../utils/content";
+import { Moon, Sun } from "lucide-react";
 
 import { useModalContext } from "../../../contexts/ModalContext";
 import { useMobileMenuContext } from "../../../contexts/MobileMenuContext";
+import { useTheme } from "../../../contexts/ThemeContext";
 
 function MobileMenu() {
   const { setActiveModal } = useModalContext();
   const { mobileMenuOpened, setMobileMenuOpened } = useMobileMenuContext();
+  const { theme, toggleTheme } = useTheme();
 
   function handleLogin() {
     setActiveModal("login");
@@ -39,16 +42,46 @@ function MobileMenu() {
           className="bg-primary-1400 flex basis-80 flex-col justify-between rounded-2xl bg-[url('../src/assets/Noise.webp')] bg-repeat px-6 py-8"
         >
         <div>
-          {/* Close button */}
-          <button
-            className="border-primary-75 hover:bg-primary-75 group transition-properties mr-auto w-fit cursor-pointer rounded-2xl border-2 p-3"
-            onClick={() => setMobileMenuOpened(false)}
-          >
-            <Close
-              className="stroke-primary-75 group-hover:stroke-primary-1300 transition-properties h-4 w-4"
-              width={2}
-            />
-          </button>
+          {/* Close button and Theme Toggle */}
+          <div className="flex items-center justify-between mb-4">
+            <button
+              className="group transition-properties w-fit cursor-pointer rounded-2xl p-3"
+              style={{
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                borderColor: theme === 'light' ? '#06b6d4' : '#ecfcfd'
+              }}
+              onMouseEnter={(e) => {
+                if (theme === 'light') {
+                  e.currentTarget.style.backgroundColor = '#06b6d4';
+                } else {
+                  e.currentTarget.style.backgroundColor = '#ecfcfd';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
+              }}
+              onClick={() => setMobileMenuOpened(false)}
+            >
+              <Close
+                className={`transition-properties h-4 w-4 ${theme === 'light' ? 'stroke-cyan-500 group-hover:stroke-white' : 'stroke-primary-75 group-hover:stroke-primary-1300'}`}
+                width={2}
+              />
+            </button>
+
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-3 rounded-full bg-primary-1200/50 hover:bg-primary-1200 transition-all duration-200 border border-transparent hover:border-primary-500/30"
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? (
+                <Sun size={20} className="text-primary-400" />
+              ) : (
+                <Moon size={20} className="text-primary-400" />
+              )}
+            </button>
+          </div>
 
           {/* Navigation links */}
           <ul className="mt-16 flex flex-col gap-y-6">
@@ -69,14 +102,65 @@ function MobileMenu() {
         <div className="flex flex-col gap-y-3">
           <button
             onClick={handleLogin}
-            className="border-primary-50 transition-properties text-primary-50 hover:bg-primary-50 hover:text-primary-1300 box-border cursor-pointer rounded-full border-2 px-6 py-3 text-base/loose font-normal"
+            className="transition-all duration-200 box-border cursor-pointer rounded-full px-6 py-3 text-base/loose font-semibold"
+            style={{
+              borderWidth: '2px',
+              borderStyle: 'solid',
+              borderColor: theme === 'light' ? '#000000' : '#ecfcfd',
+              color: theme === 'light' ? '#000000' : '#ecfcfd',
+              backgroundColor: 'transparent'
+            }}
+            onMouseEnter={(e) => {
+              if (theme === 'light') {
+                e.currentTarget.style.backgroundColor = '#000000';
+                e.currentTarget.style.color = '#ffffff';
+              } else {
+                e.currentTarget.style.backgroundColor = '#ecfcfd';
+                e.currentTarget.style.color = '#0e2e2e';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent';
+              if (theme === 'light') {
+                e.currentTarget.style.color = '#000000';
+              } else {
+                e.currentTarget.style.color = '#ecfcfd';
+              }
+            }}
           >
             Login
           </button>
 
           <button
             onClick={handleGetStarted}
-            className="bg-primary-500 border-primary-500 text-primary-1300 primary-glow hover:border-primary-50 hover:bg-primary-50 primary-glow-hover transition-properties cursor-pointer rounded-full border-2 px-6 py-3 text-base/loose font-normal"
+            className="transition-all duration-200 cursor-pointer rounded-full px-6 py-3 text-base/loose font-semibold primary-glow"
+            style={{
+              borderWidth: '2px',
+              borderStyle: 'solid',
+              borderColor: '#06b6d4',
+              backgroundColor: '#06b6d4',
+              color: theme === 'light' ? '#ffffff' : '#0e2e2e'
+            }}
+            onMouseEnter={(e) => {
+              if (theme === 'light') {
+                e.currentTarget.style.backgroundColor = '#000000';
+                e.currentTarget.style.borderColor = '#000000';
+                e.currentTarget.style.color = '#ffffff';
+              } else {
+                e.currentTarget.style.backgroundColor = '#ffffff';
+                e.currentTarget.style.borderColor = '#ffffff';
+                e.currentTarget.style.color = '#000000';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = '#06b6d4';
+              e.currentTarget.style.borderColor = '#06b6d4';
+              if (theme === 'light') {
+                e.currentTarget.style.color = '#ffffff';
+              } else {
+                e.currentTarget.style.color = '#0e2e2e';
+              }
+            }}
           >
             Get Started
           </button>

@@ -88,12 +88,12 @@ export default function LoginModal() {
         {/* Close button */}
         <button
           type="button"
-          className="border-primary-75 hover:bg-primary-75 group transition ml-auto w-fit cursor-pointer rounded-2xl border-2 p-3 relative z-10 max-sm:p-2"
+          className="border-primary-300 hover:bg-primary-300 group transition ml-auto w-fit cursor-pointer rounded-2xl border-2 p-3 relative z-10 max-sm:p-2"
           onClick={() => setActiveModal("")}
         >
           <Close
-            className="stroke-primary-75 group-hover:stroke-primary-1300 transition max-md:h-4 max-md:w-4"
-            width={2}
+            className="stroke-primary-300 group-hover:stroke-primary-1300 transition max-md:h-4 max-md:w-4"
+            width={3}
           />
         </button>
 
@@ -139,7 +139,7 @@ export default function LoginModal() {
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={isLoading}
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                {showPassword ? <EyeOff size={20} strokeWidth={2.5} /> : <Eye size={20} strokeWidth={2.5} />}
               </button>
             </div>
           </label>

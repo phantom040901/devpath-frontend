@@ -1,4 +1,4 @@
-function ArrowRightLine({ width = 1.5, className, alt }) {
+function ArrowRightLine({ width = 1.5, className, alt, stroke }) {
   return (
     <svg
       width="19"
@@ -12,6 +12,7 @@ function ArrowRightLine({ width = 1.5, className, alt }) {
     >
       <path
         d="M1 1H17.83"
+        stroke={stroke || "currentColor"}
         strokeWidth={width}
         strokeMiterlimit="10"
         strokeLinecap="round"

@@ -31,7 +31,8 @@ import {
   MapPin,
   Trophy,
   Sparkles,
-  Rocket
+  Rocket,
+  Flame
 } from "lucide-react";
 
 export default function StudentDashboard() {
@@ -184,39 +185,39 @@ export default function StudentDashboard() {
         {/* Quick Stats Overview */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <StatCard
-            icon={<BookOpen className="text-blue-400" size={20} />}
+            icon={<BookOpen className="text-primary-400" size={20} />}
             label="Assessments"
             value={`${progressSummary?.totalCompleted || 0}/${progressSummary?.totalAssessments || 0}`}
             subtitle="Completed"
-            gradient="from-blue-500/20 to-cyan-600/20"
-            border="border-blue-500/30"
+            gradient="from-primary-500/20 to-cyan-600/20"
+            border="border-primary-500/30"
             onClick={() => navigate("/assessments")}
           />
           <StatCard
-            icon={<TrendingUp className="text-emerald-400" size={20} />}
+            icon={<TrendingUp className="text-primary-400" size={20} />}
             label="Academic"
             value={`${progressSummary?.academicAvg || 0}%`}
             subtitle="Average score"
-            gradient="from-emerald-500/20 to-teal-600/20"
-            border="border-emerald-500/30"
+            gradient="from-primary-500/20 to-cyan-600/20"
+            border="border-primary-500/30"
             onClick={() => navigate("/student/progress")}
           />
           <StatCard
-            icon={<Zap className="text-yellow-400" size={20} />}
-            label="Study Streak"
+            icon={<Flame className="text-primary-400" size={20} />}
+            label="Study Streak 🔥"
             value={`${progressSummary?.currentStreak || 0}`}
             subtitle="Days active"
-            gradient="from-yellow-500/20 to-orange-600/20"
-            border="border-yellow-500/30"
+            gradient="from-primary-500/20 to-cyan-600/20"
+            border="border-primary-500/30"
             onClick={() => navigate("/student/progress")}
           />
           <StatCard
-            icon={<Award className="text-purple-400" size={20} />}
+            icon={<Award className="text-primary-400" size={20} />}
             label="Technical"
             value={`${progressSummary?.technicalAvg || 0}%`}
             subtitle="Average score"
-            gradient="from-purple-500/20 to-pink-600/20"
-            border="border-purple-500/30"
+            gradient="from-primary-500/20 to-cyan-600/20"
+            border="border-primary-500/30"
             onClick={() => navigate("/student/progress")}
           />
         </div>

@@ -1,13 +1,39 @@
 import { useModalContext } from "../../contexts/ModalContext";
+import { useTheme } from "../../contexts/ThemeContext";
+import { useEffect, useRef } from "react";
 import ArrowRight from "../icons/ArrowRight";
 import ArrowRightLine from "../icons/ArrowRightLine";
 import HeroRight from "../../assets/graphics/HeroRight.png";
 
 export default function Hero({ id }) {
   const { setActiveModal } = useModalContext();
+  const { theme } = useTheme();
+  const buttonRef = useRef(null);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    if (buttonRef.current) {
+      if (theme === 'light') {
+        buttonRef.current.style.setProperty('background-color', '#44e5e7', 'important');
+        buttonRef.current.style.setProperty('color', '#ffffff', 'important');
+      } else {
+        buttonRef.current.style.setProperty('background-color', '#44e5e7', 'important');
+        buttonRef.current.style.setProperty('color', '#0e2e2e', 'important');
+      }
+    }
+
+    // Force background color to blend with Organizations
+    if (sectionRef.current) {
+      if (theme === 'light') {
+        sectionRef.current.style.setProperty('background-color', '#f9fafb', 'important');
+      } else {
+        sectionRef.current.style.removeProperty('background-color');
+      }
+    }
+  }, [theme]);
 
   return (
-    <section id={id} className="relative w-full overflow-x-hidden">
+    <section ref={sectionRef} id={id} className="relative w-full overflow-x-hidden dark:bg-primary-1500 light:bg-gray-50 dark:bg-[url('../src/assets/Noise.webp')] bg-repeat">
       <div
         className="m-auto max-w-[90rem] grid grid-cols-[1fr_1fr] items-center gap-x-12 px-24 py-40
           max-xl:grid-cols-2 max-xl:px-16 max-xl:py-32
@@ -19,7 +45,7 @@ export default function Hero({ id }) {
 <div className="max-lg:text-center max-lg:flex max-lg:flex-col max-lg:items-center">
   {/* Headline */}
   <h1
-    className="mb-6 text-6xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]
+    className="mb-6 text-6xl font-extrabold tracking-tight dark:text-white light:text-gray-900 dark:drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] light:drop-shadow-none
       max-xl:text-5xl max-lg:text-4xl max-sm:text-3xl"
   >
     Discover Your <br /> Tech Career Path
@@ -27,7 +53,7 @@ export default function Hero({ id }) {
 
   {/* Subheadline */}
   <p
-    className="mb-10 text-xl leading-relaxed text-gray-200 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]
+    className="mb-10 text-xl leading-relaxed dark:text-gray-200 light:text-gray-700 dark:drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)] light:drop-shadow-none
       max-xl:text-lg max-lg:mb-8"
   >
     DevPath helps students and aspiring tech professionals discover their ideal career in technology—from software development to data analytics, networking & security, quality assurance, IT management, technical support, and specialized IT roles. Match your skills to the right path and get personalized guidance to accelerate your career growth.
@@ -35,22 +61,43 @@ export default function Hero({ id }) {
 
   {/* CTA Button */}
   <button
+    ref={buttonRef}
     className="group flex items-center gap-x-3 rounded-full
-      bg-primary-500 px-10 py-5 text-xl font-semibold text-primary-1300
+      px-10 py-5 text-xl font-semibold
       shadow-[0_0_25px_rgba(0,255,200,0.6)]
-      transition-all hover:bg-primary-50 hover:shadow-[0_0_40px_rgba(0,255,200,0.8)]"
+      transition-all hover:shadow-[0_0_40px_rgba(0,255,200,0.8)]"
+    onMouseEnter={(e) => {
+      if (theme === 'light') {
+        e.currentTarget.style.setProperty('background-color', '#111827', 'important');
+        e.currentTarget.style.setProperty('color', '#ffffff', 'important');
+      } else {
+        e.currentTarget.style.setProperty('background-color', '#ffffff', 'important');
+        e.currentTarget.style.setProperty('color', '#111827', 'important');
+      }
+    }}
+    onMouseLeave={(e) => {
+      if (theme === 'light') {
+        e.currentTarget.style.setProperty('background-color', '#44e5e7', 'important');
+        e.currentTarget.style.setProperty('color', '#ffffff', 'important');
+      } else {
+        e.currentTarget.style.setProperty('background-color', '#44e5e7', 'important');
+        e.currentTarget.style.setProperty('color', '#0e2e2e', 'important');
+      }
+    }}
     onClick={() => setActiveModal("sign-up")}
   >
     <span>Get Started</span>
-    <div className="w-6">
+    <div className="w-6" style={{ display: 'flex', alignItems: 'center' }}>
       <ArrowRightLine
         alt="Arrow right line"
-        className="stroke-primary-1300 -mr-3 inline w-0 opacity-0 transition-all group-hover:w-3 group-hover:opacity-100"
+        className="-mr-3 inline w-0 opacity-0 transition-all group-hover:w-3 group-hover:opacity-100"
+        stroke={theme === 'light' ? '#ffffff' : '#0e2e2e'}
         width={3}
       />
       <ArrowRight
         alt="Arrow right icon"
-        className="stroke-primary-1300 inline w-6"
+        className="inline w-6"
+        stroke={theme === 'light' ? '#ffffff' : '#0e2e2e'}
         width={2.5}
       />
     </div>

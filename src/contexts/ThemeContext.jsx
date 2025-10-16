@@ -15,11 +15,10 @@ export function ThemeProvider({ children }) {
     // Apply theme to document root
     const root = document.documentElement;
 
-    // Keep landing page and admin routes always dark
-    const isLandingPage = location.pathname === '/';
+    // Keep admin routes always dark
     const isAdminRoute = location.pathname.startsWith('/admin');
 
-    if (theme === 'dark' || isLandingPage || isAdminRoute) {
+    if (theme === 'dark' || isAdminRoute) {
       root.classList.add('dark');
       root.classList.remove('light');
     } else {
@@ -37,12 +36,11 @@ export function ThemeProvider({ children }) {
   }, [theme, location.pathname]);
 
   const toggleTheme = () => {
-    // Prevent theme toggle on landing page and admin routes
-    const isLandingPage = location.pathname === '/';
+    // Prevent theme toggle on admin routes only
     const isAdminRoute = location.pathname.startsWith('/admin');
 
-    if (isLandingPage || isAdminRoute) {
-      return; // Do nothing if on landing page or admin route
+    if (isAdminRoute) {
+      return; // Do nothing if on admin route
     }
 
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');

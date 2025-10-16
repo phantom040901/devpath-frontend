@@ -1,12 +1,13 @@
 // src/components/dashboard/NotificationBell.jsx
 import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Bell, Check, ExternalLink, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  getUserNotifications, 
-  getUnreadCount, 
-  markAsRead, 
+import {
+  getUserNotifications,
+  getUnreadCount,
+  markAsRead,
   markAllAsRead,
   deleteNotification
 } from '../../services/notificationService';
@@ -43,10 +44,23 @@ const NotificationBell = () => {
         setIsOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Disable body scroll when notification is open on mobile
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   const loadNotifications = async () => {
     try {
@@ -147,22 +161,33 @@ const NotificationBell = () => {
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Mobile: Full screen centered modal */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="sm:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center p-4 pt-20"
-              onClick={() => setIsOpen(false)}
-            >
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.2 }}
-                onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-md max-h-[70vh] bg-primary-1400 border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col"
-              >
+            {createPortal(
+              <div className="sm:hidden fixed inset-0" style={{ zIndex: 10000 }}>
+                {/* Blur layer */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0"
+                  style={{
+                    backdropFilter: 'blur(16px)',
+                    WebkitBackdropFilter: 'blur(16px)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                  }}
+                  onClick={() => setIsOpen(false)}
+                />
+
+                {/* Modal container */}
+                <div className="absolute inset-0 flex items-center justify-center p-4" onClick={() => setIsOpen(false)}>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                    transition={{ duration: 0.2 }}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full max-w-md max-h-[80vh] bg-primary-1400 border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col mx-auto my-auto relative"
+                    style={{ zIndex: 1 }}
+                  >
                 {/* Header */}
                 <div className="p-4 border-b border-white/10 flex items-center justify-between bg-primary-1300/50">
                   <div className="flex items-center gap-2">
@@ -242,9 +267,10 @@ const NotificationBell = () => {
                   </div>
                 )}
               </motion.div>
-            </motion.div>
-
-            {/* Desktop: Dropdown from bell icon */}
+              </div>
+            </div>,
+            document.body
+            )}
             <motion.div
               initial={{ opacity: 0, y: -20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}

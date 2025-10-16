@@ -176,7 +176,7 @@ export default function DashboardNav() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-0 top-full mt-3 bg-primary-1400/95 dark:bg-primary-1400/95 light:bg-white/95 backdrop-blur-xl border border-white/10 dark:border-white/10 light:border-gray-200 rounded-xl shadow-2xl w-56 py-2 overflow-hidden"
+                  className="absolute left-0 top-full mt-3 bg-primary-1300 dark:bg-primary-1300 light:bg-white border border-white/20 dark:border-white/20 light:border-gray-300 rounded-xl shadow-2xl w-56 py-2 overflow-hidden"
                   style={{ zIndex: 9100 }}
                   onMouseEnter={() => {
                     if (careerTimeout.current) clearTimeout(careerTimeout.current);
@@ -190,21 +190,21 @@ export default function DashboardNav() {
                   <Link
                     to="/career-matches"
                     onClick={() => setCareerOpen(false)}
-                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-white dark:text-white light:text-gray-900 hover:text-primary-300 dark:hover:text-primary-300 light:hover:text-primary-600 font-medium"
                   >
                     🎯 Career Matches
                   </Link>
                   <Link
                     to="/career-roadmap"
                     onClick={() => setCareerOpen(false)}
-                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-white dark:text-white light:text-gray-900 hover:text-primary-300 dark:hover:text-primary-300 light:hover:text-primary-600 font-medium"
                   >
                     🗺️ Career Roadmap
                   </Link>
                   <Link
                     to="/student/learning-path"
                     onClick={() => setCareerOpen(false)}
-                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-white dark:text-white light:text-gray-900 hover:text-primary-300 dark:hover:text-primary-300 light:hover:text-primary-600 font-medium"
                   >
                     📖 Learning Path
                   </Link>
@@ -242,7 +242,7 @@ export default function DashboardNav() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-0 top-full mt-3 bg-primary-1400/95 dark:bg-primary-1400/95 light:bg-white/95 backdrop-blur-xl border border-white/10 dark:border-white/10 light:border-gray-200 rounded-xl shadow-2xl w-56 py-2 overflow-hidden"
+                  className="absolute left-0 top-full mt-3 bg-primary-1300 dark:bg-primary-1300 light:bg-white border border-white/20 dark:border-white/20 light:border-gray-300 rounded-xl shadow-2xl w-56 py-2 overflow-hidden"
                   style={{ zIndex: 9100 }}
                   onMouseEnter={() => {
                     if (assessTimeout.current) clearTimeout(assessTimeout.current);
@@ -256,21 +256,21 @@ export default function DashboardNav() {
                   <Link
                     to="/assessments?tab=academic"
                     onClick={() => setAssessOpen(false)}
-                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-white dark:text-white light:text-gray-900 hover:text-primary-300 dark:hover:text-primary-300 light:hover:text-primary-600 font-medium"
                   >
                     📚 Academic
                   </Link>
                   <Link
                     to="/assessments?tab=technical"
                     onClick={() => setAssessOpen(false)}
-                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-white dark:text-white light:text-gray-900 hover:text-primary-300 dark:hover:text-primary-300 light:hover:text-primary-600 font-medium"
                   >
                     ⚡ Technical
                   </Link>
                   <Link
                     to="/assessments?tab=personal"
                     onClick={() => setAssessOpen(false)}
-                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-white dark:text-white light:text-gray-900 hover:text-primary-300 dark:hover:text-primary-300 light:hover:text-primary-600 font-medium"
                   >
                     🎯 Personal
                   </Link>
@@ -315,7 +315,7 @@ export default function DashboardNav() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute left-0 top-full mt-3 bg-primary-1400/95 dark:bg-primary-1400/95 light:bg-white/95 backdrop-blur-xl border border-white/10 dark:border-white/10 light:border-gray-200 rounded-xl shadow-2xl w-56 py-2 overflow-hidden"
+                  className="absolute left-0 top-full mt-3 bg-primary-1300 dark:bg-primary-1300 light:bg-white border border-white/20 dark:border-white/20 light:border-gray-300 rounded-xl shadow-2xl w-56 py-2 overflow-hidden"
                   style={{ zIndex: 9100 }}
                   onMouseEnter={() => {
                     if (progressTimeout.current) clearTimeout(progressTimeout.current);
@@ -329,7 +329,7 @@ export default function DashboardNav() {
                   <Link
                     to="/student/progress"
                     onClick={() => setProgressOpen(false)}
-                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
+                    className="block px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors duration-150 text-white dark:text-white light:text-gray-900 hover:text-primary-300 dark:hover:text-primary-300 light:hover:text-primary-600 font-medium"
                   >
                     📊 Overall Progress
                   </Link>

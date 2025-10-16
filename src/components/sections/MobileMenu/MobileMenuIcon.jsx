@@ -1,9 +1,11 @@
 import { motion } from "motion/react";
 import Menu from "../../icons/Menu";
 import { useMobileMenuContext } from "../../../contexts/MobileMenuContext";
+import { useTheme } from "../../../contexts/ThemeContext";
 
 function MobileMenuIcon() {
   const { mobileMenuOpened, setMobileMenuOpened } = useMobileMenuContext();
+  const { theme } = useTheme();
 
   return (
     <motion.button
@@ -13,7 +15,10 @@ function MobileMenuIcon() {
       className="jusitfy-center hidden items-center hover:cursor-pointer max-lg:flex"
       onClick={() => setMobileMenuOpened(true)}
     >
-      <Menu className="stroke-primary-75 h-7 w-7" width={2} />
+      <Menu
+        className={`h-7 w-7 ${theme === 'light' ? 'stroke-gray-900' : 'stroke-primary-75'}`}
+        width={2}
+      />
     </motion.button>
   );
 }

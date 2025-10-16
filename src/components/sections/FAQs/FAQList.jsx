@@ -7,6 +7,7 @@ export default function FAQList({
   questions,
   activeQuestion,
   handleQuestionClick,
+  theme,
 }) {
   const [inView, setInView] = useState(false);
 
@@ -39,6 +40,7 @@ export default function FAQList({
           question={question}
           activeQuestion={activeQuestion}
           handleQuestionClick={handleQuestionClick}
+          theme={theme}
         />
       ))}
     </motion.ul>

@@ -3,10 +3,13 @@ import Logo from "../icons/Logo";
 import MobileMenuIcon from "./MobileMenu/MobileMenuIcon";
 import { navigationLinks } from "../../utils/content";
 import { useModalContext } from "../../contexts/ModalContext";
+import { useTheme } from "../../contexts/ThemeContext";
+import { Moon, Sun } from "lucide-react";
 import logoImage from "../../assets/logo.png";
 
 export default function Navigation() {
   const { setActiveModal } = useModalContext();
+  const { theme, toggleTheme } = useTheme();
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
@@ -26,13 +29,13 @@ export default function Navigation() {
 
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 w-full backdrop-blur-md bg-transparent transition-shadow duration-300"
+      className="fixed top-0 left-0 right-0 z-50 w-full backdrop-blur-md dark:bg-transparent light:bg-white/95 transition-all duration-300 dark:border-transparent light:border-b light:border-gray-200"
       style={{
         boxShadow: scrollY > 10 ? "0 8px 25px rgba(0,0,0,0.4)" : "none",
       }}
     >
       {/* Inner container for content */}
-      <div className="m-auto flex max-w-[90rem] justify-between px-24 py-3 text-primary-50 text-lg/8 font-light max-xl:px-16 max-xl:text-base/loose max-lg:px-8 max-md:px-6">
+      <div className="m-auto flex max-w-[90rem] justify-between px-24 py-3 dark:text-primary-50 light:text-gray-900 text-lg/8 font-light max-xl:px-16 max-xl:text-base/loose max-lg:px-8 max-md:px-6">
         {/* Logo */}
         <a
           href="#hero"
@@ -69,7 +72,20 @@ export default function Navigation() {
             <li key={link.id}>
               <a
                 href={link.href}
-                className="hover:text-primary-500 transition-properties"
+                className="dark:text-gray-200 light:text-black transition-colors duration-200 font-medium"
+                style={{
+                  color: theme === 'light' ? '#000000' : undefined
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.setProperty('color', '#06b6d4', 'important'); // cyan-500
+                }}
+                onMouseLeave={(e) => {
+                  if (theme === 'light') {
+                    e.currentTarget.style.setProperty('color', '#000000', 'important');
+                  } else {
+                    e.currentTarget.style.removeProperty('color');
+                  }
+                }}
                 onClick={(e) => handleSmoothScroll(e, link.href)}
               >
                 {link.link}
@@ -80,9 +96,45 @@ export default function Navigation() {
 
         {/* Auth Buttons */}
         <div className="flex items-center gap-x-3 max-lg:hidden">
+          {/* Theme Toggle Button */}
+          <button
+            onClick={toggleTheme}
+            className="p-3 rounded-full dark:bg-primary-1200/50 light:bg-gray-100 dark:hover:bg-primary-1200 light:hover:bg-gray-200 transition-all duration-200 border border-transparent dark:hover:border-primary-500/30 light:hover:border-primary-500/30"
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? (
+              <Sun size={20} className="dark:text-primary-400 light:text-primary-600" />
+            ) : (
+              <Moon size={20} className="dark:text-primary-400 light:text-primary-600" />
+            )}
+          </button>
+
           {/* Login Button */}
           <button
-            className="border-primary-50 transition-properties hover:bg-primary-50 hover:text-primary-1300 box-border cursor-pointer rounded-full border-2 px-8 py-3.5 text-lg/8 font-normal max-xl:px-6 max-xl:py-3 max-xl:text-base/loose"
+            style={{
+              borderColor: theme === 'light' ? '#111827' : undefined,
+              color: theme === 'light' ? '#111827' : undefined,
+            }}
+            className="border-2 rounded-full px-8 py-3.5 text-lg/8 font-normal max-xl:px-6 max-xl:py-3 max-xl:text-base/loose box-border cursor-pointer transition-all duration-200
+                       dark:border-primary-50 dark:text-primary-50 dark:hover:bg-primary-50 dark:hover:text-primary-1300"
+            onMouseEnter={(e) => {
+              if (theme === 'light') {
+                e.currentTarget.style.setProperty('background-color', '#111827', 'important');
+                e.currentTarget.style.setProperty('color', '#ffffff', 'important');
+              } else {
+                e.currentTarget.style.setProperty('background-color', '#ffffff', 'important');
+                e.currentTarget.style.setProperty('color', '#111827', 'important');
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (theme === 'light') {
+                e.currentTarget.style.setProperty('background-color', 'transparent', 'important');
+                e.currentTarget.style.setProperty('color', '#111827', 'important');
+              } else {
+                e.currentTarget.style.setProperty('background-color', 'transparent', 'important');
+                e.currentTarget.style.setProperty('color', '#ecfcfd', 'important');
+              }
+            }}
             onClick={() => setActiveModal("login")}
           >
             Login
@@ -90,7 +142,29 @@ export default function Navigation() {
 
           {/* Signup Button */}
           <button
-            className="bg-primary-500 border-primary-500 text-primary-1300 primary-glow hover:border-primary-50 hover:bg-primary-50 primary-glow-hover transition-properties cursor-pointer rounded-full border-2 px-8 py-3.5 text-lg/8 font-normal max-xl:px-6 max-xl:py-3 max-xl:text-base/loose"
+            className="bg-primary-500 border-primary-500 dark:text-primary-1300 light:text-white primary-glow primary-glow-hover transition-all duration-200 cursor-pointer rounded-full border-2 px-8 py-3.5 text-lg/8 font-normal max-xl:px-6 max-xl:py-3 max-xl:text-base/loose"
+            onMouseEnter={(e) => {
+              if (theme === 'light') {
+                e.currentTarget.style.setProperty('background-color', '#111827', 'important');
+                e.currentTarget.style.setProperty('border-color', '#111827', 'important');
+                e.currentTarget.style.setProperty('color', '#ffffff', 'important');
+              } else {
+                e.currentTarget.style.setProperty('background-color', '#ffffff', 'important');
+                e.currentTarget.style.setProperty('border-color', '#ffffff', 'important');
+                e.currentTarget.style.setProperty('color', '#111827', 'important');
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (theme === 'light') {
+                e.currentTarget.style.setProperty('background-color', '#44e5e7', 'important');
+                e.currentTarget.style.setProperty('border-color', '#44e5e7', 'important');
+                e.currentTarget.style.setProperty('color', '#ffffff', 'important');
+              } else {
+                e.currentTarget.style.setProperty('background-color', '#44e5e7', 'important');
+                e.currentTarget.style.setProperty('border-color', '#44e5e7', 'important');
+                e.currentTarget.style.setProperty('color', '#0e2e2e', 'important');
+              }
+            }}
             onClick={() => setActiveModal("sign-up")}
           >
             Get Started

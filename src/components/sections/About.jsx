@@ -1,12 +1,93 @@
 import MissionGraphic from "../../assets/graphics/MissionGraphic.webp";
 import TeamGrid from "../../assets/graphics/TeamGrid.webp";
 import FadeInSection from "../animations/FadeInSection";
+import { useTheme } from "../../contexts/ThemeContext";
+import { useEffect, useRef } from "react";
+
+function PillarCard({ pillar, theme }) {
+  const titleRef = useRef(null);
+  const descRef = useRef(null);
+
+  useEffect(() => {
+    if (titleRef.current) {
+      if (theme === 'light') {
+        titleRef.current.style.setProperty('color', '#111827', 'important');
+      } else {
+        titleRef.current.style.removeProperty('color');
+      }
+    }
+    if (descRef.current) {
+      if (theme === 'light') {
+        descRef.current.style.setProperty('color', '#1f2937', 'important');
+      } else {
+        descRef.current.style.removeProperty('color');
+      }
+    }
+  }, [theme]);
+
+  return (
+    <div className="p-6 dark:bg-gradient-to-br dark:from-primary-1400 dark:to-primary-1300 light:bg-white rounded-2xl border dark:border-primary-800/30 light:border-gray-300 shadow-lg">
+      <h4 ref={titleRef} className="text-lg font-semibold mb-2 dark:text-white light:text-gray-900">{pillar.title}</h4>
+      <p ref={descRef} className="dark:text-primary-100/90 light:text-gray-800 text-sm dark:font-light light:font-normal">
+        {pillar.desc}
+      </p>
+    </div>
+  );
+}
 
 export default function About({ id }) {
+  const { theme } = useTheme();
+  const headerTitleRef = useRef(null);
+  const headerDescRef = useRef(null);
+  const missionTitleRef = useRef(null);
+  const missionTextRef = useRef(null);
+  const visionTitleRef = useRef(null);
+  const visionTextRef = useRef(null);
+  const teamTitleRef = useRef(null);
+  const teamTextRef = useRef(null);
+  const ctaTitleRef = useRef(null);
+  const ctaTextRef = useRef(null);
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const refs = [
+      { ref: headerTitleRef, color: '#111827' },
+      { ref: headerDescRef, color: '#1f2937' },
+      { ref: missionTitleRef, color: '#111827' },
+      { ref: missionTextRef, color: '#1f2937' },
+      { ref: visionTitleRef, color: '#111827' },
+      { ref: visionTextRef, color: '#1f2937' },
+      { ref: teamTitleRef, color: '#111827' },
+      { ref: teamTextRef, color: '#1f2937' },
+      { ref: ctaTitleRef, color: '#111827' },
+      { ref: ctaTextRef, color: '#1f2937' },
+    ];
+
+    refs.forEach(({ ref, color }) => {
+      if (ref.current) {
+        if (theme === 'light') {
+          ref.current.style.setProperty('color', color, 'important');
+        } else {
+          ref.current.style.removeProperty('color');
+        }
+      }
+    });
+
+    // Force background color to blend with How It Works
+    if (sectionRef.current) {
+      if (theme === 'light') {
+        sectionRef.current.style.setProperty('background-color', '#f9fafb', 'important');
+      } else {
+        sectionRef.current.style.removeProperty('background-color');
+      }
+    }
+  }, [theme]);
+
   return (
     <section
+      ref={sectionRef}
       id={id}
-      className="bg-primary-1500 text-primary-50 overflow-hidden bg-[url('../src/assets/Noise.webp')] bg-repeat"
+      className="dark:bg-primary-1500 light:bg-gray-50 dark:text-primary-50 light:text-gray-900 overflow-hidden dark:bg-[url('../src/assets/Noise.webp')] bg-repeat"
     >
       <FadeInSection>
         <div className="m-auto max-w-[84rem] px-12 py-24 
@@ -14,11 +95,11 @@ export default function About({ id }) {
         >
           {/* Header */}
           <header className="mb-14 text-center">
-            <h1 className="text-5xl font-extrabold tracking-tight max-md:text-3xl">
+            <h1 ref={headerTitleRef} className="text-5xl font-extrabold tracking-tight max-md:text-3xl dark:text-white light:text-gray-900">
               About{" "}
               <span className="text-primary-500 primary-glow">DevPath</span>
             </h1>
-            <p className="mt-4 mx-auto max-w-2xl text-lg font-light text-primary-100/90">
+            <p ref={headerDescRef} className="mt-4 mx-auto max-w-2xl text-lg dark:font-light light:font-normal dark:text-primary-100/90 light:text-gray-800">
               Smart career guidance for students — combining academic signals,
               skill assessments, and real-world role-matching to create a
               personalized roadmap for internships and early-career roles.
@@ -26,12 +107,12 @@ export default function About({ id }) {
           </header>
 
           {/* Mission & Vision */}
-          <div className="grid grid-cols-2 gap-10 items-center mb-20 
+          <div className="grid grid-cols-2 gap-10 items-center mb-20
             max-lg:gap-8 max-md:grid-cols-1 max-md:gap-12"
           >
             <div>
-              <h2 className="text-3xl font-semibold mb-4">Our Mission</h2>
-              <p className="text-primary-100/95 leading-relaxed text-lg font-light">
+              <h2 ref={missionTitleRef} className="text-3xl font-semibold mb-4 dark:text-white light:text-gray-900">Our Mission</h2>
+              <p ref={missionTextRef} className="dark:text-primary-100/95 light:text-gray-800 leading-relaxed text-lg dark:font-light light:font-normal">
                 Empower students from colleges and universities — especially
                 those in STEM and ICT programs — with practical, data-driven
                 career recommendations so they can confidently choose
@@ -39,8 +120,8 @@ export default function About({ id }) {
                 interests.
               </p>
 
-              <h2 className="text-3xl font-semibold mt-8 mb-4">Our Vision</h2>
-              <p className="text-primary-100/95 leading-relaxed text-lg font-light">
+              <h2 ref={visionTitleRef} className="text-3xl font-semibold mt-8 mb-4 dark:text-white light:text-gray-900">Our Vision</h2>
+              <p ref={visionTextRef} className="dark:text-primary-100/95 light:text-gray-800 leading-relaxed text-lg dark:font-light light:font-normal">
                 A future where every student has access to personalized career
                 guidance that bridges classroom learning and industry needs,
                 helping create a strong pipeline of skilled graduates ready for
@@ -59,17 +140,17 @@ export default function About({ id }) {
 
           {/* Team / Creds */}
           <div className="mb-20">
-            <h3 className="text-2xl font-semibold mb-6">
+            <h3 ref={teamTitleRef} className="text-2xl font-semibold mb-6 dark:text-white light:text-gray-900">
               Built by Students, for Students
             </h3>
-            <p className="text-primary-100/90 mb-6 max-w-3xl font-light">
+            <p ref={teamTextRef} className="dark:text-primary-100/90 light:text-gray-800 mb-6 max-w-3xl dark:font-light light:font-normal">
               DevPath is a capstone project by students at the University of
               Mindanao (Computer Science & IT). We designed the system with
-              accessibility, affordability, and explainability in mind so it’s
+              accessibility, affordability, and explainability in mind so it's
               useful for thesis presentations and real student decision-making.
             </p>
 
-            <figure className="rounded-xl overflow-hidden border border-primary-800/30 shadow-lg">
+            <figure className="rounded-xl overflow-hidden dark:border-primary-800/30 light:border-gray-300 border shadow-lg">
               <img
                 src={TeamGrid}
                 alt="DevPath team"
@@ -94,36 +175,28 @@ export default function About({ id }) {
                 desc: "Actionable next steps: practice sets, internship targets, and exportable reports.",
               },
             ].map((pillar, i) => (
-              <div
-                key={i}
-                className="p-6 bg-gradient-to-br from-primary-1400 to-primary-1300 rounded-2xl border border-primary-800/30"
-              >
-                <h4 className="text-lg font-semibold mb-2">{pillar.title}</h4>
-                <p className="text-primary-100/90 text-sm font-light">
-                  {pillar.desc}
-                </p>
-              </div>
+              <PillarCard key={i} pillar={pillar} theme={theme} />
             ))}
           </div>
 
           {/* CTA */}
           <div
-            className="rounded-2xl bg-primary-1400 border border-primary-800/30 p-8 
-            flex items-center justify-between gap-6 
+            className="rounded-2xl dark:bg-primary-1400 light:bg-white border dark:border-primary-800/30 light:border-gray-300 p-8 shadow-xl
+            flex items-center justify-between gap-6
             max-md:flex-col max-md:text-center max-md:items-center"
           >
             <div>
-              <h4 className="text-2xl font-semibold">Ready to find your path?</h4>
-              <p className="text-primary-100/90 font-light">
+              <h4 ref={ctaTitleRef} className="text-2xl font-semibold dark:text-white light:text-gray-900">Ready to find your path?</h4>
+              <p ref={ctaTextRef} className="dark:text-primary-100/90 light:text-gray-800 dark:font-light light:font-normal">
                 Take the quick assessment and get a personalized roadmap
                 tailored to your course and skills.
               </p>
             </div>
             <div className="flex gap-4 max-md:flex-col max-md:w-full">
-              <button className="rounded-full px-6 py-3 bg-primary-500 text-black font-semibold shadow-xl hover:scale-[1.02] transition-transform w-full max-md:text-sm">
+              <button className="rounded-full px-6 py-3 bg-primary-500 dark:text-black light:text-white font-semibold shadow-xl hover:scale-[1.02] transition-transform w-full max-md:text-sm">
                 Start Assessment
               </button>
-              <button className="rounded-full px-6 py-3 border border-primary-700 text-primary-100 font-medium hover:bg-primary-1300 transition w-full max-md:text-sm">
+              <button className="rounded-full px-6 py-3 border dark:border-primary-700 light:border-gray-300 dark:text-primary-100 light:text-gray-900 font-medium dark:hover:bg-primary-1300 light:hover:bg-gray-100 transition w-full max-md:text-sm">
                 Learn More
               </button>
             </div>

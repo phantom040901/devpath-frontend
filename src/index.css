@@ -424,34 +424,6 @@ html.light div {
   border-color: inherit;
 }
 
-/* ========================================
-   EXCLUDE LANDING PAGE FROM LIGHT MODE
-   Keep landing page always dark
-   ======================================== */
-
-/* Disable light mode on landing page (root route "/") */
-html.light[data-route="/"] {
-  background: #0a1628 !important;
-}
-
-html.light[data-route="/"] body,
-html.light[data-route="/"] .bg-gradient-to-b,
-html.light[data-route="/"] main,
-html.light[data-route="/"] section {
-  background: inherit !important;
-}
-
-html.light[data-route="/"] h1,
-html.light[data-route="/"] h2,
-html.light[data-route="/"] h3,
-html.light[data-route="/"] h4,
-html.light[data-route="/"] p,
-html.light[data-route="/"] span,
-html.light[data-route="/"] .text-white,
-html.light[data-route="/"] .text-gray-300,
-html.light[data-route="/"] .text-gray-400 {
-  color: white !important;
-}
 
 /* Performance cards and subject cards */
 html.light .bg-emerald-500\/10,

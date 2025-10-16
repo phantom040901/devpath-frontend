@@ -296,50 +296,50 @@ const confirmSelectCareer = async () => {
   // Already selected career view
   if (hasSelectedCareer && selectedCareerData) {
     return (
-      <section className="min-h-screen bg-gradient-to-b from-primary-1400 via-primary-1500 to-black px-4 sm:px-6 py-12">
+      <section className="min-h-screen bg-gradient-to-b from-primary-1400 via-primary-1500 to-black dark:from-primary-1400 dark:via-primary-1500 dark:to-black light:from-gray-50 light:via-white light:to-gray-100 px-4 sm:px-6 py-12">
         <DashNav />
 
         <div className="max-w-4xl mx-auto mt-20 sm:mt-24">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-gray-900/70 border border-primary-500/40 rounded-3xl p-8 text-center"
+            className="bg-gray-900/70 dark:bg-gray-900/70 light:bg-white border border-primary-500/40 dark:border-primary-500/40 light:border-gray-200 rounded-3xl p-6 sm:p-8 text-center shadow-2xl"
           >
-            <div className="inline-flex p-4 rounded-full bg-primary-500/20 mb-6">
-              <Shield className="text-primary-400" size={48} />
+            <div className="inline-flex p-3 sm:p-4 rounded-full bg-primary-500/20 dark:bg-primary-500/20 light:bg-primary-100 mb-4 sm:mb-6">
+              <Shield className="text-primary-400 dark:text-primary-400 light:text-primary-600" size={40} />
             </div>
-            
-            <h2 className="text-3xl font-bold text-white mb-4">
+
+            <h2 className="text-2xl sm:text-3xl font-bold text-white dark:text-white light:text-gray-900 mb-3 sm:mb-4">
               Career Path Locked
             </h2>
-            
-            <div className="bg-primary-500/10 border border-primary-500/30 rounded-2xl p-6 mb-6">
-              <div className="text-sm text-gray-400 mb-2">Your Selected Career</div>
-              <h3 className="text-2xl font-bold text-primary-400 mb-1">
+
+            <div className="bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-50 border border-primary-500/30 dark:border-primary-500/30 light:border-primary-200 rounded-2xl p-4 sm:p-6 mb-4 sm:mb-6">
+              <div className="text-xs sm:text-sm text-gray-400 dark:text-gray-400 light:text-gray-600 mb-2">Your Selected Career</div>
+              <h3 className="text-xl sm:text-2xl font-bold text-primary-400 dark:text-primary-400 light:text-primary-600 mb-1">
                 {selectedCareerData.jobRole}
               </h3>
-              <p className="text-gray-300 mb-3">{selectedCareerData.category}</p>
+              <p className="text-sm sm:text-base text-gray-300 dark:text-gray-300 light:text-gray-700 mb-3">{selectedCareerData.category}</p>
               <div className="flex items-center justify-center gap-2">
-                <Star className="text-yellow-400" size={20} />
-                <span className="text-xl font-bold text-white">{selectedCareerData.matchScore}</span>
-                <span className="text-gray-400">Match Score</span>
+                <Star className="text-yellow-400 dark:text-yellow-400 light:text-yellow-500" size={20} />
+                <span className="text-lg sm:text-xl font-bold text-white dark:text-white light:text-gray-900">{selectedCareerData.matchScore}</span>
+                <span className="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">Match Score</span>
               </div>
             </div>
 
-            <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-base text-gray-300 dark:text-gray-300 light:text-gray-700 mb-6 max-w-2xl mx-auto leading-relaxed">
               You have already selected your career path. This is a permanent decision to help you focus on your learning journey. Continue building your skills and following your personalized learning path.
             </p>
 
-            <div className="flex gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <button
-  onClick={() => navigate("/dashboard")}
-  className="px-6 py-3 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-semibold transition-all flex items-center gap-2"
->
-  Go to Dashboard <ArrowRight size={18} />
-</button>
+                onClick={() => navigate("/dashboard")}
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-cyan-700 hover:bg-cyan-800 text-white font-bold transition-all flex items-center justify-center gap-2 shadow-2xl hover:shadow-cyan-500/50 hover:scale-105 border-4 border-cyan-900/80"
+              >
+                Go to Dashboard <ArrowRight size={18} />
+              </button>
               <button
                 onClick={() => navigate("/student/learning-path")}
-                className="px-6 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold transition-all"
+                className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-bold transition-all shadow-2xl hover:shadow-slate-500/50 hover:scale-105 border-4 border-slate-900/80"
               >
                 View Learning Path
               </button>

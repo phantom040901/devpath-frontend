@@ -841,76 +841,129 @@ function AppearanceTab() {
             </div>
           </div>
 
-          {/* Toggle Switch */}
-          <div className="flex items-center justify-between p-4 sm:p-6 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 rounded-xl">
-            <div className="flex items-center gap-4">
-              <div className={`p-3 rounded-xl transition-colors ${theme === 'dark' ? 'bg-primary-500/20 text-primary-400' : 'bg-gray-700/50 text-gray-500'}`}>
-                <Moon size={24} />
+          {/* Toggle Switch - Responsive Layout */}
+          <div className="p-4 sm:p-6 bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-50 rounded-xl">
+            {/* Mobile: Stacked Layout */}
+            <div className="flex flex-col sm:hidden gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2.5 rounded-xl transition-colors ${theme === 'dark' ? 'bg-primary-500/20 text-primary-400' : 'bg-gray-700/50 text-gray-500'}`}>
+                    <Moon size={20} />
+                  </div>
+                  <div className="text-sm font-medium">
+                    <p className="text-white dark:text-white light:text-gray-900">Dark Mode</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">Reduced eye strain</p>
+                  </div>
+                </div>
               </div>
-              <div className="text-sm font-medium">
-                <p className="text-white dark:text-white light:text-gray-900">Dark Mode</p>
-                <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">Reduced eye strain</p>
+
+              {/* Center Toggle */}
+              <div className="flex justify-center">
+                <button
+                  onClick={toggleTheme}
+                  className="relative inline-flex h-8 w-16 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  style={{
+                    backgroundColor: theme === 'dark' ? 'rgb(6 182 212)' : 'rgb(156 163 175)'
+                  }}
+                >
+                  <span
+                    className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform duration-200 ease-in-out ${
+                      theme === 'dark' ? 'translate-x-9' : 'translate-x-1'
+                    }`}
+                  >
+                    {theme === 'dark' ? (
+                      <Moon size={14} className="text-primary-400 m-auto mt-1" />
+                    ) : (
+                      <Sun size={14} className="text-yellow-500 m-auto mt-1" />
+                    )}
+                  </span>
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`p-2.5 rounded-xl transition-colors ${theme === 'light' ? 'bg-yellow-500/20 text-yellow-500' : 'bg-gray-700/50 text-gray-500'}`}>
+                    <Sun size={20} />
+                  </div>
+                  <div className="text-sm font-medium">
+                    <p className="text-white dark:text-white light:text-gray-900">Light Mode</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">Bright interface</p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Animated Toggle */}
-            <button
-              onClick={toggleTheme}
-              className="relative inline-flex h-8 w-16 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-900"
-              style={{
-                backgroundColor: theme === 'dark' ? 'rgb(6 182 212)' : 'rgb(156 163 175)'
-              }}
-            >
-              <span
-                className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform duration-200 ease-in-out ${
-                  theme === 'dark' ? 'translate-x-9' : 'translate-x-1'
-                }`}
-              >
-                {theme === 'dark' ? (
-                  <Moon size={14} className="text-primary-400 m-auto mt-1" />
-                ) : (
-                  <Sun size={14} className="text-yellow-500 m-auto mt-1" />
-                )}
-              </span>
-            </button>
-
-            <div className="flex items-center gap-4">
-              <div className="text-sm font-medium text-right">
-                <p className="text-white dark:text-white light:text-gray-900">Light Mode</p>
-                <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">Bright interface</p>
+            {/* Desktop: Horizontal Layout */}
+            <div className="hidden sm:flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className={`p-3 rounded-xl transition-colors ${theme === 'dark' ? 'bg-primary-500/20 text-primary-400' : 'bg-gray-700/50 text-gray-500'}`}>
+                  <Moon size={24} />
+                </div>
+                <div className="text-sm font-medium">
+                  <p className="text-white dark:text-white light:text-gray-900">Dark Mode</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">Reduced eye strain</p>
+                </div>
               </div>
-              <div className={`p-3 rounded-xl transition-colors ${theme === 'light' ? 'bg-yellow-500/20 text-yellow-500' : 'bg-gray-700/50 text-gray-500'}`}>
-                <Sun size={24} />
+
+              {/* Animated Toggle */}
+              <button
+                onClick={toggleTheme}
+                className="relative inline-flex h-8 w-16 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                style={{
+                  backgroundColor: theme === 'dark' ? 'rgb(6 182 212)' : 'rgb(156 163 175)'
+                }}
+              >
+                <span
+                  className={`inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform duration-200 ease-in-out ${
+                    theme === 'dark' ? 'translate-x-9' : 'translate-x-1'
+                  }`}
+                >
+                  {theme === 'dark' ? (
+                    <Moon size={14} className="text-primary-400 m-auto mt-1" />
+                  ) : (
+                    <Sun size={14} className="text-yellow-500 m-auto mt-1" />
+                  )}
+                </span>
+              </button>
+
+              <div className="flex items-center gap-4">
+                <div className="text-sm font-medium text-right">
+                  <p className="text-white dark:text-white light:text-gray-900">Light Mode</p>
+                  <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">Bright interface</p>
+                </div>
+                <div className={`p-3 rounded-xl transition-colors ${theme === 'light' ? 'bg-yellow-500/20 text-yellow-500' : 'bg-gray-700/50 text-gray-500'}`}>
+                  <Sun size={24} />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Theme Preview Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+          {/* Theme Preview Cards - More Compact for Mobile */}
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-6">
             {/* Dark Theme Preview */}
             <button
               onClick={() => theme !== 'dark' && toggleTheme()}
-              className={`relative group overflow-hidden rounded-xl border-2 transition-all ${
+              className={`relative group overflow-hidden rounded-lg sm:rounded-xl border-2 transition-all ${
                 theme === 'dark'
                   ? 'border-primary-500 shadow-lg shadow-primary-500/20'
                   : 'border-gray-700 hover:border-gray-600'
               }`}
             >
-              <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <Moon size={16} className="text-primary-400" />
+              <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-3 sm:p-4">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <Moon size={14} className="text-primary-400 sm:w-4 sm:h-4" />
                   {theme === 'dark' && (
-                    <div className="flex items-center gap-1 text-xs font-semibold text-primary-400">
-                      <CheckCircle size={14} />
-                      Active
+                    <div className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-xs font-semibold text-primary-400">
+                      <CheckCircle size={12} className="sm:w-3.5 sm:h-3.5" />
+                      <span className="hidden sm:inline">Active</span>
                     </div>
                   )}
                 </div>
-                <div className="space-y-2">
-                  <div className="h-2 bg-gray-700 rounded w-3/4"></div>
-                  <div className="h-2 bg-gray-700 rounded w-1/2"></div>
-                  <div className="h-8 bg-primary-500/20 rounded mt-3 flex items-center justify-center">
-                    <span className="text-xs text-primary-400 font-medium">Dark Theme</span>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <div className="h-1.5 sm:h-2 bg-gray-700 rounded w-3/4"></div>
+                  <div className="h-1.5 sm:h-2 bg-gray-700 rounded w-1/2"></div>
+                  <div className="h-6 sm:h-8 bg-primary-500/20 rounded mt-2 sm:mt-3 flex items-center justify-center">
+                    <span className="text-[10px] sm:text-xs text-primary-400 font-medium">Dark</span>
                   </div>
                 </div>
               </div>
@@ -919,27 +972,27 @@ function AppearanceTab() {
             {/* Light Theme Preview */}
             <button
               onClick={() => theme !== 'light' && toggleTheme()}
-              className={`relative group overflow-hidden rounded-xl border-2 transition-all ${
+              className={`relative group overflow-hidden rounded-lg sm:rounded-xl border-2 transition-all ${
                 theme === 'light'
                   ? 'border-yellow-500 shadow-lg shadow-yellow-500/20'
                   : 'border-gray-700 hover:border-gray-600'
               }`}
             >
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-                <div className="flex items-center justify-between mb-3">
-                  <Sun size={16} className="text-yellow-500" />
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-3 sm:p-4">
+                <div className="flex items-center justify-between mb-2 sm:mb-3">
+                  <Sun size={14} className="text-yellow-500 sm:w-4 sm:h-4" />
                   {theme === 'light' && (
-                    <div className="flex items-center gap-1 text-xs font-semibold text-yellow-600">
-                      <CheckCircle size={14} />
-                      Active
+                    <div className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-xs font-semibold text-yellow-600">
+                      <CheckCircle size={12} className="sm:w-3.5 sm:h-3.5" />
+                      <span className="hidden sm:inline">Active</span>
                     </div>
                   )}
                 </div>
-                <div className="space-y-2">
-                  <div className="h-2 bg-gray-300 rounded w-3/4"></div>
-                  <div className="h-2 bg-gray-300 rounded w-1/2"></div>
-                  <div className="h-8 bg-yellow-500/20 rounded mt-3 flex items-center justify-center">
-                    <span className="text-xs text-yellow-700 font-medium">Light Theme</span>
+                <div className="space-y-1.5 sm:space-y-2">
+                  <div className="h-1.5 sm:h-2 bg-gray-300 rounded w-3/4"></div>
+                  <div className="h-1.5 sm:h-2 bg-gray-300 rounded w-1/2"></div>
+                  <div className="h-6 sm:h-8 bg-yellow-500/20 rounded mt-2 sm:mt-3 flex items-center justify-center">
+                    <span className="text-[10px] sm:text-xs text-yellow-700 font-medium">Light</span>
                   </div>
                 </div>
               </div>
