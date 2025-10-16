@@ -90,8 +90,8 @@ export default function About({ id }) {
       className="dark:bg-primary-1500 light:bg-gray-50 dark:text-primary-50 light:text-gray-900 overflow-hidden dark:bg-[url('../src/assets/Noise.webp')] bg-repeat"
     >
       <FadeInSection>
-        <div className="m-auto max-w-[84rem] px-12 py-24 
-          max-xl:px-10 max-lg:px-8 max-md:px-6 max-sm:px-4 max-sm:py-16"
+        <div className="m-auto max-w-[84rem] px-12 py-20
+          max-xl:px-10 max-xl:py-18 max-lg:px-8 max-lg:py-16 max-md:px-6 max-md:py-14 max-sm:px-4 max-sm:py-12"
         >
           {/* Header */}
           <header className="mb-14 text-center">

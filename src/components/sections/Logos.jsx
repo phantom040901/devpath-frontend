@@ -30,11 +30,11 @@ export default function Logos() {
   }, [theme]);
 
   return (
-    <section ref={sectionRef} className="dark:bg-primary-1500 light:bg-gray-50 dark:bg-[url('../src/assets/Noise.webp')] bg-repeat">
-      <div className="m-auto max-w-[90rem] px-24 py-28 max-xl:px-16 max-xl:py-24 max-lg:px-8 max-md:px-6">
+    <section ref={sectionRef} className="dark:bg-primary-1500 light:bg-gray-50 dark:bg-[url('../src/assets/Noise.webp')] bg-repeat -mt-10">
+      <div className="m-auto max-w-[90rem] px-24 pt-20 pb-16 max-xl:px-16 max-xl:pt-16 max-xl:pb-14 max-lg:px-8 max-lg:pt-14 max-md:px-6 max-md:pt-12">
         {/* Heading */}
         <FadeInSection>
-          <p ref={textRef} className="dark:text-primary-50 light:text-gray-900 m-auto mb-20 text-center text-xl max-xl:text-lg/8 max-sm:mb-16">
+          <p ref={textRef} className="dark:text-primary-50 light:text-gray-900 m-auto mb-12 text-center text-xl max-xl:text-lg/8 max-sm:mb-10">
             Organizations powered by{" "}
             <span className="font-bold tracking-tight">DevPath</span>
           </p>

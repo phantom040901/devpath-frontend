@@ -55,7 +55,7 @@ export default function HowItWorks({ id }) {
       id={id}
       className="dark:bg-primary-1500 light:bg-gray-50 overflow-hidden dark:bg-[url('../src/assets/Noise.webp')] bg-repeat"
     >
-      <div className="dark:text-primary-50 light:text-gray-900 m-auto max-w-[90rem] px-6 sm:px-8 lg:px-16 xl:px-24 py-16 sm:py-20 lg:py-24 xl:py-32">
+      <div className="dark:text-primary-50 light:text-gray-900 m-auto max-w-[90rem] px-6 sm:px-8 lg:px-16 xl:px-24 py-16 sm:py-18 lg:py-20 xl:py-24">
         {/* Ambient glow */}
         <div className="bg-primary-1300 absolute top-1/2 left-full h-[62.5rem] w-[62.5rem] -translate-x-1/2 rounded-full opacity-100 blur-[40rem] max-xl:h-[35rem] max-xl:w-[35rem] max-xl:blur-[10rem] max-lg:left-[90%] max-lg:h-[20rem] max-lg:w-[20rem]" />
 

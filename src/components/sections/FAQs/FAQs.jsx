@@ -93,7 +93,7 @@ export default function FAQs({ id = "faqs" }) {   // 👈 accept id prop
       {/* Smooth gradient blend to footer - dark mode only */}
       <div className="absolute inset-0 dark:bg-gradient-to-b dark:from-primary-1500 dark:via-primary-1400 dark:to-black light:hidden" />
 
-      <div className="relative w-full max-w-[90rem] py-32 px-24 max-xl:px-16 max-xl:py-24 max-lg:px-8 max-md:px-6 max-sm:px-4">
+      <div className="relative w-full max-w-[90rem] py-24 px-24 max-xl:px-16 max-xl:py-20 max-lg:px-8 max-lg:py-16 max-md:px-6 max-md:py-14 max-sm:px-4">
         <h2 ref={titleRef} className="dark:text-primary-50 light:text-gray-900 mb-8 text-center text-6xl/18 font-semibold tracking-tighter max-xl:mb-6 max-xl:text-5xl/16 max-lg:text-4xl/10 max-lg:tracking-tight max-md:mb-6 max-md:text-left max-sm:text-3xl/9 max-sm:tracking-tighter max-sm:mb-4">
           Frequently Asked Questions
         </h2>

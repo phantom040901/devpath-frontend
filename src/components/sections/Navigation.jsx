@@ -99,13 +99,13 @@ export default function Navigation() {
           {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
-            className="p-3 rounded-full dark:bg-primary-1200/50 light:bg-gray-100 dark:hover:bg-primary-1200 light:hover:bg-gray-200 transition-all duration-200 border border-transparent dark:hover:border-primary-500/30 light:hover:border-primary-500/30"
+            className="p-3 rounded-full dark:bg-primary-1200/50 light:bg-gray-200 dark:hover:bg-primary-1200 light:hover:bg-gray-300 transition-all duration-200 border dark:border-transparent light:border-gray-300 dark:hover:border-primary-500/30 light:hover:border-gray-400"
             aria-label="Toggle theme"
           >
             {theme === 'dark' ? (
-              <Sun size={20} className="dark:text-primary-400 light:text-primary-600" />
+              <Sun size={20} className="text-primary-400" strokeWidth={2.5} />
             ) : (
-              <Moon size={20} className="dark:text-primary-400 light:text-primary-600" />
+              <Moon size={20} className="text-gray-800" strokeWidth={2.5} />
             )}
           </button>
 

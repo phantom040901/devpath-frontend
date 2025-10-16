@@ -134,7 +134,7 @@ export default function Footer() {
       {/* Smooth gradient blend from FAQ */}
       <div className="absolute inset-0 dark:bg-gradient-to-b dark:from-black dark:to-primary-1500 light:bg-gray-100" />
 
-      <div className="relative m-auto flex max-w-[90rem] justify-between px-24 py-32 max-xl:px-16 max-xl:py-24 max-lg:grid max-lg:gap-y-18 max-lg:px-8 max-md:px-6 max-sm:pb-16">
+      <div className="relative m-auto flex max-w-[90rem] justify-between px-24 py-20 max-xl:px-16 max-xl:py-16 max-lg:grid max-lg:gap-y-18 max-lg:px-8 max-md:px-6 max-sm:pb-16">
         <div ref={logoContainerRef}>
           <a className="flex items-center gap-x-3 max-md:gap-x-2" href="#">
             <Logo

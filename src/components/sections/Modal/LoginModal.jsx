@@ -4,12 +4,14 @@ import { useModalContext } from "../../../contexts/ModalContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../AuthContext.jsx";
+import { useTheme } from "../../../contexts/ThemeContext";
 
 const initialState = { email: "", password: "", remember: false };
 
 export default function LoginModal() {
   const { setActiveModal } = useModalContext();
   const { login, user } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
 
   const [inputs, setInputs] = useState(initialState);
@@ -104,7 +106,7 @@ export default function LoginModal() {
         >
           {/* Email */}
           <label className="flex flex-col gap-1">
-            <span className="text-sm text-primary-100">Email</span>
+            <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Email</span>
             <input
               name="email"
               type="email"
@@ -120,7 +122,7 @@ export default function LoginModal() {
 
           {/* Password */}
           <label className="flex flex-col gap-1 relative">
-            <span className="text-sm text-primary-100">Password</span>
+            <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Password</span>
             <div className="relative">
               <input
                 name="password"
@@ -145,7 +147,7 @@ export default function LoginModal() {
           </label>
 
           {/* Remember me */}
-          <label className="flex items-center gap-2 text-sm text-primary-200">
+          <label className={`flex items-center gap-2 text-sm ${theme === 'light' ? 'text-gray-600' : 'text-primary-200'}`}>
             <input
               type="checkbox"
               name="remember"

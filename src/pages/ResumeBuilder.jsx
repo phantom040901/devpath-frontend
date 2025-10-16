@@ -366,7 +366,7 @@ export default function ResumeBuilder() {
               </button>
               <div className="flex-1 min-w-0">
                 <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white flex items-center gap-2 sm:gap-3">
-                  <FileText className="text-primary-400" size={24} className="sm:w-7 sm:h-7 lg:w-8 lg:h-8" />
+                  <FileText className="text-primary-400 sm:w-7 sm:h-7 lg:w-8 lg:h-8" size={24} />
                   Resume Builder
                 </h1>
                 <p className="text-gray-400 mt-1 text-xs sm:text-sm lg:text-base">Create your professional resume powered by your DevPath assessments</p>

@@ -6,6 +6,7 @@ import { useModalContext } from "../../../contexts/ModalContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../AuthContext.jsx";
+import { useTheme } from "../../../contexts/ThemeContext";
 
 const initialState = {
   firstName: "",
@@ -20,6 +21,7 @@ const initialState = {
 export default function SignUpModal() {
   const { setActiveModal } = useModalContext();
   const { signup } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
 
   const [checked, setChecked] = useState(false);
@@ -169,7 +171,7 @@ export default function SignUpModal() {
             {/* First + Last Name */}
             <div className="flex flex-col sm:flex-row sm:gap-5 gap-4">
               <label className="flex flex-col gap-1 flex-1 min-w-0">
-                <span className="text-sm text-primary-100">First Name</span>
+                <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>First Name</span>
                 <input
                   name="firstName"
                   type="text"
@@ -184,7 +186,7 @@ export default function SignUpModal() {
               </label>
 
               <label className="flex flex-col gap-1 flex-1 min-w-0">
-                <span className="text-sm text-primary-100">Last Name</span>
+                <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Last Name</span>
                 <input
                   name="lastName"
                   type="text"
@@ -201,7 +203,7 @@ export default function SignUpModal() {
 
             {/* Email */}
             <label className="flex flex-col gap-1">
-              <span className="text-sm text-primary-100">Email</span>
+              <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Email</span>
               <input
                 name="email"
                 type="email"
@@ -217,7 +219,7 @@ export default function SignUpModal() {
 
             {/* Password */}
             <label className="flex flex-col gap-1 relative">
-              <span className="text-sm text-primary-100">Password</span>
+              <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Password</span>
               <div className="relative">
                 <input
                   name="password"
@@ -249,72 +251,95 @@ export default function SignUpModal() {
                   {inputs.password && (
                     <div className="space-y-1">
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-primary-200">Password Strength:</span>
+                        <span className={`text-xs ${theme === 'light' ? 'text-gray-600' : 'text-primary-200'}`}>Password Strength:</span>
                         <span className={`text-xs font-semibold ${strengthLabel.color}`}>
                           {strengthLabel.text}
                         </span>
                       </div>
-                      <div className="flex gap-1 h-1.5">
-                        {[...Array(4)].map((_, index) => (
-                          <div
-                            key={index}
-                            className={`flex-1 rounded-full transition-all duration-300 ${
-                              index < passwordStrength
-                                ? passwordStrength === 1
-                                  ? 'bg-orange-500'
-                                  : passwordStrength === 2
-                                  ? 'bg-yellow-500'
-                                  : passwordStrength === 3
-                                  ? 'bg-blue-500'
-                                  : 'bg-green-500'
-                                : 'bg-gray-600'
-                            }`}
-                          />
-                        ))}
+                      <div className="flex gap-2 h-3">
+                        {[...Array(4)].map((_, index) => {
+                          const isFilled = index < passwordStrength;
+
+                          // Determine colors based on strength and theme
+                          let backgroundColor = '';
+                          let borderColor = '';
+
+                          if (isFilled) {
+                            if (passwordStrength === 1) {
+                              backgroundColor = theme === 'light' ? '#f97316' : '#f97316'; // orange-500
+                              borderColor = theme === 'light' ? '#c2410c' : '#ea580c'; // orange-700 / orange-600
+                            } else if (passwordStrength === 2) {
+                              backgroundColor = theme === 'light' ? '#facc15' : '#eab308'; // yellow-400 / yellow-500
+                              borderColor = theme === 'light' ? '#ca8a04' : '#ca8a04'; // yellow-600
+                            } else if (passwordStrength === 3) {
+                              backgroundColor = theme === 'light' ? '#3b82f6' : '#3b82f6'; // blue-500
+                              borderColor = theme === 'light' ? '#1d4ed8' : '#2563eb'; // blue-700 / blue-600
+                            } else {
+                              backgroundColor = theme === 'light' ? '#22c55e' : '#22c55e'; // green-500
+                              borderColor = theme === 'light' ? '#15803d' : '#16a34a'; // green-700 / green-600
+                            }
+                          } else {
+                            backgroundColor = theme === 'light' ? '#e5e7eb' : '#374151'; // gray-200 / gray-700
+                            borderColor = theme === 'light' ? '#6b7280' : '#4b5563'; // gray-500 / gray-600
+                          }
+
+                          return (
+                            <div
+                              key={index}
+                              className="flex-1 rounded-md transition-all duration-300"
+                              style={{
+                                backgroundColor,
+                                borderWidth: theme === 'light' ? '2px' : '1px',
+                                borderStyle: 'solid',
+                                borderColor
+                              }}
+                            />
+                          );
+                        })}
                       </div>
                     </div>
                   )}
 
                   {/* Requirements Checklist */}
                   <div className="space-y-1.5 text-xs pt-1">
-                    <p className="text-primary-200 font-medium mb-1.5">Your password must contain:</p>
+                    <p className={`font-medium mb-1.5 ${theme === 'light' ? 'text-gray-700' : 'text-primary-200'}`}>Your password must contain:</p>
                     <div className="flex items-center gap-2">
                       <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                        passwordRequirements.minLength ? 'bg-green-500' : 'bg-gray-600'
+                        passwordRequirements.minLength ? 'bg-green-500' : theme === 'light' ? 'bg-gray-300' : 'bg-gray-600'
                       }`}>
                         {passwordRequirements.minLength && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
                       </div>
-                      <span className={passwordRequirements.minLength ? 'text-green-400' : 'text-gray-400'}>
+                      <span className={passwordRequirements.minLength ? theme === 'light' ? 'text-green-600' : 'text-green-400' : theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>
                         At least 8 characters
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                        passwordRequirements.hasUppercase ? 'bg-green-500' : 'bg-gray-600'
+                        passwordRequirements.hasUppercase ? 'bg-green-500' : theme === 'light' ? 'bg-gray-300' : 'bg-gray-600'
                       }`}>
                         {passwordRequirements.hasUppercase && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
                       </div>
-                      <span className={passwordRequirements.hasUppercase ? 'text-green-400' : 'text-gray-400'}>
+                      <span className={passwordRequirements.hasUppercase ? theme === 'light' ? 'text-green-600' : 'text-green-400' : theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>
                         One uppercase letter (A-Z)
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                        passwordRequirements.hasLowercase ? 'bg-green-500' : 'bg-gray-600'
+                        passwordRequirements.hasLowercase ? 'bg-green-500' : theme === 'light' ? 'bg-gray-300' : 'bg-gray-600'
                       }`}>
                         {passwordRequirements.hasLowercase && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
                       </div>
-                      <span className={passwordRequirements.hasLowercase ? 'text-green-400' : 'text-gray-400'}>
+                      <span className={passwordRequirements.hasLowercase ? theme === 'light' ? 'text-green-600' : 'text-green-400' : theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>
                         One lowercase letter (a-z)
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className={`w-4 h-4 rounded-full flex items-center justify-center ${
-                        passwordRequirements.hasNumber ? 'bg-green-500' : 'bg-gray-600'
+                        passwordRequirements.hasNumber ? 'bg-green-500' : theme === 'light' ? 'bg-gray-300' : 'bg-gray-600'
                       }`}>
                         {passwordRequirements.hasNumber && <Checkmark className="h-2.5 w-2.5 stroke-white" />}
                       </div>
-                      <span className={passwordRequirements.hasNumber ? 'text-green-400' : 'text-gray-400'}>
+                      <span className={passwordRequirements.hasNumber ? theme === 'light' ? 'text-green-600' : 'text-green-400' : theme === 'light' ? 'text-gray-600' : 'text-gray-400'}>
                         One number (0-9)
                       </span>
                     </div>
@@ -325,7 +350,7 @@ export default function SignUpModal() {
 
             {/* Confirm Password */}
             <label className="flex flex-col gap-1 relative">
-              <span className="text-sm text-primary-100">Confirm Password</span>
+              <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Confirm Password</span>
               <div className="relative">
                 <input
                   name="confirmPassword"
@@ -351,12 +376,12 @@ export default function SignUpModal() {
 
             {/* Course */}
             <label className="flex flex-col gap-1">
-              <span className="text-sm text-primary-100">Course</span>
+              <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Course</span>
               <select
                 name="course"
                 value={inputs.course}
                 onChange={handleInputs}
-                className="rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3 
+                className="rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3
                 focus:ring-2 focus:ring-primary-500 outline-none"
                 required
                 disabled={isLoading}
@@ -364,26 +389,22 @@ export default function SignUpModal() {
                 <option value="">Select your course</option>
                 <option value="BS Computer Science">BS Computer Science</option>
                 <option value="BS Information Technology">BS Information Technology</option>
-                <option value="BS Information Systems">BS Information Systems</option>
-                <option value="BS Data Science">BS Data Science</option>
               </select>
             </label>
 
             {/* Year Level */}
             <label className="flex flex-col gap-1">
-              <span className="text-sm text-primary-100">Year Level</span>
+              <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Year Level</span>
               <select
                 name="yearLevel"
                 value={inputs.yearLevel}
                 onChange={handleInputs}
-                className="rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3 
+                className="rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3
                 focus:ring-2 focus:ring-primary-500 outline-none"
                 required
                 disabled={isLoading}
               >
                 <option value="">Select year level</option>
-                <option value="1st Year">1st Year</option>
-                <option value="2nd Year">2nd Year</option>
                 <option value="3rd Year">3rd Year</option>
                 <option value="4th Year">4th Year</option>
               </select>

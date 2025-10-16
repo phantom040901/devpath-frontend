@@ -25,7 +25,7 @@ export default function FadeInSection({ children, mode = "fade-slide", duration 
       <motion.div
         initial={variants[mode].initial}
         whileInView={variants[mode].animate}
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.1 }}
         transition={{ duration, ease: "easeOut" }}
         style={{ willChange: "transform, opacity" }}
       >

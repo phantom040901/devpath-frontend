@@ -583,9 +583,9 @@ export default function LearningPath() {
                         : 'bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/30'
                     }`}>
                       {area.type === 'academic' ? (
-                        <GraduationCap className={area.type === 'academic' ? 'text-blue-400' : 'text-emerald-400'} size={20} className="sm:w-6 sm:h-6" />
+                        <GraduationCap className={`${area.type === 'academic' ? 'text-blue-400' : 'text-emerald-400'} sm:w-6 sm:h-6`} size={20} />
                       ) : (
-                        <Code className="text-emerald-400" size={20} className="sm:w-6 sm:h-6" />
+                        <Code className="text-emerald-400 sm:w-6 sm:h-6" size={20} />
                       )}
                     </div>
 
@@ -796,7 +796,7 @@ export default function LearningPath() {
 
               <div className="flex items-start gap-3 sm:gap-4">
                 <div className="p-2 sm:p-3 bg-white/20 rounded-full flex-shrink-0">
-                  <PartyPopper className="text-white" size={20} className="sm:w-7 sm:h-7" />
+                  <PartyPopper className="text-white sm:w-7 sm:h-7" size={20} />
                 </div>
 
                 <div className="flex-1 min-w-0">
