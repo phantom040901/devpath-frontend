@@ -352,7 +352,7 @@ const confirmSelectCareer = async () => {
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-primary-1400 via-primary-1500 to-black px-4 sm:px-6 py-12">
+    <section className="min-h-screen bg-gradient-to-b from-primary-1400 via-primary-1500 to-black dark:from-primary-1400 dark:via-primary-1500 dark:to-black light:from-gray-50 light:via-white light:to-gray-100 px-4 sm:px-6 py-12">
       <DashNav />
 
       <div className="max-w-7xl mx-auto mt-20 sm:mt-24">
@@ -372,22 +372,22 @@ const confirmSelectCareer = async () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary-500/20 via-emerald-500/20 to-cyan-500/20 border border-primary-500/40 mb-6 backdrop-blur-sm"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary-500/20 via-emerald-500/20 to-cyan-500/20 dark:from-primary-500/20 dark:via-emerald-500/20 dark:to-cyan-500/20 light:from-primary-100 light:via-emerald-100 light:to-cyan-100 border border-primary-500/40 dark:border-primary-500/40 light:border-primary-300 mb-6 backdrop-blur-sm"
           >
-            <Brain className="text-primary-400" size={18} />
-            <span className="text-primary-300 text-sm font-bold tracking-wide">INTELLIGENT CAREER MATCHING</span>
-            <Sparkles className="text-emerald-400" size={16} />
+            <Brain className="text-primary-400 dark:text-primary-400 light:text-primary-600" size={18} />
+            <span className="text-primary-300 dark:text-primary-300 light:text-primary-700 text-sm font-bold tracking-wide">INTELLIGENT CAREER MATCHING</span>
+            <Sparkles className="text-emerald-400 dark:text-emerald-400 light:text-emerald-600" size={16} />
           </motion.div>
 
           <motion.h1
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="text-5xl sm:text-6xl lg:text-7xl font-black bg-gradient-to-r from-primary-300 via-emerald-300 to-cyan-300 bg-clip-text text-transparent mb-6 leading-tight"
+            className="text-5xl sm:text-6xl lg:text-7xl font-black bg-gradient-to-r from-primary-300 via-emerald-300 to-cyan-300 dark:from-primary-300 dark:via-emerald-300 dark:to-cyan-300 light:from-primary-600 light:via-emerald-600 light:to-cyan-600 bg-clip-text text-transparent mb-6 leading-tight"
           >
             Discover Your
             <br />
-            <span className="bg-gradient-to-r from-yellow-300 via-primary-400 to-emerald-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-yellow-300 via-primary-400 to-emerald-400 dark:from-yellow-300 dark:via-primary-400 dark:to-emerald-400 light:from-yellow-600 light:via-primary-600 light:to-emerald-600 bg-clip-text text-transparent">
               Perfect Career Path
             </span>
           </motion.h1>
@@ -396,11 +396,11 @@ const confirmSelectCareer = async () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-gray-300 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed"
+            className="text-gray-300 dark:text-gray-300 light:text-gray-700 text-lg sm:text-xl max-w-3xl mx-auto leading-relaxed"
           >
             Complete all assessments to unlock personalized career recommendations
             <br className="hidden sm:block" />
-            <span className="text-primary-400 font-semibold">powered by advanced data-driven matching technology</span>
+            <span className="text-primary-400 dark:text-primary-400 light:text-primary-600 font-semibold">powered by advanced data-driven matching technology</span>
           </motion.p>
 
           {/* Stats Bar */}
@@ -411,18 +411,18 @@ const confirmSelectCareer = async () => {
             className="flex items-center justify-center gap-8 mt-8 text-sm"
           >
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-              <span className="text-gray-400">17 Total Assessments</span>
+              <div className="w-2 h-2 rounded-full bg-emerald-400 dark:bg-emerald-400 light:bg-emerald-500 animate-pulse"></div>
+              <span className="text-gray-400 dark:text-gray-400 light:text-gray-600">17 Total Assessments</span>
             </div>
-            <div className="w-px h-4 bg-gray-700"></div>
+            <div className="w-px h-4 bg-gray-700 dark:bg-gray-700 light:bg-gray-300"></div>
             <div className="flex items-center gap-2">
-              <Zap className="text-yellow-400" size={14} />
-              <span className="text-gray-400">Top 3 Matches Generated</span>
+              <Zap className="text-yellow-400 dark:text-yellow-400 light:text-yellow-600" size={14} />
+              <span className="text-gray-400 dark:text-gray-400 light:text-gray-600">Top 3 Matches Generated</span>
             </div>
-            <div className="w-px h-4 bg-gray-700"></div>
+            <div className="w-px h-4 bg-gray-700 dark:bg-gray-700 light:bg-gray-300"></div>
             <div className="flex items-center gap-2">
-              <Target className="text-primary-400" size={14} />
-              <span className="text-gray-400">95%+ Accuracy</span>
+              <Target className="text-primary-400 dark:text-primary-400 light:text-primary-600" size={14} />
+              <span className="text-gray-400 dark:text-gray-400 light:text-gray-600">95%+ Accuracy</span>
             </div>
           </motion.div>
         </motion.div>
@@ -432,22 +432,22 @@ const confirmSelectCareer = async () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
-          className="relative bg-gradient-to-br from-yellow-500/10 via-orange-500/10 to-red-500/10 border border-yellow-500/40 rounded-2xl p-6 mb-12 max-w-4xl mx-auto backdrop-blur-sm overflow-hidden"
+          className="relative bg-gradient-to-br from-yellow-500/10 via-orange-500/10 to-red-500/10 dark:from-yellow-500/10 dark:via-orange-500/10 dark:to-red-500/10 light:from-yellow-50 light:via-orange-50 light:to-red-50 border border-yellow-500/40 dark:border-yellow-500/40 light:border-yellow-300 rounded-2xl p-6 mb-12 max-w-4xl mx-auto backdrop-blur-sm overflow-hidden"
         >
           {/* Glow effect */}
           <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/5 to-orange-500/5 blur-xl"></div>
 
           <div className="relative flex items-start gap-4">
-            <div className="flex-shrink-0 p-3 rounded-xl bg-yellow-500/20 border border-yellow-500/30">
-              <AlertTriangle className="text-yellow-400" size={24} />
+            <div className="flex-shrink-0 p-3 rounded-xl bg-yellow-500/20 dark:bg-yellow-500/20 light:bg-yellow-100 border border-yellow-500/30 dark:border-yellow-500/30 light:border-yellow-300">
+              <AlertTriangle className="text-yellow-400 dark:text-yellow-400 light:text-yellow-600" size={24} />
             </div>
             <div className="flex-1">
-              <h3 className="text-yellow-300 font-bold text-lg mb-2 flex items-center gap-2">
+              <h3 className="text-yellow-300 dark:text-yellow-300 light:text-yellow-700 font-bold text-lg mb-2 flex items-center gap-2">
                 Important Decision Ahead
-                <Lock size={16} className="text-yellow-400" />
+                <Lock size={16} className="text-yellow-400 dark:text-yellow-400 light:text-yellow-600" />
               </h3>
-              <p className="text-gray-200 leading-relaxed">
-                Career selection is <span className="text-yellow-300 font-bold">permanent and cannot be changed</span>.
+              <p className="text-gray-200 dark:text-gray-200 light:text-gray-700 leading-relaxed">
+                Career selection is <span className="text-yellow-300 dark:text-yellow-300 light:text-yellow-700 font-bold">permanent and cannot be changed</span>.
                 Choose carefully from your top 3 AI-matched careers. This commitment helps you stay focused on a clear,
                 structured learning path tailored to your selected career.
               </p>
@@ -585,22 +585,22 @@ const confirmSelectCareer = async () => {
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-500/40 mb-4"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 dark:bg-emerald-500/20 light:bg-emerald-100 border border-emerald-500/40 dark:border-emerald-500/40 light:border-emerald-400 mb-4"
               >
-                <Sparkles className="text-emerald-400" size={16} />
-                <span className="text-emerald-300 text-sm font-bold">ANALYSIS COMPLETE</span>
+                <Sparkles className="text-emerald-400 dark:text-emerald-400 light:text-emerald-600" size={16} />
+                <span className="text-emerald-300 dark:text-emerald-300 light:text-emerald-700 text-sm font-bold">ANALYSIS COMPLETE</span>
               </motion.div>
 
-              <h2 className="text-4xl sm:text-5xl font-black text-white mb-4 relative z-10">
+              <h2 className="text-4xl sm:text-5xl font-black text-white dark:text-white light:text-gray-900 mb-4 relative z-10">
                 Your Top 3{" "}
-                <span className="bg-gradient-to-r from-primary-400 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-primary-400 via-emerald-400 to-cyan-400 dark:from-primary-400 dark:via-emerald-400 dark:to-cyan-400 light:from-primary-600 light:via-emerald-600 light:to-cyan-600 bg-clip-text text-transparent">
                   Career Matches
                 </span>
               </h2>
 
-              <p className="text-gray-300 text-lg max-w-2xl mx-auto relative z-10">
+              <p className="text-gray-300 dark:text-gray-300 light:text-gray-700 text-lg max-w-2xl mx-auto relative z-10">
                 Based on your comprehensive assessment results, our matching system has identified these
-                <span className="text-primary-400 font-semibold"> perfect career paths </span>
+                <span className="text-primary-400 dark:text-primary-400 light:text-primary-600 font-semibold"> perfect career paths </span>
                 for you
               </p>
 
@@ -609,10 +609,10 @@ const confirmSelectCareer = async () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.5 }}
-                className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-500/10 border border-primary-500/30"
+                className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-500/10 dark:bg-primary-500/10 light:bg-primary-100 border border-primary-500/30 dark:border-primary-500/30 light:border-primary-300"
               >
-                <Target className="text-primary-400" size={16} />
-                <span className="text-gray-300 text-sm font-semibold">
+                <Target className="text-primary-400 dark:text-primary-400 light:text-primary-600" size={16} />
+                <span className="text-gray-300 dark:text-gray-300 light:text-gray-700 text-sm font-semibold">
                   Select ONE career to unlock your personalized learning roadmap
                 </span>
               </motion.div>
@@ -637,7 +637,7 @@ const confirmSelectCareer = async () => {
               transition={{ delay: 1 }}
               className="mt-12 text-center"
             >
-              <div className="inline-flex items-center gap-2 text-gray-500 text-sm">
+              <div className="inline-flex items-center gap-2 text-gray-500 dark:text-gray-500 light:text-gray-600 text-sm">
                 <Shield size={14} />
                 <span>Your selection is permanent and helps maintain a focused learning path</span>
               </div>
@@ -748,14 +748,14 @@ function CompletionCard({ title, completed, total, icon, link, color }) {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -8, scale: 1.02 }}
       onClick={() => navigate(link)}
-      className={`group relative bg-gradient-to-br ${styles.gradient} ${styles.border} border-2 rounded-2xl p-6 cursor-pointer transition-all duration-300 ${styles.glow} shadow-lg hover:shadow-2xl overflow-hidden`}
+      className={`group relative bg-gradient-to-br ${styles.gradient} dark:${styles.gradient} light:from-white light:to-gray-50 ${styles.border} dark:${styles.border} light:border-gray-300 border-2 rounded-2xl p-6 cursor-pointer transition-all duration-300 ${styles.glow} shadow-lg hover:shadow-2xl overflow-hidden`}
     >
       {/* Background glow effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
       <div className="relative">
         <div className="flex items-center justify-between mb-5">
-          <div className={`p-3 rounded-xl ${styles.icon} border backdrop-blur-sm`}>
+          <div className={`p-3 rounded-xl ${styles.icon} dark:${styles.icon} light:bg-gray-100 border backdrop-blur-sm`}>
             {icon}
           </div>
           {isComplete ? (
@@ -763,34 +763,34 @@ function CompletionCard({ title, completed, total, icon, link, color }) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 10 }}
-              className="p-2 rounded-full bg-emerald-500/20 border border-emerald-500/40"
+              className="p-2 rounded-full bg-emerald-500/20 dark:bg-emerald-500/20 light:bg-emerald-100 border border-emerald-500/40 dark:border-emerald-500/40 light:border-emerald-400"
             >
-              <CheckCircle className="text-emerald-400" size={20} />
+              <CheckCircle className="text-emerald-400 dark:text-emerald-400 light:text-emerald-600" size={20} />
             </motion.div>
           ) : (
-            <div className="p-2 rounded-full bg-gray-800/50 border border-gray-700/30">
-              <XCircle className="text-gray-500" size={20} />
+            <div className="p-2 rounded-full bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-200 border border-gray-700/30 dark:border-gray-700/30 light:border-gray-300">
+              <XCircle className="text-gray-500 dark:text-gray-500 light:text-gray-400" size={20} />
             </div>
           )}
         </div>
 
-        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-primary-300 transition-colors">
+        <h3 className="text-lg font-bold text-white dark:text-white light:text-gray-900 mb-2 group-hover:text-primary-300 dark:group-hover:text-primary-300 light:group-hover:text-primary-600 transition-colors">
           {title}
         </h3>
 
         <div className="flex items-center justify-between mb-4">
-          <p className="text-sm text-gray-400">
-            <span className="text-white font-bold text-lg">{completed}</span>
-            <span className="text-gray-500 mx-1">/</span>
-            <span className="text-gray-400">{total}</span>
+          <p className="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">
+            <span className="text-white dark:text-white light:text-gray-900 font-bold text-lg">{completed}</span>
+            <span className="text-gray-500 dark:text-gray-500 light:text-gray-400 mx-1">/</span>
+            <span className="text-gray-400 dark:text-gray-400 light:text-gray-600">{total}</span>
           </p>
-          <span className="text-xs font-semibold text-primary-400 bg-primary-500/20 px-2 py-1 rounded-full">
+          <span className="text-xs font-semibold text-primary-400 dark:text-primary-400 light:text-primary-600 bg-primary-500/20 dark:bg-primary-500/20 light:bg-primary-100 px-2 py-1 rounded-full">
             {Math.round(percentage)}%
           </span>
         </div>
 
         {/* Progress Bar */}
-        <div className="relative h-3 bg-gray-900/60 rounded-full overflow-hidden border border-gray-700/30">
+        <div className="relative h-3 bg-gray-900/60 dark:bg-gray-900/60 light:bg-gray-200 rounded-full overflow-hidden border border-gray-700/30 dark:border-gray-700/30 light:border-gray-300">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${percentage}%` }}
@@ -802,7 +802,7 @@ function CompletionCard({ title, completed, total, icon, link, color }) {
         </div>
 
         {/* Click hint */}
-        <div className="flex items-center justify-center gap-1 mt-4 text-xs text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex items-center justify-center gap-1 mt-4 text-xs text-gray-500 dark:text-gray-500 light:text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity">
           <span>Click to view</span>
           <ArrowRight size={12} />
         </div>
@@ -860,45 +860,45 @@ function CareerCard({ match, rank, onSelect }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ delay: rank * 0.15, type: "spring", stiffness: 100 }}
       whileHover={{ y: -12, scale: 1.02 }}
-      className={`group relative bg-gradient-to-br from-gray-900/80 via-gray-900/60 to-gray-900/80 border-2 ${badge.border} rounded-3xl p-7 transition-all duration-300 hover:${badge.glow} shadow-xl hover:shadow-2xl overflow-hidden backdrop-blur-sm`}
+      className={`group relative bg-gradient-to-br from-gray-900/80 via-gray-900/60 to-gray-900/80 dark:from-gray-900/80 dark:via-gray-900/60 dark:to-gray-900/80 light:from-white light:to-gray-50 border-2 ${badge.border} dark:${badge.border} light:border-gray-300 rounded-3xl p-7 transition-all duration-300 hover:${badge.glow} shadow-xl hover:shadow-2xl overflow-hidden backdrop-blur-sm`}
     >
       {/* Animated background gradient */}
       <div className={`absolute inset-0 bg-gradient-to-br ${badge.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}></div>
 
       {/* Rank number watermark */}
-      <div className="absolute top-4 right-4 text-8xl font-black text-white/5 select-none">
+      <div className="absolute top-4 right-4 text-8xl font-black text-white/5 dark:text-white/5 light:text-gray-900/5 select-none">
         {rank}
       </div>
 
       <div className="relative z-10">
         {/* Rank Badge */}
-        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${badge.gradient} border-2 ${badge.border} text-xs font-black tracking-wider mb-5 ring-4 ${badge.ring}`}>
+        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${badge.gradient} border-2 ${badge.border} dark:${badge.border} light:border-gray-400 text-xs font-black tracking-wider mb-5 ring-4 ${badge.ring}`}>
           {getRankIcon(rank)}
-          <span className={badge.textColor}>{badge.text}</span>
+          <span className={`${badge.textColor} dark:${badge.textColor} light:text-gray-800`}>{badge.text}</span>
         </div>
 
         {/* Job Title */}
-        <h3 className="text-2xl font-black text-white mb-3 group-hover:text-primary-300 transition-colors leading-tight">
+        <h3 className="text-2xl font-black text-white dark:text-white light:text-gray-900 mb-3 group-hover:text-primary-300 dark:group-hover:text-primary-300 light:group-hover:text-primary-600 transition-colors leading-tight">
           {match.job_role}
         </h3>
 
         {/* Category */}
         <div className="flex items-center gap-2 mb-6">
-          <div className="px-3 py-1 rounded-full bg-gray-800/60 border border-gray-700/50">
-            <p className="text-xs font-semibold text-gray-300">{match.category}</p>
+          <div className="px-3 py-1 rounded-full bg-gray-800/60 dark:bg-gray-800/60 light:bg-gray-200 border border-gray-700/50 dark:border-gray-700/50 light:border-gray-300">
+            <p className="text-xs font-semibold text-gray-300 dark:text-gray-300 light:text-gray-700">{match.category}</p>
           </div>
         </div>
 
         {/* Match Score Display */}
-        <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 border border-gray-700/50 rounded-2xl p-5 mb-6 backdrop-blur-sm">
+        <div className="bg-gradient-to-br from-gray-800/80 to-gray-900/80 dark:from-gray-800/80 dark:to-gray-900/80 light:from-gray-100 light:to-gray-200 border border-gray-700/50 dark:border-gray-700/50 light:border-gray-300 rounded-2xl p-5 mb-6 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-xs text-gray-500 mb-1 uppercase tracking-wide font-semibold">Match Score</div>
+              <div className="text-xs text-gray-500 dark:text-gray-500 light:text-gray-600 mb-1 uppercase tracking-wide font-semibold">Match Score</div>
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-black bg-gradient-to-r from-primary-400 to-emerald-400 bg-clip-text text-transparent">
+                <span className="text-4xl font-black bg-gradient-to-r from-primary-400 to-emerald-400 dark:from-primary-400 dark:to-emerald-400 light:from-primary-600 light:to-emerald-600 bg-clip-text text-transparent">
                   {match.match_score}
                 </span>
-                <BarChart3 className="text-primary-400" size={20} />
+                <BarChart3 className="text-primary-400 dark:text-primary-400 light:text-primary-600" size={20} />
               </div>
             </div>
             <div className="relative">
@@ -907,19 +907,19 @@ function CareerCard({ match, rank, onSelect }) {
                 transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                 className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full blur-lg opacity-20"
               ></motion.div>
-              <Star className="text-yellow-400 relative z-10" size={40} fill="currentColor" />
+              <Star className="text-yellow-400 dark:text-yellow-400 light:text-yellow-500 relative z-10" size={40} fill="currentColor" />
             </div>
           </div>
         </div>
 
         {/* Key Highlights */}
         <div className="grid grid-cols-2 gap-2 mb-6">
-          <div className="flex items-center gap-2 text-xs text-gray-400">
-            <Code size={14} className="text-primary-400" />
+          <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">
+            <Code size={14} className="text-primary-400 dark:text-primary-400 light:text-primary-600" />
             <span>Tech Skills</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-gray-400">
-            <Brain size={14} className="text-emerald-400" />
+          <div className="flex items-center gap-2 text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">
+            <Brain size={14} className="text-emerald-400 dark:text-emerald-400 light:text-emerald-600" />
             <span>Data Matched</span>
           </div>
         </div>
