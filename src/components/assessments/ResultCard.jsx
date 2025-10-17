@@ -1,10 +1,17 @@
 // src/components/assessments/ResultCard.jsx
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Trophy, Target, CheckCircle } from "lucide-react";
+import { Trophy, Target, CheckCircle, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../../lib/firebase";
+import { useAuth } from "../AuthContext";
 
 export default function ResultCard({ title, score }) {
   const navigate = useNavigate();
+  const { user } = useAuth() || {};
+  const [nextAssessment, setNextAssessment] = useState(null);
+  const [loadingNext, setLoadingNext] = useState(true);
 
   if (!score) return null;
 
@@ -38,6 +45,112 @@ export default function ResultCard({ title, score }) {
   };
 
   const gradeInfo = getGrade(score.pct);
+
+  // Fetch next available assessment
+  useEffect(() => {
+    async function findNextAssessment() {
+      if (!user) {
+        setLoadingNext(false);
+        return;
+      }
+
+      try {
+        // Fetch all assessments from all collections
+        const academicRef = collection(db, "assessments");
+        const academicSnap = await getDocs(academicRef);
+        const academicData = academicSnap.docs.map((doc) => ({
+          id: doc.id,
+          type: "academic",
+          mode: "mcq",
+          collectionName: "assessments",
+          ...doc.data(),
+        }));
+
+        const techRef = collection(db, "technicalAssessments");
+        const techSnap = await getDocs(techRef);
+        const techData = techSnap.docs.map((doc) => ({
+          id: doc.id,
+          type: "technical",
+          mode: doc.data().mode || "mcq",
+          collectionName: "technicalAssessments",
+          ...doc.data(),
+        }));
+
+        const personalRef = collection(db, "personalAssessments");
+        const personalSnap = await getDocs(personalRef);
+        const personalData = personalSnap.docs.map((doc) => ({
+          id: doc.id,
+          type: "personal",
+          mode: doc.data().mode || "survey",
+          collectionName: "personalAssessments",
+          ...doc.data(),
+        }));
+
+        // Combine all assessments
+        const allAssessments = [...academicData, ...techData, ...personalData];
+
+        // Fetch user's results to check what's been completed
+        const resultsRef = collection(db, "users", user.uid, "results");
+        const resultsSnap = await getDocs(resultsRef);
+        const results = resultsSnap.docs.map((d) => ({
+          id: d.id,
+          ...d.data(),
+        }));
+
+        const resultsByAssessment = {};
+        results.forEach((r) => {
+          if (!r.assessmentId) return;
+          if (!resultsByAssessment[r.assessmentId]) {
+            resultsByAssessment[r.assessmentId] = [];
+          }
+          resultsByAssessment[r.assessmentId].push(r);
+        });
+
+        // Find the next assessment that hasn't been started yet
+        const nextAvailable = allAssessments.find((assessment) => {
+          const attempts = resultsByAssessment[assessment.id] || [];
+          // Only show assessments that have NOT been started (0 attempts)
+          return attempts.length === 0;
+        });
+
+        setNextAssessment(nextAvailable);
+      } catch (err) {
+        console.error("Failed to find next assessment:", err);
+      } finally {
+        setLoadingNext(false);
+      }
+    }
+
+    findNextAssessment();
+  }, [user]);
+
+  const handleNextAssessment = () => {
+    if (!nextAssessment) return;
+
+    // Clear any existing assessment progress from localStorage before navigating
+    const storageKeys = Object.keys(localStorage);
+    storageKeys.forEach((key) => {
+      if (key.startsWith('assessment-progress:')) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    let targetUrl = '';
+    if (nextAssessment.mode === "survey") {
+      if (nextAssessment.type === "personal") {
+        targetUrl = `/survey/personal/${nextAssessment.id}`;
+      } else {
+        targetUrl = `/survey/technical/${nextAssessment.id}`;
+      }
+    } else if (nextAssessment.type === "technical") {
+      targetUrl = `/technical-assessments/${nextAssessment.id}`;
+    } else {
+      targetUrl = `/assessments/${nextAssessment.id}`;
+    }
+
+    // Use window.location.href for full page reload to ensure fresh assessment load
+    window.location.href = targetUrl;
+  };
 
   return (
     <motion.div
@@ -122,20 +235,43 @@ export default function ResultCard({ title, score }) {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
-        <button
-          onClick={() => navigate(backPath)}
-          className="px-8 py-3 rounded-full bg-primary-500 text-primary-1300 font-semibold 
-                     hover:bg-primary-400 transition shadow-lg hover:shadow-primary-500/50"
-        >
-          ← Back to Assessments
-        </button>
-        <button
-          onClick={() => navigate("/dashboard")}
-          className="px-8 py-3 rounded-full bg-gray-700 text-white font-semibold hover:bg-gray-600 transition"
-        >
-          Go to Dashboard
-        </button>
+      <div className="flex flex-col gap-3">
+        {/* Next Assessment Button - Show prominently if available */}
+        {!loadingNext && nextAssessment && (
+          <div className="relative">
+            <button
+              onClick={handleNextAssessment}
+              className="w-full px-4 sm:px-8 py-3 sm:py-4 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-400 text-white font-bold
+                         hover:from-emerald-400 hover:to-cyan-300 transition shadow-lg hover:shadow-emerald-500/50
+                         flex items-center justify-center gap-2 text-sm sm:text-base group"
+            >
+              <span className="text-center leading-tight">
+                Next Assessment:<br className="sm:hidden" />
+                <span className="sm:ml-1">{nextAssessment.title}</span>
+              </span>
+              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform flex-shrink-0" />
+            </button>
+            <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 flex items-center gap-1 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-yellow-500 text-xs font-bold shadow-lg">
+              <span className="animate-pulse">→</span>
+            </div>
+          </div>
+        )}
+
+        <div className="flex flex-col sm:flex-row gap-3">
+          <button
+            onClick={() => navigate(backPath)}
+            className="flex-1 px-6 py-3 rounded-full bg-primary-500 text-primary-1300 font-semibold
+                       hover:bg-primary-400 transition shadow-lg hover:shadow-primary-500/50"
+          >
+            ← Back to Assessments
+          </button>
+          <button
+            onClick={() => navigate("/dashboard")}
+            className="flex-1 px-6 py-3 rounded-full bg-gray-700 text-white font-semibold hover:bg-gray-600 transition"
+          >
+            Go to Dashboard
+          </button>
+        </div>
       </div>
     </motion.div>
   );

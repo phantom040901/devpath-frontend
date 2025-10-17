@@ -9,7 +9,6 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
-import { getFunctions, httpsCallable } from "firebase/functions";
 
 const AuthContext = createContext();
 
@@ -87,19 +86,8 @@ export function AuthProvider({ children }) {
         });
       }
 
-      // Send welcome email via Cloud Function
-      try {
-        const functions = getFunctions();
-        const sendWelcome = httpsCallable(functions, "sendWelcomeEmail");
-        await sendWelcome({
-          email: email,
-          firstName: extraData.firstName || "there",
-        });
-        console.log("✅ Welcome email sent successfully");
-      } catch (emailError) {
-        console.error("⚠️ Failed to send welcome email:", emailError);
-        // Don't fail signup if welcome email fails
-      }
+      // Welcome email removed - OTP verification already confirms email
+      console.log("✅ Account created successfully - OTP verified");
 
       return newUser;
     } catch (error) {

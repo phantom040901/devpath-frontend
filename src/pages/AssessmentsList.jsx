@@ -5,6 +5,8 @@ import { db } from "../lib/firebase";
 import { useNavigate, useLocation } from "react-router-dom";
 import { BookOpen, Brain, ClipboardList, CheckCircle, Clock, X, FileText, Code, Award, TrendingUp, Trophy, Target, Timer, RefreshCw, Lock, Unlock, Zap } from "lucide-react";
 import DashNav from "../components/dashboard/DashboardNav";
+import AssessmentInstructions from "../components/assessments/AssessmentInstructions";
+import AssessmentWarning from "../components/assessments/AssessmentWarning";
 import { useAuth } from "../components/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
@@ -22,6 +24,9 @@ export default function AssessmentsList() {
   const [learningProgress, setLearningProgress] = useState({});
   const [weakAreas, setWeakAreas] = useState([]);
   const [userScores, setUserScores] = useState(null);
+  const [showInstructions, setShowInstructions] = useState(false);
+  const [pendingAssessment, setPendingAssessment] = useState(null);
+  const [showWarning, setShowWarning] = useState(false);
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -169,6 +174,16 @@ export default function AssessmentsList() {
     fetchAll();
   }, [user]);
 
+  // Show warning modal on first visit
+  useEffect(() => {
+    if (!loading) {
+      const hideWarning = localStorage.getItem('hideAssessmentWarning') === 'true';
+      if (!hideWarning) {
+        setShowWarning(true);
+      }
+    }
+  }, [loading]);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.scrollY > 400;
@@ -219,17 +234,7 @@ export default function AssessmentsList() {
   }, [location.search, loading]);
 
   const handleStartTest = (assessment, accessStatus) => {
-    // Surveys have no restrictions
-    if (assessment.mode === "survey") {
-      if (assessment.type === "personal") {
-        navigate(`/survey/personal/${assessment.id}`);
-      } else {
-        navigate(`/survey/technical/${assessment.id}`);
-      }
-      return;
-    }
-
-    // Check access status
+    // Check access status first
     if (!accessStatus.canAccess) {
       if (accessStatus.reason === "max_attempts") {
         setModalMessage("You have already reached the maximum of 2 attempts for this assessment.");
@@ -242,12 +247,53 @@ export default function AssessmentsList() {
       return;
     }
 
-    // Navigate to assessment
-    if (assessment.type === "technical") {
+    // Check if user has disabled instructions
+    const hideInstructions = localStorage.getItem('hideAssessmentInstructions') === 'true';
+
+    if (hideInstructions) {
+      // Directly navigate to assessment
+      navigateToAssessment(assessment);
+    } else {
+      // Show instructions modal first
+      setPendingAssessment(assessment);
+      setShowInstructions(true);
+    }
+  };
+
+  const navigateToAssessment = (assessment) => {
+    if (assessment.mode === "survey") {
+      if (assessment.type === "personal") {
+        navigate(`/survey/personal/${assessment.id}`);
+      } else {
+        navigate(`/survey/technical/${assessment.id}`);
+      }
+    } else if (assessment.type === "technical") {
       navigate(`/technical-assessments/${assessment.id}`);
     } else {
       navigate(`/assessments/${assessment.id}`);
     }
+  };
+
+  const handleInstructionsStart = () => {
+    setShowInstructions(false);
+    if (pendingAssessment) {
+      navigateToAssessment(pendingAssessment);
+      setPendingAssessment(null);
+    }
+  };
+
+  const handleInstructionsClose = () => {
+    setShowInstructions(false);
+    setPendingAssessment(null);
+  };
+
+  const handleWarningProceed = () => {
+    setShowWarning(false);
+  };
+
+  const handleWarningClose = () => {
+    setShowWarning(false);
+    navigate('/dashboard');
   };
 
   const scrollToSection = (ref) => {
@@ -434,6 +480,21 @@ export default function AssessmentsList() {
           document.body
         )}
       </AnimatePresence>
+
+      {/* Assessment Instructions Modal */}
+      <AssessmentInstructions
+        isOpen={showInstructions}
+        onClose={handleInstructionsClose}
+        onStart={handleInstructionsStart}
+        assessmentType={pendingAssessment?.mode === "survey" ? "Survey" : "MCQ"}
+      />
+
+      {/* Assessment Warning Modal */}
+      <AssessmentWarning
+        isOpen={showWarning}
+        onClose={handleWarningClose}
+        onProceed={handleWarningProceed}
+      />
     </section>
   );
 }

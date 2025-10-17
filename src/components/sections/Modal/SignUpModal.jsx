@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../AuthContext.jsx";
 import { useTheme } from "../../../contexts/ThemeContext";
+import OTPVerification from "./OTPVerification";
+import emailjs from '@emailjs/browser';
 
 const initialState = {
   firstName: "",
@@ -32,6 +34,11 @@ export default function SignUpModal() {
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+
+  // OTP verification state
+  const [showOTP, setShowOTP] = useState(false);
+  const [generatedOTP, setGeneratedOTP] = useState("");
+  const [otpExpiry, setOtpExpiry] = useState(null);
 
   // Password validation checks
   const passwordRequirements = {
@@ -72,6 +79,45 @@ export default function SignUpModal() {
     setError("");
   }
 
+  // Generate and send OTP using EmailJS
+  async function sendOTP() {
+    try {
+      // Generate 6-digit OTP
+      const otp = Math.floor(100000 + Math.random() * 900000).toString();
+      setGeneratedOTP(otp);
+      setOtpExpiry(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
+
+      // EmailJS configuration
+      const serviceId = 'service_fn2o6do';  // Your EmailJS Service ID
+      const templateId = 'template_kiqyhq6'; // Your EmailJS Template ID
+      const publicKey = 'E0obOJjzr6CNIfzKR';   // Your EmailJS Public Key
+
+      console.log("📧 Attempting to send OTP email...");
+      console.log("Email:", inputs.email);
+      console.log("Name:", inputs.firstName);
+      console.log("OTP Code:", otp);
+
+      // Send OTP via EmailJS
+      const templateParams = {
+        to_email: inputs.email,
+        to_name: inputs.firstName,
+        otp_code: otp,
+        from_name: 'DevPath',
+        from_email: 'alfredcmelencion@gmail.com',
+        reply_to: inputs.email,
+      };
+
+      const response = await emailjs.send(serviceId, templateId, templateParams, publicKey);
+
+      console.log("✅ OTP sent successfully via EmailJS", response);
+      return true;
+    } catch (err) {
+      console.error("❌ Error sending OTP:", err);
+      console.error("Error details:", err.text || err.message);
+      throw new Error(err.text || "Failed to send OTP. Please check your internet connection.");
+    }
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -91,8 +137,35 @@ export default function SignUpModal() {
     }
 
     setIsLoading(true);
+    setError("");
 
     try {
+      // Send OTP instead of directly signing up
+      await sendOTP();
+      setShowOTP(true);
+    } catch (err) {
+      setError(err.message || "Failed to send verification code. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  // Verify OTP and complete signup
+  async function handleOTPVerify(otpCode) {
+    // Check if OTP is expired
+    if (Date.now() > otpExpiry) {
+      throw new Error("OTP has expired. Please request a new one.");
+    }
+
+    // Verify OTP
+    if (otpCode !== generatedOTP) {
+      throw new Error("Invalid OTP. Please check and try again.");
+    }
+
+    setIsLoading(true);
+
+    try {
+      // OTP verified, create account
       await signup(inputs.email, inputs.password, {
         firstName: inputs.firstName,
         lastName: inputs.lastName,
@@ -102,20 +175,33 @@ export default function SignUpModal() {
 
       setInputs(initialState);
       setChecked(false);
+      setShowOTP(false);
       setActiveModal("");
 
-      // Scroll to top before navigating (helps with mobile UX)
+      // Scroll to top before navigating
       window.scrollTo({ top: 0, behavior: 'instant' });
 
-      // Small delay to ensure modal closes before navigation
+      // Navigate to dashboard
       setTimeout(() => {
         navigate("/dashboard");
       }, 100);
     } catch (err) {
-      setError(err.message || "Signup failed. Please try again.");
+      throw new Error(err.message || "Signup failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
+  }
+
+  // Resend OTP
+  async function handleResendOTP() {
+    await sendOTP();
+  }
+
+  // Cancel OTP verification
+  function handleCancelOTP() {
+    setShowOTP(false);
+    setGeneratedOTP("");
+    setOtpExpiry(null);
   }
 
   function handleTermsClick(e) {
@@ -450,6 +536,16 @@ export default function SignUpModal() {
           </form>
         </div>
       </section>
+
+      {/* OTP Verification Modal */}
+      {showOTP && (
+        <OTPVerification
+          email={inputs.email}
+          onVerify={handleOTPVerify}
+          onResend={handleResendOTP}
+          onCancel={handleCancelOTP}
+        />
+      )}
 
       {/* Terms & Conditions Modal */}
       {showTermsModal && (
