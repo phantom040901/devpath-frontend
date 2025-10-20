@@ -80,7 +80,8 @@ export default function LoginModal() {
 
     try {
       console.log("📧 Sending password reset email to:", inputs.email);
-      console.log("🔧 Using Firebase Auth domain:", window.location.origin);
+      console.log("🔧 Current domain:", window.location.origin);
+      console.log("🔧 Firebase project:", "devpath-capstone");
 
       await resetPassword(inputs.email);
 
@@ -89,13 +90,22 @@ export default function LoginModal() {
       setError("");
       console.log("✅ Password reset email sent successfully!");
       console.log("📬 Check your inbox and spam folder for an email from Firebase");
+      console.log("📧 Email should come from: noreply@devpath-capstone.firebaseapp.com");
+
+      // Show alert for debugging
+      alert(`Password reset email sent to: ${inputs.email}\n\nCheck:\n1. Your inbox\n2. Spam/Junk folder\n3. Email from: noreply@devpath-capstone.firebaseapp.com`);
     } catch (err) {
       console.error("❌ Password reset error:", err);
       console.error("Error details:", {
         code: err.code,
         message: err.message,
-        email: inputs.email
+        email: inputs.email,
+        domain: window.location.origin
       });
+
+      // Show detailed error in alert
+      alert(`Password reset FAILED!\n\nError: ${err.message}\nCode: ${err.code || 'unknown'}\nEmail: ${inputs.email}\n\nCheck console for more details (F12)`);
+
       setError(err.message || "Failed to send reset email. Please try again.");
       setResetEmailSent(false);
     } finally {
