@@ -184,15 +184,31 @@ export function AuthProvider({ children }) {
   // ✅ Send password reset email
   const resetPassword = async (email) => {
     try {
-      await sendPasswordResetEmail(auth, email);
+      // Trim email to remove any whitespace
+      const trimmedEmail = email.trim();
+
+      console.log("🔐 Attempting to send password reset email...");
+      await sendPasswordResetEmail(auth, trimmedEmail, {
+        url: window.location.origin, // Return to home page after reset
+        handleCodeInApp: false,
+      });
+      console.log("✅ Password reset email sent successfully");
       return true;
     } catch (error) {
       console.error("❌ Password reset error:", error);
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
 
       if (error.code === "auth/user-not-found") {
         throw new Error("No account found with this email.");
       } else if (error.code === "auth/invalid-email") {
         throw new Error("Invalid email address.");
+      } else if (error.code === "auth/missing-email") {
+        throw new Error("Please enter an email address.");
+      } else if (error.code === "auth/too-many-requests") {
+        throw new Error("Too many requests. Please try again later.");
+      } else if (error.code === "auth/network-request-failed") {
+        throw new Error("Network error. Please check your internet connection.");
       } else {
         throw new Error(error.message || "Failed to send reset email. Please try again.");
       }

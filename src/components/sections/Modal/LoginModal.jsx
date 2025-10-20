@@ -61,8 +61,16 @@ export default function LoginModal() {
   }
 
   async function handleForgotPassword() {
-    if (!inputs.email) {
+    // Validate email input
+    if (!inputs.email || inputs.email.trim() === "") {
       setError("Please enter your email address first.");
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(inputs.email)) {
+      setError("Please enter a valid email address.");
       return;
     }
 
@@ -71,11 +79,15 @@ export default function LoginModal() {
     setResetEmailSent(false);
 
     try {
+      console.log("Sending password reset email to:", inputs.email);
       await resetPassword(inputs.email);
       setResetEmailSent(true);
       setError("");
+      console.log("✅ Password reset email sent successfully");
     } catch (err) {
+      console.error("❌ Password reset error:", err);
       setError(err.message || "Failed to send reset email. Please try again.");
+      setResetEmailSent(false);
     } finally {
       setIsLoading(false);
     }
