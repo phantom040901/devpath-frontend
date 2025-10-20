@@ -18,6 +18,7 @@ import ResumeBuilder from "./pages/ResumeBuilder";
 import StudentSettings from "./pages/student/StudentSettings";
 import NotificationsPage from "./pages/student/NotificationsPage";
 import StudentMessaging from "./pages/student/StudentMessaging";
+import ResetPassword from "./pages/ResetPassword";
 
 // Career Roadmap Pages
 import CareerRoadmap from "./pages/CareerRoadmap";
@@ -65,6 +66,7 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/predictor" element={<PredictorDashboard />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />
