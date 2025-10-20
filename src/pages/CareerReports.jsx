@@ -1641,8 +1641,8 @@ export default function CareerReports() {
                 onClick={() => setShowAdvancedDetails(!showAdvancedDetails)}
                 className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-sm transition-all ${
                   showAdvancedDetails
-                    ? 'bg-gray-800/60 hover:bg-gray-800/80 text-gray-300 border border-gray-700/50'
-                    : 'bg-gray-800/40 hover:bg-gray-800/60 text-gray-400 hover:text-gray-300 border border-gray-700/30 hover:border-gray-700/50'
+                    ? 'bg-gray-800/60 dark:bg-gray-800/60 light:bg-gray-200 hover:bg-gray-800/80 dark:hover:bg-gray-800/80 light:hover:bg-gray-300 text-gray-300 dark:text-gray-300 light:text-gray-700 border border-gray-700/50 dark:border-gray-700/50 light:border-gray-300'
+                    : 'bg-gray-800/40 dark:bg-gray-800/40 light:bg-gray-100 hover:bg-gray-800/60 dark:hover:bg-gray-800/60 light:hover:bg-gray-200 text-gray-400 dark:text-gray-400 light:text-gray-600 hover:text-gray-300 dark:hover:text-gray-300 light:hover:text-gray-700 border border-gray-700/30 dark:border-gray-700/30 light:border-gray-200 hover:border-gray-700/50 dark:hover:border-gray-700/50 light:hover:border-gray-300'
                 }`}
               >
                 {showAdvancedDetails ? (
@@ -1668,7 +1668,7 @@ export default function CareerReports() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.5 }}
-                  className="text-center text-xs text-gray-500 mt-2"
+                  className="text-center text-xs dark:text-gray-500 light:text-gray-500 mt-2"
                 >
                   View detailed career breakdowns, skills radar, and performance metrics
                 </motion.p>
