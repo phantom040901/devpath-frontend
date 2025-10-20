@@ -36,6 +36,9 @@ function PredictorDashboard() {
   });
 
   const [recommendations, setRecommendations] = useState([]);
+  const [detailedExplanations, setDetailedExplanations] = useState([]);
+  const [validation, setValidation] = useState(null);
+  const [diversityInfo, setDiversityInfo] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -48,18 +51,25 @@ function PredictorDashboard() {
     Math.floor(Math.random() * (max - min + 1)) + min;
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+  // Generate random percentage in multiples of 10 (like assessment scores)
+  const randPercentage = (min, max) => {
+    const minTens = Math.ceil(min / 10);
+    const maxTens = Math.floor(max / 10);
+    return (randInt(minTens, maxTens) * 10);
+  };
+
   const generateRandomProfile = () => {
     setProfile({
       courses: "BSIT",
-      os_perc: randInt(75, 100),
-      algo_perc: randInt(75, 100),
-      prog_perc: randInt(75, 100),
-      se_perc: randInt(75, 100),
-      cn_perc: randInt(75, 100),
-      es_perc: randInt(75, 95),
-      ca_perc: randInt(75, 95),
-      math_perc: randInt(75, 95),
-      comm_perc: randInt(75, 100),
+      os_perc: randPercentage(60, 100),
+      algo_perc: randPercentage(60, 100),
+      prog_perc: randPercentage(60, 100),
+      se_perc: randPercentage(60, 100),
+      cn_perc: randPercentage(60, 100),
+      es_perc: randPercentage(60, 100),
+      ca_perc: randPercentage(60, 100),
+      math_perc: randPercentage(60, 100),
+      comm_perc: randPercentage(60, 100),
       hours_working: randInt(4, 12),
       hackathons: randInt(0, 10),
       logical_quotient: randInt(1, 5),
@@ -123,8 +133,16 @@ function PredictorDashboard() {
       });
       const data = await res.json();
 
-      // Ensure it's always an array
+      console.log("Full API Response:", data); // For debugging
+
+      // Store all the new data
       setRecommendations(data.recommendations?.job_matches || []);
+      setDetailedExplanations(data.recommendations?.detailed_explanations || []);
+      setValidation(data.recommendations?.validation || null);
+      setDiversityInfo({
+        strategy: data.recommendations?.diversity_strategy,
+        note: data.recommendations?.diversity_note
+      });
     } catch (err) {
       console.error("Prediction error:", err);
     } finally {
@@ -141,6 +159,28 @@ function PredictorDashboard() {
       return `${(score * 100).toFixed(2)}%`; // Convert float to %
     }
     return "N/A";
+  };
+
+  // --- Readiness Badge Helper ---
+  const getReadinessBadge = (readiness) => {
+    const badges = {
+      "READY": { color: "bg-green-500", text: "✓ Ready", desc: "You meet all prerequisites!" },
+      "READY_WITH_GROWTH": { color: "bg-blue-500", text: "Ready to Grow", desc: "Ready with room for improvement" },
+      "CONDITIONAL": { color: "bg-yellow-500", text: "⚠ Conditional", desc: "Need skill improvements" },
+      "NOT_READY": { color: "bg-red-500", text: "✗ Not Ready", desc: "Critical skill gaps present" }
+    };
+    return badges[readiness] || { color: "bg-gray-500", text: "Unknown", desc: "" };
+  };
+
+  // --- Confidence Badge Helper ---
+  const getConfidenceBadge = (level) => {
+    const badges = {
+      "High": { color: "bg-green-500", icon: "✓" },
+      "Medium": { color: "bg-yellow-500", icon: "~" },
+      "Low": { color: "bg-orange-500", icon: "!" },
+      "Conditional": { color: "bg-red-500", icon: "⚠" }
+    };
+    return badges[level] || { color: "bg-gray-500", icon: "?" };
   };
 
   return (
@@ -401,28 +441,177 @@ function PredictorDashboard() {
 
         {/* Recommendations */}
         {recommendations.length > 0 && (
-          <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
-            <h2 className="text-2xl font-semibold mb-6 text-indigo-300 text-center">
-              Recommended Careers
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {recommendations.map((rec, idx) => (
-                <div
-                  key={idx}
-                  className="bg-gray-700 rounded-xl p-6 shadow-md border border-gray-600"
-                >
-                  <h3 className="text-xl font-bold text-indigo-300">
-                    {rec.job_role}
-                  </h3>
-                  <p className="text-gray-400">Category: {rec.category}</p>
-                  <p className="mt-3 text-lg font-bold text-green-400">
-                    Match Score: {formatScore(rec.match_score)}
-                  </p>
-                  {rec.explanation && (
-                    <p className="mt-2 text-sm text-gray-300">{rec.explanation}</p>
-                  )}
+          <div className="space-y-8">
+            {/* Diversity Info Banner */}
+            {diversityInfo?.note && (
+              <div className="bg-indigo-900 border border-indigo-600 p-4 rounded-xl">
+                <p className="text-sm text-indigo-200">
+                  <span className="font-semibold">Strategy:</span> {diversityInfo.strategy} - {diversityInfo.note}
+                </p>
+              </div>
+            )}
+
+            {/* Validation Metrics */}
+            {validation && (
+              <div className="bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-700">
+                <h3 className="text-xl font-semibold mb-4 text-indigo-300">System Confidence</h3>
+                <div className="flex items-center gap-4 mb-4">
+                  <span className={`px-4 py-2 rounded-full text-white font-bold ${getConfidenceBadge(validation.confidence_level).color}`}>
+                    {getConfidenceBadge(validation.confidence_level).icon} {validation.confidence_level}
+                  </span>
+                  <span className="text-2xl font-bold text-white">{validation.confidence_score}%</span>
                 </div>
-              ))}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p className="text-gray-400">Score Spread</p>
+                    <p className="font-bold">{validation.metrics.score_spread} points</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Avg Score</p>
+                    <p className="font-bold">{validation.metrics.average_score}%</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Diversity</p>
+                    <p className="font-bold">{validation.metrics.category_diversity}%</p>
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Strong Features</p>
+                    <p className="font-bold">{validation.metrics.strong_profile_features}</p>
+                  </div>
+                </div>
+                {validation.validation_notes && validation.validation_notes.length > 0 && (
+                  <div className="mt-4 p-3 bg-gray-700 rounded-lg">
+                    <p className="text-sm font-semibold text-gray-300 mb-2">Notes:</p>
+                    {validation.validation_notes.map((note, i) => (
+                      <p key={i} className="text-sm text-gray-400">• {note}</p>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Recommended Careers with Details */}
+            <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
+              <h2 className="text-2xl font-semibold mb-6 text-indigo-300 text-center">
+                Recommended Careers
+              </h2>
+              <div className="space-y-6">
+                {recommendations.map((rec, idx) => {
+                  const detail = detailedExplanations[idx];
+                  const readinessBadge = detail ? getReadinessBadge(detail.readiness) : null;
+
+                  return (
+                    <div
+                      key={idx}
+                      className="bg-gray-700 rounded-xl p-6 shadow-md border border-gray-600"
+                    >
+                      {/* Header */}
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="text-xl font-bold text-indigo-300">
+                            {rec.job_role}
+                          </h3>
+                          <p className="text-gray-400 text-sm">Category: {rec.category}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-2xl font-bold text-green-400">
+                            {formatScore(rec.match_score)}
+                          </p>
+                          {readinessBadge && (
+                            <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-bold text-white ${readinessBadge.color}`}>
+                              {readinessBadge.text}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Readiness Description */}
+                      {readinessBadge && (
+                        <p className="text-sm text-gray-300 mb-4">{readinessBadge.desc}</p>
+                      )}
+
+                      {/* Details Section */}
+                      {detail && (
+                        <div className="space-y-4">
+                          {/* Skill Gaps - CRITICAL */}
+                          {detail.skill_gaps && detail.skill_gaps.length > 0 && (
+                            <div className="bg-red-900 bg-opacity-30 border border-red-700 p-4 rounded-lg">
+                              <p className="font-semibold text-red-300 mb-2">⚠️ Critical Skill Gaps:</p>
+                              {detail.skill_gaps.map((gap, i) => (
+                                <div key={i} className="text-sm text-red-200">
+                                  • {gap.skill}: <span className="font-bold">{gap.current}</span> → needs <span className="font-bold">{gap.required}</span> (ideal: {gap.ideal})
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Readiness Warnings */}
+                          {detail.readiness_warnings && detail.readiness_warnings.length > 0 && (
+                            <div className="bg-yellow-900 bg-opacity-30 border border-yellow-700 p-4 rounded-lg">
+                              <p className="font-semibold text-yellow-300 mb-2">⚠️ Warnings:</p>
+                              {detail.readiness_warnings.map((warning, i) => (
+                                <p key={i} className="text-sm text-yellow-200">• {warning}</p>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Alternative Roles */}
+                          {detail.alternative_roles && detail.alternative_roles.length > 0 && (
+                            <div className="bg-blue-900 bg-opacity-30 border border-blue-700 p-4 rounded-lg">
+                              <p className="font-semibold text-blue-300 mb-2">🔄 Consider Starting With:</p>
+                              {detail.alternative_roles.map((alt, i) => (
+                                <p key={i} className="text-sm text-blue-200">• {alt}</p>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Recommended Career Path */}
+                          {detail.recommended_career_path && (
+                            <div className="bg-purple-900 bg-opacity-30 border border-purple-700 p-4 rounded-lg">
+                              <p className="font-semibold text-purple-300 mb-2">📍 Recommended Path:</p>
+                              <p className="text-sm text-purple-200">{detail.recommended_career_path}</p>
+                            </div>
+                          )}
+
+                          {/* Your Strengths */}
+                          {detail.your_strengths && detail.your_strengths.length > 0 && (
+                            <div className="bg-green-900 bg-opacity-30 border border-green-700 p-4 rounded-lg">
+                              <p className="font-semibold text-green-300 mb-2">💪 Your Strengths:</p>
+                              {detail.your_strengths.map((strength, i) => (
+                                <p key={i} className="text-sm text-green-200">• {strength}</p>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Growth Areas */}
+                          {detail.growth_areas && detail.growth_areas.length > 0 && (
+                            <div className="bg-gray-600 p-4 rounded-lg">
+                              <p className="font-semibold text-gray-300 mb-2">📈 Areas for Growth:</p>
+                              {detail.growth_areas.map((area, i) => (
+                                <div key={i} className="text-sm text-gray-300">
+                                  • {area.skill}: {area.current} → ideal {area.ideal}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Improvement Opportunities */}
+                          {detail.improvement_opportunities && detail.improvement_opportunities.length > 0 && !detail.growth_areas?.length && (
+                            <div className="bg-gray-600 p-4 rounded-lg">
+                              <p className="font-semibold text-gray-300 mb-2">📈 Improvement Opportunities:</p>
+                              {detail.improvement_opportunities.map((opp, i) => (
+                                <div key={i} className="text-sm text-gray-300">
+                                  • {opp.area}: {opp.current} → {opp.target}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}

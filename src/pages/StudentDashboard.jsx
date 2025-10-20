@@ -189,8 +189,6 @@ export default function StudentDashboard() {
             label="Assessments"
             value={`${progressSummary?.totalCompleted || 0}/${progressSummary?.totalAssessments || 0}`}
             subtitle="Completed"
-            gradient="from-primary-500/20 to-cyan-600/20"
-            border="border-primary-500/30"
             onClick={() => navigate("/assessments")}
           />
           <StatCard
@@ -198,17 +196,13 @@ export default function StudentDashboard() {
             label="Academic"
             value={`${progressSummary?.academicAvg || 0}%`}
             subtitle="Average score"
-            gradient="from-primary-500/20 to-cyan-600/20"
-            border="border-primary-500/30"
             onClick={() => navigate("/student/progress")}
           />
           <StatCard
-            icon={<Flame className="text-primary-400" size={20} />}
+            icon={<Flame className="text-orange-400" size={20} />}
             label="Study Streak 🔥"
             value={`${progressSummary?.currentStreak || 0}`}
             subtitle="Days active"
-            gradient="from-primary-500/20 to-cyan-600/20"
-            border="border-primary-500/30"
             onClick={() => navigate("/student/progress")}
           />
           <StatCard
@@ -216,8 +210,6 @@ export default function StudentDashboard() {
             label="Technical"
             value={`${progressSummary?.technicalAvg || 0}%`}
             subtitle="Average score"
-            gradient="from-primary-500/20 to-cyan-600/20"
-            border="border-primary-500/30"
             onClick={() => navigate("/student/progress")}
           />
         </div>
@@ -279,14 +271,14 @@ export default function StudentDashboard() {
                   <div className="flex flex-col sm:flex-row gap-3">
                     <button
                       onClick={() => navigate("/career-roadmap")}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-semibold transition-all"
+                      className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-semibold transition-all shadow-md hover:shadow-lg"
                     >
                       <MapPin size={18} />
                       View Learning Roadmap
                     </button>
                     <button
                       onClick={() => navigate("/career-matches")}
-                      className="px-4 py-2.5 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold transition-all"
+                      className="px-4 py-2.5 rounded-lg bg-gray-800/70 hover:bg-gray-800 border border-gray-700/40 hover:border-gray-600 text-gray-300 font-semibold transition-all"
                     >
                       Change Career
                     </button>
@@ -294,7 +286,7 @@ export default function StudentDashboard() {
                 </>
               ) : (
                 <div className="text-center py-10">
-                  <div className="inline-flex p-4 rounded-full bg-gradient-to-br from-primary-500/20 to-purple-500/20 border border-primary-500/30 mb-4">
+                  <div className="inline-flex p-4 rounded-full bg-primary-500/20 border border-primary-500/30 mb-4">
                     <Target className="text-primary-400" size={36} />
                   </div>
                   <h3 className="text-2xl font-bold text-white mb-2">Start Your Career Journey</h3>
@@ -304,14 +296,14 @@ export default function StudentDashboard() {
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <button
                       onClick={() => navigate("/assessments")}
-                      className="px-6 py-3 rounded-lg bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 text-white font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 inline-flex items-center gap-2 justify-center"
+                      className="px-6 py-3 rounded-lg bg-primary-500 hover:bg-primary-600 dark:text-white light:text-white light:bg-emerald-500 light:hover:bg-emerald-600 font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 inline-flex items-center gap-2 justify-center"
                     >
                       <BookOpen size={18} />
                       Take Assessments
                     </button>
                     <button
                       onClick={() => navigate("/career-matches")}
-                      className="px-6 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 border border-gray-700 text-gray-300 font-semibold transition-all inline-flex items-center gap-2 justify-center"
+                      className="px-6 py-3 rounded-lg bg-gray-800/70 hover:bg-gray-800 border border-gray-700/40 hover:border-gray-600 text-gray-300 font-semibold transition-all inline-flex items-center gap-2 justify-center"
                     >
                       View Career Options <ArrowRight size={18} />
                     </button>
@@ -406,7 +398,7 @@ export default function StudentDashboard() {
                 </p>
                 <button
                   onClick={() => navigate("/career-roadmap")}
-                  className="w-full py-2.5 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
                 >
                   Start Learning Roadmap
                   <ArrowRight size={16} />
@@ -469,7 +461,7 @@ export default function StudentDashboard() {
 
                 <button
                   onClick={() => navigate("/assessments")}
-                  className="w-full py-2.5 bg-gradient-to-r from-purple-500 via-primary-500 to-emerald-500 hover:from-purple-600 hover:via-primary-600 hover:to-emerald-600 text-white rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
+                  className="w-full py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
                 >
                   <Sparkles size={16} />
                   Get Started Now
@@ -500,28 +492,24 @@ export default function StudentDashboard() {
               {/* Overview Stats */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                 <ProgressItem
-                  icon={<BookOpen size={16} className="text-blue-400" />}
+                  icon={<BookOpen size={16} className="text-primary-400" />}
                   label="Academic Assessments"
                   progress={progressSummary?.academicAvg || 0}
-                  color="blue"
                 />
                 <ProgressItem
-                  icon={<Award size={16} className="text-purple-400" />}
+                  icon={<Award size={16} className="text-primary-400" />}
                   label="Technical Skills"
                   progress={progressSummary?.technicalAvg || 0}
-                  color="purple"
                 />
                 <ProgressItem
-                  icon={<Calendar size={16} className="text-emerald-400" />}
+                  icon={<Calendar size={16} className="text-primary-400" />}
                   label="Active Days"
                   value={`${progressSummary?.activeDays || 0} days`}
-                  color="emerald"
                 />
                 <ProgressItem
-                  icon={<Clock size={16} className="text-yellow-400" />}
+                  icon={<Clock size={16} className="text-primary-400" />}
                   label="Recent Activity"
                   value={`${progressSummary?.recentActivity || 0} attempts`}
-                  color="yellow"
                 />
               </div>
 
@@ -654,7 +642,7 @@ export default function StudentDashboard() {
               {/* Action Button */}
               <button
                 onClick={() => navigate("/assessments")}
-                className="w-full mt-4 py-3 bg-gradient-to-r from-primary-500 to-purple-500 hover:from-primary-600 hover:to-purple-600 rounded-lg text-white font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-2"
+                className="w-full mt-4 py-3 bg-primary-500 hover:bg-primary-600 rounded-lg text-white font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-2"
               >
                 <Rocket size={18} />
                 Continue Learning Journey
@@ -678,28 +666,24 @@ export default function StudentDashboard() {
                   label="Take Assessments"
                   description="Continue learning"
                   onClick={() => navigate("/assessments")}
-                  color="blue"
                 />
                 <ActionButton
                   icon={<BarChart3 size={18} />}
                   label="View Progress"
                   description="Check your stats"
                   onClick={() => navigate("/student/progress")}
-                  color="emerald"
                 />
                 <ActionButton
                   icon={<FileText size={18} />}
                   label="Career Report"
                   description="Download insights"
                   onClick={() => navigate("/student/reports")}
-                  color="purple"
                 />
                 <ActionButton
                   icon={<MapPin size={18} />}
                   label="Learning Roadmap"
                   description="Follow your path"
                   onClick={() => navigate("/career-roadmap")}
-                  color="yellow"
                 />
               </div>
             </motion.div>
@@ -809,36 +793,32 @@ export default function StudentDashboard() {
   );
 }
 
-function StatCard({ icon, label, value, subtitle, gradient, border, onClick }) {
+function StatCard({ icon, label, value, subtitle, onClick }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ scale: 1.03, y: -4 }}
       onClick={onClick}
-      className={`bg-gradient-to-br ${gradient} border ${border} rounded-xl p-4 cursor-pointer hover:scale-105 transition-transform`}
+      className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-2 border-gray-700/50 hover:border-primary-500/70 rounded-xl sm:rounded-2xl p-4 sm:p-6 cursor-pointer shadow-xl hover:shadow-2xl hover:shadow-primary-500/30 transition-all duration-300 group backdrop-blur-sm"
     >
-      <div className="flex items-center gap-2 mb-2">
-        <div className="p-1.5 rounded-lg bg-gray-900/50">
+      <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+        <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-primary-500/20 group-hover:bg-primary-500/30 border border-primary-500/30 group-hover:border-primary-500/50 transition-all">
           {icon}
         </div>
-        <div className="text-xs font-medium text-gray-400 uppercase">{label}</div>
+        <div className="text-xs font-bold text-gray-300 group-hover:text-gray-200 uppercase tracking-wider transition-colors">{label}</div>
       </div>
-      <div className="text-2xl font-bold text-white mb-0.5">{value}</div>
-      <div className="text-xs text-gray-400">{subtitle}</div>
+      <div className="text-3xl sm:text-4xl font-extrabold text-white dark:text-gray-100 mb-1 sm:mb-2 group-hover:text-primary-400 transition-colors">
+        {value}
+      </div>
+      <div className="text-xs text-gray-400 font-semibold">{subtitle}</div>
     </motion.div>
   );
 }
 
-function ProgressItem({ icon, label, progress, value, color }) {
-  const colorClasses = {
-    blue: 'from-blue-500 to-cyan-400',
-    purple: 'from-purple-500 to-pink-400',
-    emerald: 'from-emerald-500 to-teal-400',
-    yellow: 'from-yellow-500 to-orange-400'
-  };
-
+function ProgressItem({ icon, label, progress, value }) {
   return (
-    <div className="bg-gray-800/50 rounded-lg p-3">
+    <div className="bg-gray-800/50 dark:bg-gray-800/40 rounded-lg p-3 border border-gray-700/30">
       <div className="flex items-center gap-2 mb-2">
         {icon}
         <span className="text-sm text-gray-300">{label}</span>
@@ -846,9 +826,9 @@ function ProgressItem({ icon, label, progress, value, color }) {
       {progress !== undefined ? (
         <>
           <div className="text-xl font-bold text-white mb-1">{progress}%</div>
-          <div className="w-full bg-gray-700 rounded-full h-1.5">
-            <div 
-              className={`h-1.5 rounded-full bg-gradient-to-r ${colorClasses[color]} transition-all duration-500`}
+          <div className="w-full bg-gray-700/50 rounded-full h-1.5">
+            <div
+              className="h-1.5 rounded-full bg-primary-500 transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -860,30 +840,23 @@ function ProgressItem({ icon, label, progress, value, color }) {
   );
 }
 
-function ActionButton({ icon, label, description, onClick, color }) {
-  const colorClasses = {
-    blue: 'from-blue-500/20 to-cyan-500/20 border-blue-500/30 hover:border-blue-500/50 text-blue-400',
-    emerald: 'from-emerald-500/20 to-teal-500/20 border-emerald-500/30 hover:border-emerald-500/50 text-emerald-400',
-    purple: 'from-purple-500/20 to-pink-500/20 border-purple-500/30 hover:border-purple-500/50 text-purple-400',
-    yellow: 'from-yellow-500/20 to-orange-500/20 border-yellow-500/30 hover:border-yellow-500/50 text-yellow-400'
-  };
-
+function ActionButton({ icon, label, description, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-3 rounded-lg bg-gradient-to-br ${colorClasses[color]} border transition-all group`}
+      className="w-full text-left p-3 rounded-lg bg-gray-800/50 border border-gray-700/40 hover:border-primary-500/50 hover:bg-gray-800/70 transition-all group"
     >
       <div className="flex items-center gap-3">
-        <div className={`${colorClasses[color].split(' ')[4]}`}>
+        <div className="text-primary-400">
           {icon}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="text-white font-semibold text-sm group-hover:text-white transition-colors">
+          <div className="text-white font-semibold text-sm">
             {label}
           </div>
           <div className="text-xs text-gray-400 truncate">{description}</div>
         </div>
-        <ChevronRight size={16} className="text-gray-400 group-hover:translate-x-1 transition-transform flex-shrink-0" />
+        <ChevronRight size={16} className="text-gray-400 group-hover:translate-x-1 group-hover:text-primary-400 transition-all flex-shrink-0" />
       </div>
     </button>
   );

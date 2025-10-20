@@ -170,13 +170,13 @@ export default function SystemPreview({ id = "system-preview" }) {
       {/* Background glow */}
       <div className="bg-primary-1300 absolute top-[60%] left-[0%] h-[45rem] w-[45rem] -translate-y-[50%] rounded-full opacity-30 blur-[30rem] light:hidden" />
 
-      <div className="relative w-full max-w-[90rem] mx-auto px-24 py-24 max-xl:px-16 max-xl:py-20 max-lg:px-8 max-lg:py-16 max-md:px-6 max-md:py-14">
+      <div className="relative w-full max-w-[90rem] mx-auto px-24 pt-0 pb-24 max-xl:px-16 max-xl:pb-20 max-lg:px-8 max-lg:pb-16 max-md:px-6 max-md:pb-14">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-16 pt-16 sm:pt-20 lg:pt-24 xl:pt-28"
         >
           <p className="text-primary-500 dark:text-primary-1300 dark:bg-primary-500 light:bg-primary-500 primary-glow rounded-full px-4 py-2 text-sm font-semibold mb-6 inline-block light:text-white">
             System Preview

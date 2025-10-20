@@ -32,7 +32,7 @@ const navigationLinks = [
   },
   {
     id: 4,
-    link: "Demo",
+    link: "System Preview",
     href: "#system-preview",   // 👈 Scroll to System Preview section
   },
   

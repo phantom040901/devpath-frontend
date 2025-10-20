@@ -38,7 +38,7 @@ export default function Reviews() {
   }, [theme]);
 
   return (
-    <section ref={sectionRef} className="dark:bg-primary-1500 light:bg-gray-50 dark:bg-[url('../src/assets/Noise.webp')] bg-repeat py-6 max-md:py-5 mb-0">
+    <section ref={sectionRef} className="dark:bg-primary-1500 light:bg-gray-50 dark:bg-[url('../src/assets/Noise.webp')] bg-repeat pt-16 pb-12 max-xl:pt-12 max-lg:pt-10 max-md:pt-8">
       <div className="m-auto flex max-w-[90rem] items-center px-24 max-xl:px-16 max-lg:px-8 max-md:px-6">
         <ul className="flex mr-4">
           {reviews.map((review) => (

@@ -33,12 +33,12 @@ export default function Hero({ id }) {
   }, [theme]);
 
   return (
-    <section ref={sectionRef} id={id} className="relative w-full overflow-x-hidden dark:bg-primary-1500 light:bg-gray-50 dark:bg-[url('../src/assets/Noise.webp')] bg-repeat">
+    <section ref={sectionRef} id={id} className="relative w-full overflow-x-hidden dark:bg-primary-1500 light:bg-gray-50 dark:bg-[url('../src/assets/Noise.webp')] bg-repeat pb-24 max-xl:pb-20 max-lg:pb-16 max-md:pb-12">
       <div
-        className="m-auto max-w-[90rem] grid grid-cols-[1fr_1fr] items-center gap-x-12 px-24 pt-40 pb-16
-          max-xl:grid-cols-2 max-xl:px-16 max-xl:pt-32 max-xl:pb-12
-          max-lg:grid-cols-1 max-lg:gap-y-16 max-lg:px-8 max-lg:pt-24 max-lg:pb-10
-          max-md:px-6 max-md:pb-8 max-sm:px-4"
+        className="m-auto max-w-[90rem] grid grid-cols-[1fr_1fr] items-center gap-x-12 px-24 pt-40
+          max-xl:grid-cols-2 max-xl:px-16 max-xl:pt-32
+          max-lg:grid-cols-1 max-lg:gap-y-16 max-lg:px-8 max-lg:pt-24
+          max-md:px-6 max-sm:px-4"
       >
         {/* --- Left content --- */}
         {/* --- Left content --- */}

@@ -12,6 +12,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { createPortal } from "react-dom";
 import { checkAssessmentAccess, getUnlockMessage } from "../utils/assessmentUnlock";
 import { identifyWeakAreas } from "../data/sections/learningResources";
+import Footer from "../components/sections/Footer";
 
 export default function AssessmentsList() {
   const [academic, setAcademic] = useState([]);
@@ -495,6 +496,9 @@ export default function AssessmentsList() {
         onClose={handleWarningClose}
         onProceed={handleWarningProceed}
       />
+
+      {/* Footer */}
+      <Footer />
     </section>
   );
 }

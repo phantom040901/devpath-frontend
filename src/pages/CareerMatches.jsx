@@ -267,7 +267,7 @@ const confirmSelectCareer = async () => {
 
     await createNotification(user.uid, {
       title: "🎉 Congratulations on Your Career Selection!",
-      message: `You've selected ${selectedJob.job_role} as your career path! This is an exciting first step towards your future. We'll now provide personalized learning resources and a roadmap to help you achieve your goals.`,
+      message: `You've selected ${careerData.job_role} as your career path! This is an exciting first step towards your future. We'll now provide personalized learning resources and a roadmap to help you achieve your goals.`,
       type: "career_selection",
       priority: "high",
       link: "/career-roadmap", // Takes them to their roadmap

@@ -324,35 +324,27 @@ export default function StudentProgress() {
             label="Overall Progress"
             value={`${Math.round(overview.overallCompletion)}%`}
             subtitle={`${overview.totalCompleted}/${overview.totalAssessments} completed`}
-            gradient="from-primary-500/20 to-primary-600/20"
-            border="border-primary-500/30"
           />
 
           <MetricCard
-            icon={<Trophy className="text-yellow-400" size={24} />}
+            icon={<Trophy className="text-primary-400" size={24} />}
             label="Career Readiness"
             value={`${overview.careerReadiness}%`}
             subtitle="Market ready score"
-            gradient="from-yellow-500/20 to-yellow-600/20"
-            border="border-yellow-500/30"
           />
 
           <MetricCard
-            icon={<Activity className="text-emerald-400" size={24} />}
+            icon={<Activity className="text-primary-400" size={24} />}
             label="Study Streak"
             value={`${studyAnalytics.currentStreak} days`}
             subtitle={`${studyAnalytics.activeDays} active days`}
-            gradient="from-emerald-500/20 to-emerald-600/20"
-            border="border-emerald-500/30"
           />
 
           <MetricCard
-            icon={<Star className="text-purple-400" size={24} />}
+            icon={<Star className="text-primary-400" size={24} />}
             label="Best Score"
             value={`${performance.highestScore}%`}
             subtitle="Personal best"
-            gradient="from-purple-500/20 to-purple-600/20"
-            border="border-purple-500/30"
           />
         </div>
 
@@ -373,32 +365,29 @@ export default function StudentProgress() {
 
               <div className="space-y-6">
                 <AssessmentCategory
-                  icon={<BookOpen className="text-blue-400" size={20} />}
+                  icon={<BookOpen className="text-primary-400" size={20} />}
                   title="Academic Assessments"
                   completed={assessments.academic.completed}
                   total={assessments.academic.total}
                   completion={assessments.academic.completion}
                   averageScore={assessments.academic.averageScore}
-                  color="blue"
                 />
 
                 <AssessmentCategory
-                  icon={<Code className="text-purple-400" size={20} />}
+                  icon={<Code className="text-primary-400" size={20} />}
                   title="Technical Assessments"
                   completed={assessments.technical.completed}
                   total={assessments.technical.total}
                   completion={assessments.technical.completion}
                   averageScore={assessments.technical.averageScore}
-                  color="purple"
                 />
 
                 <AssessmentCategory
-                  icon={<Brain className="text-emerald-400" size={20} />}
+                  icon={<Brain className="text-primary-400" size={20} />}
                   title="Personal Assessments"
                   completed={assessments.personal.completed}
                   total={assessments.personal.total}
                   completion={assessments.personal.completion}
-                  color="emerald"
                   hideScore
                 />
               </div>
@@ -469,22 +458,22 @@ export default function StudentProgress() {
 
               <div className="space-y-4">
                 <AnalyticItem
-                  icon={<Calendar className="text-blue-400" size={16} />}
+                  icon={<Calendar className="text-primary-400" size={16} />}
                   label="Total Attempts"
                   value={studyAnalytics.totalAttempts}
                 />
                 <AnalyticItem
-                  icon={<Activity className="text-emerald-400" size={16} />}
+                  icon={<Activity className="text-primary-400" size={16} />}
                   label="Active Days"
                   value={studyAnalytics.activeDays}
                 />
                 <AnalyticItem
-                  icon={<TrendingUp className="text-purple-400" size={16} />}
+                  icon={<TrendingUp className="text-primary-400" size={16} />}
                   label="Avg. Per Day"
                   value={studyAnalytics.averagePerDay}
                 />
                 <AnalyticItem
-                  icon={<Zap className="text-yellow-400" size={16} />}
+                  icon={<Zap className="text-primary-400" size={16} />}
                   label="Current Streak"
                   value={`${studyAnalytics.currentStreak} days`}
                 />
@@ -537,21 +526,21 @@ export default function StudentProgress() {
               <div className="space-y-3">
                 <button
                   onClick={() => navigate("/assessments")}
-                  className="w-full py-3 rounded-lg bg-primary-500/20 hover:bg-primary-500/30 text-primary-400 font-semibold transition flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-semibold transition shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                 >
                   <BookOpen size={18} />
                   Take Assessments
                 </button>
                 <button
                   onClick={() => navigate("/student/learning-path")}
-                  className="w-full py-3 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 font-semibold transition flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-lg bg-gray-800/70 hover:bg-gray-800 border border-gray-700/40 hover:border-gray-600 text-gray-300 font-semibold transition flex items-center justify-center gap-2"
                 >
                   <Target size={18} />
                   Learning Path
                 </button>
                 <button
                   onClick={() => navigate("/student/reports")}
-                  className="w-full py-3 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold transition flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-lg bg-gray-800/70 hover:bg-gray-800 border border-gray-700/40 hover:border-gray-600 text-gray-300 font-semibold transition flex items-center justify-center gap-2"
                 >
                   <BarChart3 size={18} />
                   View Reports
@@ -569,33 +558,28 @@ export default function StudentProgress() {
 }
 
 // Component: Metric Card
-function MetricCard({ icon, label, value, subtitle, gradient, border }) {
+function MetricCard({ icon, label, value, subtitle }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className={`bg-gradient-to-br ${gradient} border ${border} rounded-xl p-5`}
+      whileHover={{ scale: 1.03, y: -4 }}
+      className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 border-2 border-gray-700/50 hover:border-primary-500/70 rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-xl hover:shadow-2xl hover:shadow-primary-500/30 transition-all duration-300 group backdrop-blur-sm"
     >
-      <div className="flex items-center gap-3 mb-3">
-        <div className="p-2 rounded-lg bg-gray-900/50">
+      <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+        <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-primary-500/20 group-hover:bg-primary-500/30 border border-primary-500/30 group-hover:border-primary-500/50 transition-all">
           {icon}
         </div>
-        <div className="text-xs font-medium text-gray-400">{label}</div>
+        <div className="text-xs font-bold text-gray-300 group-hover:text-gray-200 uppercase tracking-wider transition-colors">{label}</div>
       </div>
-      <div className="text-3xl font-bold text-white mb-1">{value}</div>
-      <div className="text-xs text-gray-400">{subtitle}</div>
+      <div className="text-3xl sm:text-4xl font-extrabold text-white mb-1 sm:mb-2 group-hover:text-primary-400 transition-colors">{value}</div>
+      <div className="text-xs text-gray-400 font-semibold">{subtitle}</div>
     </motion.div>
   );
 }
 
 // Component: Assessment Category
-function AssessmentCategory({ icon, title, completed, total, completion, averageScore, color, hideScore }) {
-  const colorClasses = {
-    blue: 'from-blue-500 to-cyan-400',
-    purple: 'from-purple-500 to-pink-400',
-    emerald: 'from-emerald-500 to-teal-400'
-  };
-
+function AssessmentCategory({ icon, title, completed, total, completion, averageScore, hideScore }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-3">
@@ -609,9 +593,9 @@ function AssessmentCategory({ icon, title, completed, total, completion, average
       </div>
 
       <div className="mb-3">
-        <div className="w-full bg-gray-800 rounded-full h-3 overflow-hidden">
+        <div className="w-full bg-gray-800/50 rounded-full h-3 overflow-hidden">
           <div
-            className={`h-full transition-all duration-500 bg-gradient-to-r ${colorClasses[color]}`}
+            className="h-full transition-all duration-500 bg-primary-500"
             style={{ width: `${completion}%` }}
           />
         </div>
@@ -632,34 +616,20 @@ function AssessmentCategory({ icon, title, completed, total, completion, average
 function SubjectPerformanceCard({ subject, average, best, attempts, type }) {
   const getScoreColor = (score) => {
     if (score >= 80) return 'text-emerald-400';
-    if (score >= 60) return 'text-blue-400';
+    if (score >= 60) return 'text-primary-400';
     if (score >= 40) return 'text-yellow-400';
     return 'text-red-400';
   };
 
-  const getScoreGradient = (score) => {
-    if (score >= 80) return 'from-emerald-500/20 to-teal-500/20';
-    if (score >= 60) return 'from-blue-500/20 to-cyan-500/20';
-    if (score >= 40) return 'from-yellow-500/20 to-orange-500/20';
-    return 'from-red-500/20 to-pink-500/20';
-  };
-
-  const getProgressColor = (score) => {
-    if (score >= 80) return 'from-emerald-500 to-teal-400';
-    if (score >= 60) return 'from-blue-500 to-cyan-400';
-    if (score >= 40) return 'from-yellow-500 to-orange-400';
-    return 'from-red-500 to-pink-400';
-  };
-
   return (
-    <div className={`p-4 rounded-xl bg-gradient-to-br ${getScoreGradient(average)} border border-gray-700/40 hover:border-gray-600/60 transition-all duration-300 shadow-md hover:shadow-lg`}>
+    <div className="p-4 rounded-xl bg-gray-800/50 border border-gray-700/40 hover:border-primary-500/50 transition-all duration-300 shadow-md hover:shadow-lg">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <h4 className="text-white font-semibold text-sm mb-1 truncate capitalize">
             {subject}
           </h4>
           <div className="flex items-center gap-2 text-xs text-gray-400">
-            <span className="px-2 py-0.5 rounded-full bg-gray-800/70 capitalize">
+            <span className="px-2 py-0.5 rounded-full bg-gray-900/70 capitalize">
               {type}
             </span>
             <span>{attempts} attempt{attempts > 1 ? 's' : ''}</span>
@@ -672,25 +642,25 @@ function SubjectPerformanceCard({ subject, average, best, attempts, type }) {
           <div className="text-xs text-gray-500">average</div>
         </div>
       </div>
-      
+
       <div className="mt-3 pt-3 border-t border-gray-700/40 flex items-center justify-between">
         <div className="flex items-center gap-1.5 text-xs">
-          <Trophy size={14} className="text-yellow-400" />
+          <Trophy size={14} className="text-primary-400" />
           <span className="text-gray-400">Best:</span>
           <span className="font-bold text-white">{Math.round(best)}%</span>
         </div>
-        
+
         {/* Mini progress bar */}
-        <div className="w-16 h-1.5 bg-gray-800 rounded-full overflow-hidden">
-          <div 
-            className={`h-full bg-gradient-to-r ${getProgressColor(average)}`}
+        <div className="w-16 h-1.5 bg-gray-900/50 rounded-full overflow-hidden">
+          <div
+            className="h-full bg-primary-500"
             style={{ width: `${average}%` }}
           />
         </div>
       </div>
     </div>
   );
-  
+
 }
 
 

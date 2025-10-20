@@ -41,9 +41,7 @@ export default function LandingPage() {
           <Header>
             <Navigation />
             <Hero id="hero" />
-            <FadeInSection>
-              <Reviews />
-            </FadeInSection>
+            <Reviews />
           </Header>
 
           {/* MAIN */}

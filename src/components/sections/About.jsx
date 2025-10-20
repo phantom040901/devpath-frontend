@@ -3,6 +3,7 @@ import TeamGrid from "../../assets/graphics/TeamGrid.webp";
 import FadeInSection from "../animations/FadeInSection";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useEffect, useRef } from "react";
+import { useModalContext } from "../../contexts/ModalContext";
 
 function PillarCard({ pillar, theme }) {
   const titleRef = useRef(null);
@@ -37,6 +38,7 @@ function PillarCard({ pillar, theme }) {
 
 export default function About({ id }) {
   const { theme } = useTheme();
+  const { setActiveModal } = useModalContext();
   const headerTitleRef = useRef(null);
   const headerDescRef = useRef(null);
   const missionTitleRef = useRef(null);
@@ -100,9 +102,7 @@ export default function About({ id }) {
               <span className="text-primary-500 primary-glow">DevPath</span>
             </h1>
             <p ref={headerDescRef} className="mt-4 mx-auto max-w-2xl text-lg dark:font-light light:font-normal dark:text-primary-100/90 light:text-gray-800">
-              Smart career guidance for students — combining academic signals,
-              skill assessments, and real-world role-matching to create a
-              personalized roadmap for internships and early-career roles.
+              Smart career guidance that matches your skills to tech roles and creates personalized roadmaps.
             </p>
           </header>
 
@@ -113,19 +113,12 @@ export default function About({ id }) {
             <div>
               <h2 ref={missionTitleRef} className="text-3xl font-semibold mb-4 dark:text-white light:text-gray-900">Our Mission</h2>
               <p ref={missionTextRef} className="dark:text-primary-100/95 light:text-gray-800 leading-relaxed text-lg dark:font-light light:font-normal">
-                Empower students from colleges and universities — especially
-                those in STEM and ICT programs — with practical, data-driven
-                career recommendations so they can confidently choose
-                internships and pathways that match their strengths and
-                interests.
+                Empower students to confidently navigate their tech career journey by matching their unique skills and interests with the right opportunities through intelligent insights and personalized roadmaps.
               </p>
 
               <h2 ref={visionTitleRef} className="text-3xl font-semibold mt-8 mb-4 dark:text-white light:text-gray-900">Our Vision</h2>
               <p ref={visionTextRef} className="dark:text-primary-100/95 light:text-gray-800 leading-relaxed text-lg dark:font-light light:font-normal">
-                A future where every student has access to personalized career
-                guidance that bridges classroom learning and industry needs,
-                helping create a strong pipeline of skilled graduates ready for
-                the tech workforce.
+                Transform career guidance in tech education by making personalized, intelligent recommendations accessible to every student, creating a future where talent meets opportunity seamlessly.
               </p>
             </div>
 
@@ -144,10 +137,7 @@ export default function About({ id }) {
               Built by Students, for Students
             </h3>
             <p ref={teamTextRef} className="dark:text-primary-100/90 light:text-gray-800 mb-6 max-w-3xl dark:font-light light:font-normal">
-              DevPath is a capstone project by students at the University of
-              Mindanao (Computer Science & IT). We designed the system with
-              accessibility, affordability, and explainability in mind so it's
-              useful for thesis presentations and real student decision-making.
+              A capstone project by three IT students at the University of Mindanao, designed to be accessible, affordable, and easy to understand.
             </p>
 
             <figure className="rounded-xl overflow-hidden dark:border-primary-800/30 light:border-gray-300 border shadow-lg">
@@ -164,15 +154,15 @@ export default function About({ id }) {
             {[
               {
                 title: "Transparent",
-                desc: "Explainable recommendations and clear reasoning for every suggested job role.",
+                desc: "Clear explanations for every career recommendation.",
               },
               {
                 title: "Affordable",
-                desc: "Designed to be lightweight and budget-friendly for student use and presentations.",
+                desc: "Free and lightweight for all students.",
               },
               {
                 title: "Practical",
-                desc: "Actionable next steps: practice sets, internship targets, and exportable reports.",
+                desc: "Actionable roadmaps and exportable reports.",
               },
             ].map((pillar, i) => (
               <PillarCard key={i} pillar={pillar} theme={theme} />
@@ -188,16 +178,15 @@ export default function About({ id }) {
             <div>
               <h4 ref={ctaTitleRef} className="text-2xl font-semibold dark:text-white light:text-gray-900">Ready to find your path?</h4>
               <p ref={ctaTextRef} className="dark:text-primary-100/90 light:text-gray-800 dark:font-light light:font-normal">
-                Take the quick assessment and get a personalized roadmap
-                tailored to your course and skills.
+                Get your personalized tech career roadmap today.
               </p>
             </div>
             <div className="flex gap-4 max-md:flex-col max-md:w-full">
-              <button className="rounded-full px-6 py-3 bg-primary-500 dark:text-black light:text-white font-semibold shadow-xl hover:scale-[1.02] transition-transform w-full max-md:text-sm">
+              <button
+                onClick={() => setActiveModal("sign-up")}
+                className="rounded-full px-8 py-3.5 bg-primary-500 hover:bg-primary-600 dark:text-primary-1300 light:text-white light:bg-emerald-500 light:hover:bg-emerald-600 font-bold shadow-xl hover:shadow-2xl hover:scale-105 transition-all max-md:text-sm"
+              >
                 Start Assessment
-              </button>
-              <button className="rounded-full px-6 py-3 border dark:border-primary-700 light:border-gray-300 dark:text-primary-100 light:text-gray-900 font-medium dark:hover:bg-primary-1300 light:hover:bg-gray-100 transition w-full max-md:text-sm">
-                Learn More
               </button>
             </div>
           </div>
