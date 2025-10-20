@@ -2161,12 +2161,18 @@ export default function CareerReports() {
                               Skills to Learn
                             </h4>
                             <div className="space-y-1.5">
-                              {explanation.skill_gaps.slice(0, 3).map((gap, gIdx) => (
-                                <div key={gIdx} className="flex items-start gap-2 text-xs text-gray-300">
-                                  <span className="text-amber-400 mt-0.5 flex-shrink-0">•</span>
-                                  <span className="leading-relaxed">{gap}</span>
-                                </div>
-                              ))}
+                              {explanation.skill_gaps.slice(0, 3).map((gap, gIdx) => {
+                                // Handle both string and object formats
+                                const gapText = typeof gap === 'string'
+                                  ? gap
+                                  : `${gap.skill}: ${gap.current} → needs ${gap.required}+ (ideal: ${gap.ideal})`;
+                                return (
+                                  <div key={gIdx} className="flex items-start gap-2 text-xs text-gray-300">
+                                    <span className="text-amber-400 mt-0.5 flex-shrink-0">•</span>
+                                    <span className="leading-relaxed">{gapText}</span>
+                                  </div>
+                                );
+                              })}
                             </div>
                             <div className="mt-2 text-xs text-gray-500">
                               {explanation.skill_gaps.length} gap{explanation.skill_gaps.length !== 1 ? 's' : ''} total
