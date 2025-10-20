@@ -7,6 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import DashNav from "../components/dashboard/DashboardNav";
 import { createNotification } from '../services/notificationService';
+import ApiLoadingState from "../components/loading/ApiLoadingState";
+import useApiWithColdStart from "../hooks/useApiWithColdStart";
 import {
   CheckCircle,
   XCircle,
@@ -32,7 +34,7 @@ import {
 export default function CareerMatches() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  
+
   const [loading, setLoading] = useState(true);
   const [predicting, setPredicting] = useState(false);
   const [hasSelectedCareer, setHasSelectedCareer] = useState(false);
@@ -46,6 +48,9 @@ export default function CareerMatches() {
   });
   const [predictions, setPredictions] = useState(null);
   const [error, setError] = useState(null);
+
+  // API cold start detection hook
+  const { isLoading: isApiLoading, execute: executeApiCall } = useApiWithColdStart();
 
   useEffect(() => {
     if (!user) return;
@@ -207,20 +212,28 @@ export default function CareerMatches() {
     try {
       const payload = await aggregateUserData();
 
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-      const response = await fetch(`${apiUrl}/predict`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+      // Wrap API call with cold start detection
+      const data = await executeApiCall(async () => {
+        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+        const response = await fetch(`${apiUrl}/predict`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`API Error: ${errorText}`);
+        }
+
+        return await response.json();
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`API Error: ${errorText}`);
+      if (data) {
+        setPredictions(data.recommendations);
+      } else {
+        setError("Failed to get predictions. Make sure the FastAPI server is running.");
       }
-      
-      const data = await response.json();
-      setPredictions(data.recommendations);
     } catch (err) {
       console.error("Prediction error:", err);
       setError("Failed to get predictions. Make sure the FastAPI server is running.");
@@ -353,6 +366,13 @@ const confirmSelectCareer = async () => {
 
   return (
     <section className="min-h-screen bg-gradient-to-b from-primary-1400 via-primary-1500 to-black dark:from-primary-1400 dark:via-primary-1500 dark:to-black light:from-gray-50 light:via-white light:to-gray-100 px-4 sm:px-6 py-12">
+      {/* API Loading State with Cold Start Detection */}
+      <ApiLoadingState
+        isLoading={isApiLoading}
+        initialMessage="Generating your career matches..."
+        fullScreen={true}
+      />
+
       <DashNav />
 
       <div className="max-w-7xl mx-auto mt-20 sm:mt-24">

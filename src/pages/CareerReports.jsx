@@ -8,6 +8,8 @@ import DashboardFooter from "../components/dashboard/DashboardFooter";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "../components/icons/Logo";
 import Chart from 'chart.js/auto';
+import ApiLoadingState from "../components/loading/ApiLoadingState";
+import useApiWithColdStart from "../hooks/useApiWithColdStart";
 import {
   TrendingUp,
   Award,
@@ -643,6 +645,9 @@ export default function CareerReports() {
   const [showAdvancedDetails, setShowAdvancedDetails] = useState(false); // Toggle for advanced details
   const reportRef = useRef(null);
 
+  // API cold start detection hook
+  const { isLoading: isApiLoading, execute: executeApiCall } = useApiWithColdStart();
+
   // Chart refs
   const skillsRadarRef = useRef(null);
   const performanceBarRef = useRef(null);
@@ -803,47 +808,53 @@ export default function CareerReports() {
         salary_work: getSurveyValue("survey_personality_workstyle", "q6") || "work",
       };
 
-      try {
+      // Wrap API call with cold start detection
+      const data = await executeApiCall(async () => {
         const response = await fetch(`${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}/predict`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log("Full API Response for Career Reports:", data); // For debugging
-          console.log("Detailed Explanations:", data.recommendations?.detailed_explanations);
-          console.log("Validation:", data.recommendations?.validation);
-          console.log("Diversity Info:", {
-            strategy: data.recommendations?.diversity_strategy,
-            note: data.recommendations?.diversity_note
-          });
-
-          let topMatches = data.recommendations?.job_matches?.slice(0, 3) || [];
-
-          if (selectedCareerInfo && selectedCareerInfo.jobRole) {
-            topMatches = topMatches.map(match => ({
-              ...match,
-              isSelected: match.job_role === selectedCareerInfo.jobRole
-            }));
-          }
-
-          setPredictions({
-            job_matches: topMatches
-          });
-
-          // Capture enhanced API data with safe defaults
-          setDetailedExplanations(data.recommendations?.detailed_explanations || []);
-          setValidation(data.recommendations?.validation || null);
-          setDiversityInfo({
-            strategy: data.recommendations?.diversity_strategy || null,
-            note: data.recommendations?.diversity_note || null
-          });
+        if (!response.ok) {
+          throw new Error(`API responded with status ${response.status}`);
         }
-      } catch (err) {
-        console.error("API call failed:", err);
 
+        return await response.json();
+      });
+
+      if (data) {
+        console.log("Full API Response for Career Reports:", data); // For debugging
+        console.log("Detailed Explanations:", data.recommendations?.detailed_explanations);
+        console.log("Validation:", data.recommendations?.validation);
+        console.log("Diversity Info:", {
+          strategy: data.recommendations?.diversity_strategy,
+          note: data.recommendations?.diversity_note
+        });
+
+        let topMatches = data.recommendations?.job_matches?.slice(0, 3) || [];
+
+        if (selectedCareerInfo && selectedCareerInfo.jobRole) {
+          topMatches = topMatches.map(match => ({
+            ...match,
+            isSelected: match.job_role === selectedCareerInfo.jobRole
+          }));
+        }
+
+        setPredictions({
+          job_matches: topMatches
+        });
+
+        // Capture enhanced API data with safe defaults
+        setDetailedExplanations(data.recommendations?.detailed_explanations || []);
+        setValidation(data.recommendations?.validation || null);
+        setDiversityInfo({
+          strategy: data.recommendations?.diversity_strategy || null,
+          note: data.recommendations?.diversity_note || null
+        });
+      } else {
+        // Fallback to dummy data if API call fails
+        console.error("API call failed, using fallback data");
         setPredictions({
           job_matches: [
             { job_role: "Mobile Applications Developer", category: "Software Development", match_score: "92.15%" },
@@ -1157,6 +1168,13 @@ export default function CareerReports() {
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden w-full bg-gradient-to-b from-primary-1400 via-primary-1500 to-black text-primary-50">
+      {/* API Loading State with Cold Start Detection */}
+      <ApiLoadingState
+        isLoading={isApiLoading}
+        initialMessage="Loading your career report..."
+        fullScreen={true}
+      />
+
       <DashNav />
 
       <main ref={reportRef} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-20 sm:pt-24 pb-8 sm:pb-12 w-full flex-1 space-y-4 sm:space-y-6">

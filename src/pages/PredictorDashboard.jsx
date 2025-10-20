@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import ApiLoadingState from "../components/loading/ApiLoadingState";
+import useApiWithColdStart from "../hooks/useApiWithColdStart";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"; // backend URL
 
@@ -40,6 +42,9 @@ function PredictorDashboard() {
   const [validation, setValidation] = useState(null);
   const [diversityInfo, setDiversityInfo] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // API cold start detection hook
+  const { isLoading: isApiLoading, execute: executeApiCall } = useApiWithColdStart();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -125,14 +130,23 @@ function PredictorDashboard() {
 
   const handleSubmit = async () => {
     setLoading(true);
-    try {
+
+    // Wrap API call with cold start detection
+    const data = await executeApiCall(async () => {
       const res = await fetch(`${API_URL}/predict`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(profile),
       });
-      const data = await res.json();
 
+      if (!res.ok) {
+        throw new Error(`API responded with status ${res.status}`);
+      }
+
+      return await res.json();
+    });
+
+    if (data) {
       console.log("Full API Response:", data); // For debugging
 
       // Store all the new data
@@ -143,11 +157,9 @@ function PredictorDashboard() {
         strategy: data.recommendations?.diversity_strategy,
         note: data.recommendations?.diversity_note
       });
-    } catch (err) {
-      console.error("Prediction error:", err);
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   // --- Score Formatter ---
@@ -185,6 +197,13 @@ function PredictorDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white py-10 px-6 flex justify-center">
+      {/* API Loading State with Cold Start Detection */}
+      <ApiLoadingState
+        isLoading={isApiLoading}
+        initialMessage="Generating your career predictions..."
+        fullScreen={true}
+      />
+
       <div className="w-full max-w-6xl">
         <h1 className="text-4xl font-extrabold text-center mb-10 text-indigo-400">
           Career Path Predictor
