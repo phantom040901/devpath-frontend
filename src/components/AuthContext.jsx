@@ -218,7 +218,14 @@ export function AuthProvider({ children }) {
         reply_to: trimmedEmail,
       };
 
-      const response = await emailjs.send(serviceId, templateId, templateParams, publicKey);
+      console.log("📧 Template params:", templateParams);
+
+      const response = await emailjs.send(
+        serviceId,
+        templateId,
+        templateParams,
+        publicKey
+      );
 
       console.log("✅ Password reset email sent successfully via EmailJS", response);
       return { success: true, requiresVerification: true };
