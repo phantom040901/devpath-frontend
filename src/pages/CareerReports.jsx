@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useAuth } from "../components/AuthContext";
+import { useTheme } from "../contexts/ThemeContext";
 import DashNav from "../components/dashboard/DashboardNav";
 import DashboardFooter from "../components/dashboard/DashboardFooter";
 import { motion, AnimatePresence } from "framer-motion";
@@ -629,6 +630,7 @@ function AssessmentItem({ icon, text }) {
 
 export default function CareerReports() {
   const { user } = useAuth();
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [hasSelectedCareer, setHasSelectedCareer] = useState(false);
@@ -1639,11 +1641,12 @@ export default function CareerReports() {
             >
               <button
                 onClick={() => setShowAdvancedDetails(!showAdvancedDetails)}
-                className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-sm transition-all ${
-                  showAdvancedDetails
-                    ? 'dark:bg-gray-800/60 light:bg-white dark:hover:bg-gray-800/80 light:hover:bg-gray-100 dark:text-gray-300 light:text-gray-900 dark:shadow-none light:shadow-md'
-                    : 'dark:bg-gray-800/40 light:bg-white dark:hover:bg-gray-800/60 light:hover:bg-gray-100 dark:text-gray-400 light:text-gray-900 dark:hover:text-gray-300 light:hover:text-gray-900 dark:shadow-none light:shadow-md'
-                }`}
+                style={{
+                  backgroundColor: theme === 'light' ? '#ffffff' : showAdvancedDetails ? 'rgba(31, 41, 55, 0.6)' : 'rgba(31, 41, 55, 0.4)',
+                  color: theme === 'light' ? '#111827' : showAdvancedDetails ? '#d1d5db' : '#9ca3af',
+                  boxShadow: theme === 'light' ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' : 'none'
+                }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-sm transition-all hover:opacity-90"
               >
                 {showAdvancedDetails ? (
                   <>
