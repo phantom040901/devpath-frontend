@@ -33,7 +33,8 @@ import {
   Trophy,
   Sparkles,
   Rocket,
-  Flame
+  Flame,
+  HelpCircle
 } from "lucide-react";
 
 export default function StudentDashboard() {
@@ -844,6 +845,19 @@ export default function StudentDashboard() {
 
       {/* Footer */}
       <DashboardFooter />
+
+      {/* Floating Help Button for Tutorial */}
+      <motion.button
+        onClick={startTutorial}
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.95 }}
+        className="fixed bottom-6 right-6 p-4 rounded-full bg-primary-500 hover:bg-primary-600 text-white shadow-2xl hover:shadow-primary-500/50 transition-all z-50 group"
+        title="Start Tutorial"
+      >
+        <HelpCircle size={24} className="group-hover:rotate-12 transition-transform" />
+      </motion.button>
     </div>
   );
 }
