@@ -79,15 +79,23 @@ export default function LoginModal() {
     setResetEmailSent(false);
 
     try {
-      console.log("Sending password reset email to:", inputs.email);
+      console.log("📧 Sending password reset email to:", inputs.email);
+      console.log("🔧 Using Firebase Auth domain:", window.location.origin);
+
       await resetPassword(inputs.email);
 
       // Firebase sent email successfully
       setResetEmailSent(true);
       setError("");
-      console.log("✅ Password reset email sent successfully");
+      console.log("✅ Password reset email sent successfully!");
+      console.log("📬 Check your inbox and spam folder for an email from Firebase");
     } catch (err) {
       console.error("❌ Password reset error:", err);
+      console.error("Error details:", {
+        code: err.code,
+        message: err.message,
+        email: inputs.email
+      });
       setError(err.message || "Failed to send reset email. Please try again.");
       setResetEmailSent(false);
     } finally {
