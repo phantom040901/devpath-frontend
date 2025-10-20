@@ -15,7 +15,12 @@ const transporter = nodemailer.createTransport({
 });
 
 // Send OTP Email Function
-exports.sendOTPEmail = functions.https.onCall(async (data, context) => {
+exports.sendOTPEmail = functions
+  .runWith({
+    timeoutSeconds: 60,
+    memory: '256MB'
+  })
+  .https.onCall(async (data, context) => {
   const { email, otp, firstName } = data;
 
   // Validate input
@@ -141,7 +146,12 @@ exports.sendOTPEmail = functions.https.onCall(async (data, context) => {
 });
 
 // Send Welcome Email Function (existing function)
-exports.sendWelcomeEmail = functions.https.onCall(async (data, context) => {
+exports.sendWelcomeEmail = functions
+  .runWith({
+    timeoutSeconds: 60,
+    memory: '256MB'
+  })
+  .https.onCall(async (data, context) => {
   const { email, firstName } = data;
 
   // Validate input
@@ -250,7 +260,12 @@ exports.sendWelcomeEmail = functions.https.onCall(async (data, context) => {
 });
 
 // Reset Password Function
-exports.resetUserPassword = functions.https.onCall(async (data, context) => {
+exports.resetUserPassword = functions
+  .runWith({
+    timeoutSeconds: 60,
+    memory: '256MB'
+  })
+  .https.onCall(async (data, context) => {
   const { email, verificationCode, newPassword } = data;
 
   // Validate input
