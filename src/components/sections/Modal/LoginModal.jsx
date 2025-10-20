@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../AuthContext.jsx";
 import { useTheme } from "../../../contexts/ThemeContext";
+import PasswordResetSuccessModal from "./PasswordResetSuccessModal";
 
 const initialState = { email: "", password: "", remember: false };
 
@@ -20,6 +21,7 @@ export default function LoginModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [showResetSuccessModal, setShowResetSuccessModal] = useState(false);
 
   // Effect to handle redirect after user is authenticated
   useEffect(() => {
@@ -92,8 +94,8 @@ export default function LoginModal() {
       console.log("📬 Check your inbox and spam folder for an email from Firebase");
       console.log("📧 Email should come from: noreply@devpath-capstone.firebaseapp.com");
 
-      // Show alert for debugging
-      alert(`Password reset email sent to: ${inputs.email}\n\n⚠️ IMPORTANT: Check your SPAM/JUNK folder!\n\nLook for email from:\nnoreply@devpath-capstone.firebaseapp.com\n\nIf found, mark it as "Not Spam"`);
+      // Show success modal instead of alert
+      setShowResetSuccessModal(true);
     } catch (err) {
       console.error("❌ Password reset error:", err);
       console.error("Error details:", {
@@ -102,9 +104,6 @@ export default function LoginModal() {
         email: inputs.email,
         domain: window.location.origin
       });
-
-      // Show detailed error in alert
-      alert(`Password reset FAILED!\n\nError: ${err.message}\nCode: ${err.code || 'unknown'}\nEmail: ${inputs.email}\n\nCheck console for more details (F12)`);
 
       setError(err.message || "Failed to send reset email. Please try again.");
       setResetEmailSent(false);
@@ -263,6 +262,13 @@ export default function LoginModal() {
           </p>
         </form>
       </div>
+
+      {/* Password Reset Success Modal */}
+      <PasswordResetSuccessModal
+        isOpen={showResetSuccessModal}
+        onClose={() => setShowResetSuccessModal(false)}
+        email={inputs.email}
+      />
     </section>
   );
 }
