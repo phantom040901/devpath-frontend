@@ -1477,10 +1477,10 @@ export default function CareerReports() {
                     };
 
                     return (
-                      <div key={idx} className={`rounded-xl border-2 overflow-hidden transition-all ${
+                      <div key={idx} className={`rounded-xl overflow-hidden transition-all ${
                         match.isSelected
-                          ? 'bg-gradient-to-br from-primary-500/20 to-emerald-500/10 dark:from-primary-500/20 dark:to-emerald-500/10 light:from-primary-50 light:to-emerald-50 border-primary-500/60 dark:border-primary-500/60 light:border-primary-300 shadow-lg shadow-primary-500/20'
-                          : 'bg-gray-800/40 dark:bg-gray-800/40 light:bg-white border-gray-700/30 dark:border-gray-700/30 light:border-gray-300 hover:border-gray-600/50 dark:hover:border-gray-600/50 light:hover:border-gray-400'
+                          ? 'bg-gradient-to-br from-primary-500/20 to-emerald-500/10 dark:from-primary-500/20 dark:to-emerald-500/10 light:from-primary-100 light:to-emerald-100 border-2 border-primary-500/60 dark:border-primary-500/60 light:border-primary-400 shadow-lg dark:shadow-primary-500/20 light:shadow-primary-200/50'
+                          : 'bg-gray-800/40 dark:bg-gray-800/40 light:bg-gray-50/50 border dark:border-2 light:border-0 border-gray-700/30 dark:border-gray-700/30 light:border-transparent hover:border-gray-600/50 dark:hover:border-gray-600/50 light:hover:bg-gray-100/50'
                       }`}>
 
                         {/* ALWAYS VISIBLE: Job Header + Match Score */}
@@ -1512,15 +1512,15 @@ export default function CareerReports() {
                                 <span className="text-lg font-bold dark:text-white light:text-gray-900">#{idx + 1}</span>
                               </div>
                               <div className="flex-1 min-w-0">
-                                <h3 className="text-lg sm:text-xl font-bold dark:text-white light:text-gray-900 truncate">{match.job_role}</h3>
-                                <p className="text-xs dark:text-gray-400 light:text-gray-600">{match.category}</p>
+                                <h3 className="text-lg sm:text-xl font-bold dark:text-white light:text-gray-700 truncate">{match.job_role}</h3>
+                                <p className="text-xs dark:text-gray-400 light:text-gray-500">{match.category}</p>
                               </div>
                             </div>
                             <div className="flex-shrink-0 text-right ml-3">
-                              <div className={`text-3xl sm:text-4xl font-black ${match.isSelected ? 'text-primary-400 dark:text-primary-400 light:text-primary-600' : 'dark:text-gray-400 light:text-gray-700'}`}>
+                              <div className={`text-3xl sm:text-4xl font-black ${match.isSelected ? 'text-primary-400 dark:text-primary-400 light:text-primary-500' : 'dark:text-gray-400 light:text-gray-500'}`}>
                                 {match.match_score}
                               </div>
-                              <div className="text-xs dark:text-gray-500 light:text-gray-600">Match</div>
+                              <div className="text-xs dark:text-gray-500 light:text-gray-500">Match</div>
                             </div>
                           </div>
 
@@ -1529,7 +1529,7 @@ export default function CareerReports() {
                             <div className="mb-4">
                               <div className="flex flex-wrap gap-2">
                                 {explanation.your_strengths.slice(0, 3).map((strength, sIdx) => (
-                                  <span key={sIdx} className="inline-flex items-center gap-1 text-xs bg-emerald-500/20 dark:bg-emerald-500/20 light:bg-emerald-100 text-emerald-300 dark:text-emerald-300 light:text-emerald-800 px-3 py-1.5 rounded-full border border-emerald-500/30 dark:border-emerald-500/30 light:border-emerald-300">
+                                  <span key={sIdx} className="inline-flex items-center gap-1 text-xs bg-emerald-500/20 dark:bg-emerald-500/20 light:bg-emerald-50 text-emerald-300 dark:text-emerald-300 light:text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-500/30 dark:border-emerald-500/30 light:border-emerald-200">
                                     <span className="text-emerald-400 dark:text-emerald-400 light:text-emerald-600">✓</span> {strength}
                                   </span>
                                 ))}
@@ -1540,16 +1540,16 @@ export default function CareerReports() {
                           {/* Toggle Button */}
                           <button
                             onClick={toggleDetails}
-                            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-primary-500/20 to-blue-500/10 dark:from-primary-500/20 dark:to-blue-500/10 light:from-primary-100 light:to-blue-100 hover:from-primary-500/30 hover:to-blue-500/20 dark:hover:from-primary-500/30 dark:hover:to-blue-500/20 light:hover:from-primary-200 light:hover:to-blue-200 border border-primary-500/30 dark:border-primary-500/30 light:border-primary-300 hover:border-primary-500/50 dark:hover:border-primary-500/50 light:hover:border-primary-400 transition-all group"
+                            className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-gradient-to-r from-primary-500/20 to-blue-500/10 dark:from-primary-500/20 dark:to-blue-500/10 light:from-primary-50 light:to-blue-50 hover:from-primary-500/30 hover:to-blue-500/20 dark:hover:from-primary-500/30 dark:hover:to-blue-500/20 light:hover:from-primary-100 light:hover:to-blue-100 border border-primary-500/30 dark:border-primary-500/30 light:border-primary-200 hover:border-primary-500/50 dark:hover:border-primary-500/50 light:hover:border-primary-300 transition-all group"
                           >
-                            <span className="text-sm font-bold dark:text-white light:text-gray-900 flex items-center gap-2">
+                            <span className="text-sm font-bold dark:text-white light:text-gray-700 flex items-center gap-2">
                               {isDetailsOpen ? '🔼 Got it, close' : '📖 Show me why'}
                             </span>
                             <motion.div
                               animate={{ rotate: isDetailsOpen ? 180 : 0 }}
                               transition={{ duration: 0.3 }}
                             >
-                              <ChevronDown size={18} className="text-primary-400 dark:text-primary-400 light:text-primary-600" />
+                              <ChevronDown size={18} className="text-primary-400 dark:text-primary-400 light:text-primary-500" />
                             </motion.div>
                           </button>
                         </div>
@@ -1568,19 +1568,19 @@ export default function CareerReports() {
                           }}
                           style={{ overflow: "hidden" }}
                         >
-                          <div className="px-4 sm:px-5 pb-5 pt-2 border-t border-gray-700/30 dark:border-gray-700/30 light:border-gray-300">
+                          <div className="px-4 sm:px-5 pb-5 pt-2 border-t border-gray-700/30 dark:border-gray-700/30 light:border-gray-200">
 
                             {/* Simple Explanation First */}
-                            <div className="bg-blue-500/10 dark:bg-blue-500/10 light:bg-blue-50 border border-blue-500/30 dark:border-blue-500/30 light:border-blue-300 rounded-lg p-4 mb-4">
+                            <div className="bg-blue-500/10 dark:bg-blue-500/10 light:bg-blue-50/50 border border-blue-500/30 dark:border-blue-500/30 light:border-blue-200 rounded-lg p-4 mb-4">
                               <div className="flex items-start gap-3">
-                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 dark:bg-blue-500/20 light:bg-blue-200 flex items-center justify-center">
-                                  <Lightbulb size={16} className="text-blue-400 dark:text-blue-400 light:text-blue-600" />
+                                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500/20 dark:bg-blue-500/20 light:bg-blue-100 flex items-center justify-center">
+                                  <Lightbulb size={16} className="text-blue-400 dark:text-blue-400 light:text-blue-500" />
                                 </div>
                                 <div className="flex-1">
-                                  <h4 className="text-sm font-bold dark:text-blue-300 light:text-blue-800 mb-1">
+                                  <h4 className="text-sm font-bold dark:text-blue-300 light:text-blue-700 mb-1">
                                     Why this career matches you
                                   </h4>
-                                  <p className="text-xs dark:text-gray-300 light:text-gray-700 leading-relaxed">
+                                  <p className="text-xs dark:text-gray-300 light:text-gray-600 leading-relaxed">
                                     Based on your skills and test scores, this career is a great fit!
                                     The skills below had the biggest impact on your match.
                                   </p>
@@ -1591,17 +1591,17 @@ export default function CareerReports() {
                             {/* Top 3 Skills - SIMPLE */}
                             {topFactors.length > 0 && (
                               <div className="space-y-3">
-                                <h4 className="text-sm font-bold dark:text-white light:text-gray-900 flex items-center gap-2">
+                                <h4 className="text-sm font-bold dark:text-white light:text-gray-700 flex items-center gap-2">
                                   <span>🌟</span> Your Top Matching Skills
                                 </h4>
                                 {topFactors.map((factor, factorIdx) => {
                                   const percentage = factor.contribution_percentage || 0;
 
                                   return (
-                                    <div key={factorIdx} className="bg-gray-900/50 dark:bg-gray-900/50 light:bg-gray-50 rounded-lg p-4 border border-gray-700/30 dark:border-gray-700/30 light:border-gray-300">
+                                    <div key={factorIdx} className="bg-gray-900/50 dark:bg-gray-900/50 light:bg-gray-50/50 rounded-lg p-4 border border-gray-700/30 dark:border-gray-700/30 light:border-gray-200">
                                       <div className="flex items-center justify-between mb-2">
-                                        <span className="text-sm font-semibold dark:text-white light:text-gray-900">{factor.feature}</span>
-                                        <span className="text-lg font-black text-emerald-400 dark:text-emerald-400 light:text-emerald-600">
+                                        <span className="text-sm font-semibold dark:text-white light:text-gray-700">{factor.feature}</span>
+                                        <span className="text-lg font-black text-emerald-400 dark:text-emerald-400 light:text-emerald-500">
                                           {percentage.toFixed(0)}%
                                         </span>
                                       </div>
@@ -1616,7 +1616,7 @@ export default function CareerReports() {
                                     </div>
                                   );
                                 })}
-                                <p className="text-xs dark:text-gray-500 light:text-gray-600 italic text-center mt-2">
+                                <p className="text-xs dark:text-gray-500 light:text-gray-500 italic text-center mt-2">
                                   💡 Higher percentage = stronger match!
                                 </p>
                               </div>
