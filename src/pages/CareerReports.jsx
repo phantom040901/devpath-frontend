@@ -1639,10 +1639,10 @@ export default function CareerReports() {
             >
               <button
                 onClick={() => setShowAdvancedDetails(!showAdvancedDetails)}
-                className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-sm transition-all shadow-sm ${
+                className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium text-sm transition-all ${
                   showAdvancedDetails
-                    ? 'dark:bg-gray-800/60 light:bg-gray-300 dark:hover:bg-gray-800/80 light:hover:bg-gray-400 dark:text-gray-300 light:text-gray-700'
-                    : 'dark:bg-gray-800/40 light:bg-gray-200 dark:hover:bg-gray-800/60 light:hover:bg-gray-300 dark:text-gray-400 light:text-gray-600 dark:hover:text-gray-300 light:hover:text-gray-800'
+                    ? 'dark:bg-gray-800/60 light:bg-white dark:hover:bg-gray-800/80 light:hover:bg-gray-100 dark:text-gray-300 light:text-gray-900 dark:shadow-none light:shadow-md'
+                    : 'dark:bg-gray-800/40 light:bg-white dark:hover:bg-gray-800/60 light:hover:bg-gray-100 dark:text-gray-400 light:text-gray-900 dark:hover:text-gray-300 light:hover:text-gray-900 dark:shadow-none light:shadow-md'
                 }`}
               >
                 {showAdvancedDetails ? (
