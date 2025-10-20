@@ -203,16 +203,16 @@ export function AuthProvider({ children }) {
       };
       localStorage.setItem('passwordResetData', JSON.stringify(resetData));
 
-      // EmailJS configuration (same as signup OTP)
+      // EmailJS configuration for password reset
       const serviceId = 'service_fn2o6do';
-      const templateId = 'template_kiqyhq6'; // You can create a separate template for password reset
+      const templateId = 'template_tyn0rjh'; // Password reset template
       const publicKey = 'E0obOJjzr6CNIfzKR';
 
       // Send reset code via EmailJS
       const templateParams = {
         to_email: trimmedEmail,
         to_name: 'User', // We don't have the name in this context
-        otp_code: resetCode,
+        reset_code: resetCode, // Using reset_code variable for password reset template
         from_name: 'DevPath',
         from_email: 'alfredcmelencion@gmail.com',
         reply_to: trimmedEmail,
