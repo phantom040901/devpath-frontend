@@ -29,6 +29,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import StudentsList from "./pages/admin/StudentsList";
 import StudentsAnalytics from "./pages/admin/StudentsAnalytics";
+import CareerAnalytics from "./pages/admin/CareerAnalytics";
 import AssessmentManagement from "./pages/admin/AssessmentManagement";
 import StudentDetails from "./pages/admin/StudentDetails";
 import SystemSettings from "./pages/admin/SystemSettings";
@@ -100,7 +101,17 @@ function App() {
             </RequireAdmin>
           }
         />
-        
+
+        {/* Career Analytics - Career path selections */}
+        <Route
+          path="/admin/career-analytics"
+          element={
+            <RequireAdmin>
+              <CareerAnalytics />
+            </RequireAdmin>
+          }
+        />
+
         {/* Individual Student Details */}
         <Route
           path="/admin/student/:studentId"

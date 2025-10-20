@@ -13,7 +13,8 @@ import {
   X,
   BarChart3,
   BookOpen,
-  MessageSquare
+  MessageSquare,
+  Briefcase
 } from "lucide-react";
 
 export default function AdminNav() {
@@ -26,6 +27,7 @@ export default function AdminNav() {
     { path: "/admin/dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
     { path: "/admin/students", label: "Students", icon: <Users size={20} /> },
     { path: "/admin/analytics", label: "Analytics", icon: <BarChart3 size={20} /> },
+    { path: "/admin/career-analytics", label: "Careers", icon: <Briefcase size={20} /> },
     { path: "/admin/assessments", label: "Assessments", icon: <BookOpen size={20} /> },
     { path: "/admin/messaging", label: "Messages", icon: <MessageSquare size={20} /> },
     { path: "/admin/settings", label: "Settings", icon: <Settings size={20} /> },
