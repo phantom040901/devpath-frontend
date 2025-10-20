@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const API_URL = "http://127.0.0.1:8000"; // backend URL
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"; // backend URL
 
 function PredictorDashboard() {
   const [profile, setProfile] = useState({
