@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -650,18 +650,20 @@ export default function CareerReports() {
   const reportRef = useRef(null);
 
   // Manual trigger for tutorial (can be called from Settings)
-  const startTutorial = () => {
+  const startTutorial = useCallback(() => {
     console.log('🎓 Manually starting reports tutorial...');
     setRunTutorial(true);
-  };
+  }, []);
 
   // Expose startTutorial to window for testing purposes
   useEffect(() => {
+    console.log('✅ Setting up window.startReportsTutorial function');
     window.startReportsTutorial = startTutorial;
     return () => {
+      console.log('🧹 Cleaning up window.startReportsTutorial function');
       delete window.startReportsTutorial;
     };
-  }, []);
+  }, [startTutorial]);
 
   // API cold start detection hook
   const { isLoading: isApiLoading, execute: executeApiCall } = useApiWithColdStart();

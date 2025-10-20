@@ -1,6 +1,6 @@
 // src/pages/StudentDashboard.jsx
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -47,18 +47,20 @@ export default function StudentDashboard() {
   const [runTutorial, setRunTutorial] = useState(false);
 
   // Manual trigger for tutorial (can be called from Settings)
-  const startTutorial = () => {
+  const startTutorial = useCallback(() => {
     console.log('🎓 Manually starting dashboard tutorial...');
     setRunTutorial(true);
-  };
+  }, []);
 
   // Expose startTutorial to window for testing purposes
   useEffect(() => {
+    console.log('✅ Setting up window.startDashboardTutorial function');
     window.startDashboardTutorial = startTutorial;
     return () => {
+      console.log('🧹 Cleaning up window.startDashboardTutorial function');
       delete window.startDashboardTutorial;
     };
-  }, []);
+  }, [startTutorial]);
 
   // Scroll to top when component mounts (especially important for mobile after login)
   useEffect(() => {
