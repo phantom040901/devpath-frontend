@@ -6,6 +6,7 @@ import { useAuth } from "../components/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
 import DashNav from "../components/dashboard/DashboardNav";
 import DashboardFooter from "../components/dashboard/DashboardFooter";
+import ReportsTutorial from "../components/dashboard/ReportsTutorial";
 import { motion, AnimatePresence } from "framer-motion";
 import Logo from "../components/icons/Logo";
 import Chart from 'chart.js/auto';
@@ -645,7 +646,22 @@ export default function CareerReports() {
   const [selectedForComparison, setSelectedForComparison] = useState([]); // Careers selected for comparison
   const [showComparisonModal, setShowComparisonModal] = useState(false); // Show comparison modal
   const [showAdvancedDetails, setShowAdvancedDetails] = useState(false); // Toggle for advanced details
+  const [runTutorial, setRunTutorial] = useState(false); // Tutorial state
   const reportRef = useRef(null);
+
+  // Manual trigger for tutorial (can be called from Settings)
+  const startTutorial = () => {
+    console.log('🎓 Manually starting reports tutorial...');
+    setRunTutorial(true);
+  };
+
+  // Expose startTutorial to window for testing purposes
+  useEffect(() => {
+    window.startReportsTutorial = startTutorial;
+    return () => {
+      delete window.startReportsTutorial;
+    };
+  }, []);
 
   // API cold start detection hook
   const { isLoading: isApiLoading, execute: executeApiCall } = useApiWithColdStart();
@@ -662,6 +678,37 @@ export default function CareerReports() {
     if (!user) return;
     checkCareerSelection();
   }, [user]);
+
+  // Check if tutorial should be shown after loading completes
+  useEffect(() => {
+    const checkTutorial = async () => {
+      if (!user || loading || !hasSelectedCareer) return;
+
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const tutorialCompleted = userData.tutorialCompleted?.reports;
+
+          // Show tutorial if not completed (delay by 2 seconds for better UX)
+          if (!tutorialCompleted) {
+            console.log('📚 Starting reports tutorial for first-time user...');
+            setTimeout(() => {
+              setRunTutorial(true);
+            }, 2000);
+          } else {
+            console.log('✅ User has already completed the reports tutorial');
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error checking reports tutorial status:', error);
+      }
+    };
+
+    checkTutorial();
+  }, [user, loading, hasSelectedCareer]);
 
   useEffect(() => {
     return () => {
@@ -1082,6 +1129,12 @@ export default function CareerReports() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary-1400 via-primary-1500 to-black">
+        {/* API Loading State - Show even on initial page load */}
+        <ApiLoadingState
+          isLoading={isApiLoading}
+          initialMessage="Loading your career report..."
+          fullScreen={true}
+        />
         <Loader2 className="animate-spin text-primary-400" size={48} />
       </div>
     );
@@ -1090,6 +1143,13 @@ export default function CareerReports() {
   if (!hasSelectedCareer) {
     return (
       <div className="min-h-screen flex flex-col overflow-x-hidden w-full bg-gradient-to-b from-primary-1400 via-primary-1500 to-black text-primary-50">
+        {/* API Loading State - Show even when no career selected */}
+        <ApiLoadingState
+          isLoading={isApiLoading}
+          initialMessage="Loading your career report..."
+          fullScreen={true}
+        />
+
         <DashNav />
 
         <main className="flex items-center justify-center flex-1 px-4">
@@ -1179,6 +1239,12 @@ export default function CareerReports() {
 
       <DashNav />
 
+      {/* Reports Tutorial */}
+      <ReportsTutorial
+        runTutorial={runTutorial}
+        onComplete={() => setRunTutorial(false)}
+      />
+
       <main ref={reportRef} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-20 sm:pt-24 pb-8 sm:pb-12 w-full flex-1 space-y-4 sm:space-y-6">
 
         {/* PRINT ONLY - Horizontal Header with Logo */}
@@ -1232,7 +1298,7 @@ export default function CareerReports() {
               </div>
               
               {studentInfo && (
-                <div className="grid md:grid-cols-2 gap-4 mt-6">
+                <div className="student-info-section grid md:grid-cols-2 gap-4 mt-6">
                   <InfoItem 
                     icon={<User size={16} />} 
                     label="Student Name" 
@@ -1268,7 +1334,7 @@ export default function CareerReports() {
         </motion.div>
 
         {/* Executive Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="career-readiness-cards grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <ReadinessCard
             icon={<Trophy className="text-primary-400" size={24} />}
             label="Career Readiness"
@@ -1348,7 +1414,7 @@ export default function CareerReports() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-gray-900/70 border border-gray-700/40 rounded-2xl p-6"
+              className="career-matches-section bg-gray-900/70 border border-gray-700/40 rounded-2xl p-6"
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-black bg-gradient-to-r from-gray-900 to-primary-600 dark:from-white dark:to-primary-200 bg-clip-text text-transparent flex items-center gap-2">
@@ -1680,7 +1746,7 @@ export default function CareerReports() {
           </div>
 
           {/* Right Sidebar - Charts & Stats */}
-          <div className="lg:col-span-1 space-y-6 order-1 lg:order-2">
+          <div className="skills-charts-section lg:col-span-1 space-y-6 order-1 lg:order-2">
 
             {/* How Confident Are We? Card */}
             {validation && (
@@ -1855,9 +1921,9 @@ export default function CareerReports() {
             </motion.div>
 
             {/* Download Button */}
-            <button 
+            <button
               onClick={handleDownloadReport}
-              className="print:hidden w-full py-3 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-semibold hover:scale-105 transition-all shadow-lg flex items-center justify-center gap-2">
+              className="download-report-btn print:hidden w-full py-3 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-semibold hover:scale-105 transition-all shadow-lg flex items-center justify-center gap-2">
               <Download size={18} />
               Download Report
             </button>

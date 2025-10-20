@@ -368,7 +368,7 @@ export default function DashboardNav() {
           <div className="relative hidden lg:block" ref={dropdownRef}>
             <button
               onClick={() => setMenuOpen((v) => !v)}
-              className="flex items-center gap-2 rounded-full bg-primary-1200/50 dark:bg-primary-1200/50 light:bg-gray-100 px-3 py-2 hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-200 transition-all duration-200 border border-transparent hover:border-primary-500/30"
+              className="nav-menu-icon flex items-center gap-2 rounded-full bg-primary-1200/50 dark:bg-primary-1200/50 light:bg-gray-100 px-3 py-2 hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-200 transition-all duration-200 border border-transparent hover:border-primary-500/30"
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-cyan-400 flex items-center justify-center text-white font-bold text-sm">
                 {user?.firstName?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || "U"}

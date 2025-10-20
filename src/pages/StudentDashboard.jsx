@@ -12,6 +12,7 @@ import DashboardNav from "../components/dashboard/DashboardNav";
 import WelcomeBanner from "../components/dashboard/WelcomeBanner";
 import ResumeCard from "../components/dashboard/ResumeCard";
 import DashboardFooter from "../components/dashboard/DashboardFooter";
+import DashboardTutorial from "../components/dashboard/DashboardTutorial";
 import {
   ArrowRight,
   Target,
@@ -43,6 +44,21 @@ export default function StudentDashboard() {
   const [progressSummary, setProgressSummary] = useState(null);
   const [roadmapProgress, setRoadmapProgress] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [runTutorial, setRunTutorial] = useState(false);
+
+  // Manual trigger for tutorial (can be called from Settings)
+  const startTutorial = () => {
+    console.log('🎓 Manually starting dashboard tutorial...');
+    setRunTutorial(true);
+  };
+
+  // Expose startTutorial to window for testing purposes
+  useEffect(() => {
+    window.startDashboardTutorial = startTutorial;
+    return () => {
+      delete window.startDashboardTutorial;
+    };
+  }, []);
 
   // Scroll to top when component mounts (especially important for mobile after login)
   useEffect(() => {
@@ -53,6 +69,37 @@ export default function StudentDashboard() {
     if (!user) return;
     loadDashboardData();
   }, [user]);
+
+  // Check if tutorial should be shown after loading completes
+  useEffect(() => {
+    const checkTutorial = async () => {
+      if (!user || loading) return;
+
+      try {
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          const tutorialCompleted = userData.tutorialCompleted?.dashboard;
+
+          // Show tutorial if not completed (delay by 1.5 seconds for better UX)
+          if (!tutorialCompleted) {
+            console.log('📚 Starting dashboard tutorial for first-time user...');
+            setTimeout(() => {
+              setRunTutorial(true);
+            }, 1500);
+          } else {
+            console.log('✅ User has already completed the tutorial');
+          }
+        }
+      } catch (error) {
+        console.error('❌ Error checking tutorial status:', error);
+      }
+    };
+
+    checkTutorial();
+  }, [user, loading]);
 
   const loadDashboardData = async () => {
     try {
@@ -172,6 +219,12 @@ export default function StudentDashboard() {
     <div className="min-h-screen flex flex-col overflow-x-hidden w-full bg-gradient-to-b from-primary-1400 via-primary-1500 to-black text-primary-50">
       <DashboardNav />
 
+      {/* Dashboard Tutorial */}
+      <DashboardTutorial
+        runTutorial={runTutorial}
+        onComplete={() => setRunTutorial(false)}
+      />
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 w-full flex-1">
         {/* Welcome Section */}
         <motion.div
@@ -183,7 +236,7 @@ export default function StudentDashboard() {
         </motion.div>
 
         {/* Quick Stats Overview */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="quick-stats-section grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <StatCard
             icon={<BookOpen className="text-primary-400" size={20} />}
             label="Assessments"
@@ -223,7 +276,7 @@ export default function StudentDashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-gray-900/70 border border-gray-700/40 rounded-2xl p-6"
+              className="career-path-card bg-gray-900/70 border border-gray-700/40 rounded-2xl p-6"
             >
               {selectedCareer ? (
                 <>
@@ -657,7 +710,7 @@ export default function StudentDashboard() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-gray-900/70 border border-gray-700/40 rounded-2xl p-5"
+              className="action-cards-section bg-gray-900/70 border border-gray-700/40 rounded-2xl p-5"
             >
               <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
               <div className="space-y-3">
