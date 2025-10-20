@@ -314,192 +314,195 @@ export default function AssessmentsList() {
   }
 
   return (
-    <section className="min-h-screen w-full bg-gradient-to-b from-primary-1400 via-primary-1500 to-black dark:from-primary-1400 dark:via-primary-1500 dark:to-black light:from-gray-50 light:via-white light:to-gray-100 px-4 sm:px-6 lg:px-10 py-12 sm:py-16">
+    <div className="min-h-screen flex flex-col w-full bg-gradient-to-b from-primary-1400 via-primary-1500 to-black dark:from-primary-1400 dark:via-primary-1500 dark:to-black light:from-gray-50 light:via-white light:to-gray-100">
       <DashNav />
 
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-center mb-12 sm:mb-16 lg:mb-20 mt-16 sm:mt-20 lg:mt-24 px-4"
-      >
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-primary-400 via-emerald-300 to-cyan-400 bg-clip-text text-transparent mb-3 sm:mb-4">
-          Assessments
-        </h1>
-        <p className="text-gray-600 dark:text-gray-300 light:text-gray-600 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-          Test your knowledge and track your progress across academic and technical skills
-        </p>
-      </motion.div>
+      {/* Main content with padding */}
+      <section className="flex-1 px-4 sm:px-6 lg:px-10 py-12 sm:py-16">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12 sm:mb-16 lg:mb-20 mt-16 sm:mt-20 lg:mt-24 px-4"
+        >
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold bg-gradient-to-r from-primary-400 via-emerald-300 to-cyan-400 bg-clip-text text-transparent mb-3 sm:mb-4">
+            Assessments
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300 light:text-gray-600 text-xs sm:text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+            Test your knowledge and track your progress across academic and technical skills
+          </p>
+        </motion.div>
 
-      <div className="m-auto max-w-7xl space-y-16">
-        <Section
-          title="Academic Assessments"
-          icon={<BookOpen size={32} />}
-          items={academic}
-          onStart={handleStartTest}
-          headerRef={academicHeaderRef}
-          learningProgress={learningProgress}
-          weakAreas={weakAreas}
-          userScores={userScores}
-        />
-        <Section
-          title="Technical Assessments"
-          icon={<Code size={32} />}
-          items={technical}
-          onStart={handleStartTest}
-          headerRef={technicalHeaderRef}
-          learningProgress={learningProgress}
-          weakAreas={weakAreas}
-          userScores={userScores}
-        />
-        <Section
-          title="Personal Assessments"
-          icon={<Award size={32} />}
-          items={personal}
-          onStart={handleStartTest}
-          headerRef={personalHeaderRef}
-          learningProgress={learningProgress}
-          weakAreas={weakAreas}
-          userScores={userScores}
-        />
-      </div>
+        <div className="m-auto max-w-7xl space-y-16">
+          <Section
+            title="Academic Assessments"
+            icon={<BookOpen size={32} />}
+            items={academic}
+            onStart={handleStartTest}
+            headerRef={academicHeaderRef}
+            learningProgress={learningProgress}
+            weakAreas={weakAreas}
+            userScores={userScores}
+          />
+          <Section
+            title="Technical Assessments"
+            icon={<Code size={32} />}
+            items={technical}
+            onStart={handleStartTest}
+            headerRef={technicalHeaderRef}
+            learningProgress={learningProgress}
+            weakAreas={weakAreas}
+            userScores={userScores}
+          />
+          <Section
+            title="Personal Assessments"
+            icon={<Award size={32} />}
+            items={personal}
+            onStart={handleStartTest}
+            headerRef={personalHeaderRef}
+            learningProgress={learningProgress}
+            weakAreas={weakAreas}
+            userScores={userScores}
+          />
+        </div>
 
-      <AnimatePresence>
-        {showQuickJump && (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="fixed right-6 top-1/2 -translate-y-1/2 z-40"
-          >
-            <div className="flex flex-col gap-2 md:hidden">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => scrollToSection(technicalHeaderRef)}
-                className="flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg hover:shadow-purple-500/50 transition-all"
-              >
-                <Code size={18} />
-                <span className="text-sm font-semibold">Technical</span>
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => scrollToSection(personalHeaderRef)}
-                className="flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-white shadow-lg hover:shadow-emerald-500/50 transition-all"
-              >
-                <Award size={18} />
-                <span className="text-sm font-semibold">Personal</span>
-              </motion.button>
-            </div>
-
-            <div className="hidden md:flex flex-col gap-4 bg-gray-900/80 dark:bg-gray-900/80 light:bg-white/90 backdrop-blur-sm border border-gray-700/50 dark:border-gray-700/50 light:border-gray-300 rounded-full p-3 shadow-xl">
-              <motion.button
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => scrollToSection(academicHeaderRef)}
-                className="group relative w-3 h-3 rounded-full bg-primary-400 hover:bg-primary-300 dark:bg-primary-400 dark:hover:bg-primary-300 light:bg-primary-600 light:hover:bg-primary-500 transition-all shadow-lg"
-                title="Academic"
-              >
-                <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
-                  Academic
-                </span>
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => scrollToSection(technicalHeaderRef)}
-                className="group relative w-3 h-3 rounded-full bg-purple-400 hover:bg-purple-300 dark:bg-purple-400 dark:hover:bg-purple-300 light:bg-purple-600 light:hover:bg-purple-500 transition-all shadow-lg"
-                title="Technical"
-              >
-                <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
-                  Technical
-                </span>
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => scrollToSection(personalHeaderRef)}
-                className="group relative w-3 h-3 rounded-full bg-emerald-400 hover:bg-emerald-300 dark:bg-emerald-400 dark:hover:bg-emerald-300 light:bg-emerald-600 light:hover:bg-emerald-500 transition-all shadow-lg"
-                title="Personal"
-              >
-                <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
-                  Personal
-                </span>
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <AnimatePresence>
-        {showModal && createPortal(
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4"
-            onClick={() => setShowModal(false)}
-          >
+        <AnimatePresence>
+          {showQuickJump && (
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="bg-gray-900 text-white p-6 sm:p-8 rounded-2xl shadow-2xl max-w-md w-full border border-yellow-500/30"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="fixed right-6 top-1/2 -translate-y-1/2 z-40"
             >
-              <button
-                className="absolute top-4 right-4 text-gray-400 hover:text-white transition"
-                onClick={() => setShowModal(false)}
-              >
-                <X size={20} />
-              </button>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 rounded-full bg-yellow-500/20">
-                  <Lock className="text-yellow-400" size={24} />
-                </div>
-                <h3 className="text-xl font-bold text-white">Assessment Locked</h3>
+              <div className="flex flex-col gap-2 md:hidden">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => scrollToSection(technicalHeaderRef)}
+                  className="flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg hover:shadow-purple-500/50 transition-all"
+                >
+                  <Code size={18} />
+                  <span className="text-sm font-semibold">Technical</span>
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => scrollToSection(personalHeaderRef)}
+                  className="flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-white shadow-lg hover:shadow-emerald-500/50 transition-all"
+                >
+                  <Award size={18} />
+                  <span className="text-sm font-semibold">Personal</span>
+                </motion.button>
               </div>
-              <p className="text-gray-300 leading-relaxed mb-4 whitespace-pre-line">{modalMessage}</p>
-              <button
-                onClick={() => {
-                  setShowModal(false);
-                  navigate('/learning-path');
-                }}
-                className="w-full px-6 py-3 bg-gradient-to-r from-primary-500 to-emerald-400 text-primary-1300 rounded-xl font-semibold hover:scale-105 transition mb-2"
-              >
-                Go to Learning Path
-              </button>
-              <button
-                onClick={() => setShowModal(false)}
-                className="w-full px-6 py-2 bg-gray-800 text-gray-300 rounded-xl font-medium hover:bg-gray-700 transition"
-              >
-                Close
-              </button>
+
+              <div className="hidden md:flex flex-col gap-4 bg-gray-900/80 dark:bg-gray-900/80 light:bg-white/90 backdrop-blur-sm border border-gray-700/50 dark:border-gray-700/50 light:border-gray-300 rounded-full p-3 shadow-xl">
+                <motion.button
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => scrollToSection(academicHeaderRef)}
+                  className="group relative w-3 h-3 rounded-full bg-primary-400 hover:bg-primary-300 dark:bg-primary-400 dark:hover:bg-primary-300 light:bg-primary-600 light:hover:bg-primary-500 transition-all shadow-lg"
+                  title="Academic"
+                >
+                  <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
+                    Academic
+                  </span>
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => scrollToSection(technicalHeaderRef)}
+                  className="group relative w-3 h-3 rounded-full bg-purple-400 hover:bg-purple-300 dark:bg-purple-400 dark:hover:bg-purple-300 light:bg-purple-600 light:hover:bg-purple-500 transition-all shadow-lg"
+                  title="Technical"
+                >
+                  <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
+                    Technical
+                  </span>
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => scrollToSection(personalHeaderRef)}
+                  className="group relative w-3 h-3 rounded-full bg-emerald-400 hover:bg-emerald-300 dark:bg-emerald-400 dark:hover:bg-emerald-300 light:bg-emerald-600 light:hover:bg-emerald-500 transition-all shadow-lg"
+                  title="Personal"
+                >
+                  <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
+                    Personal
+                  </span>
+                </motion.button>
+              </div>
             </motion.div>
-          </motion.div>,
-          document.body
-        )}
-      </AnimatePresence>
+          )}
+        </AnimatePresence>
 
-      {/* Assessment Instructions Modal */}
-      <AssessmentInstructions
-        isOpen={showInstructions}
-        onClose={handleInstructionsClose}
-        onStart={handleInstructionsStart}
-        assessmentType={pendingAssessment?.mode === "survey" ? "Survey" : "MCQ"}
-      />
+        <AnimatePresence>
+          {showModal && createPortal(
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4"
+              onClick={() => setShowModal(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                onClick={(e) => e.stopPropagation()}
+                className="bg-gray-900 text-white p-6 sm:p-8 rounded-2xl shadow-2xl max-w-md w-full border border-yellow-500/30"
+              >
+                <button
+                  className="absolute top-4 right-4 text-gray-400 hover:text-white transition"
+                  onClick={() => setShowModal(false)}
+                >
+                  <X size={20} />
+                </button>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="p-2 rounded-full bg-yellow-500/20">
+                    <Lock className="text-yellow-400" size={24} />
+                  </div>
+                  <h3 className="text-xl font-bold text-white">Assessment Locked</h3>
+                </div>
+                <p className="text-gray-300 leading-relaxed mb-4 whitespace-pre-line">{modalMessage}</p>
+                <button
+                  onClick={() => {
+                    setShowModal(false);
+                    navigate('/learning-path');
+                  }}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-primary-500 to-emerald-400 text-primary-1300 rounded-xl font-semibold hover:scale-105 transition mb-2"
+                >
+                  Go to Learning Path
+                </button>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="w-full px-6 py-2 bg-gray-800 text-gray-300 rounded-xl font-medium hover:bg-gray-700 transition"
+                >
+                  Close
+                </button>
+              </motion.div>
+            </motion.div>,
+            document.body
+          )}
+        </AnimatePresence>
 
-      {/* Assessment Warning Modal */}
-      <AssessmentWarning
-        isOpen={showWarning}
-        onClose={handleWarningClose}
-        onProceed={handleWarningProceed}
-      />
+        {/* Assessment Instructions Modal */}
+        <AssessmentInstructions
+          isOpen={showInstructions}
+          onClose={handleInstructionsClose}
+          onStart={handleInstructionsStart}
+          assessmentType={pendingAssessment?.mode === "survey" ? "Survey" : "MCQ"}
+        />
 
-      {/* Footer */}
+        {/* Assessment Warning Modal */}
+        <AssessmentWarning
+          isOpen={showWarning}
+          onClose={handleWarningClose}
+          onProceed={handleWarningProceed}
+        />
+      </section>
+
+      {/* Footer - full width, sticks to bottom */}
       <Footer />
-    </section>
+    </div>
   );
 }
 
