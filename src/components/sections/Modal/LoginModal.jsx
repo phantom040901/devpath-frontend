@@ -93,7 +93,7 @@ export default function LoginModal() {
       console.log("📧 Email should come from: noreply@devpath-capstone.firebaseapp.com");
 
       // Show alert for debugging
-      alert(`Password reset email sent to: ${inputs.email}\n\nCheck:\n1. Your inbox\n2. Spam/Junk folder\n3. Email from: noreply@devpath-capstone.firebaseapp.com`);
+      alert(`Password reset email sent to: ${inputs.email}\n\n⚠️ IMPORTANT: Check your SPAM/JUNK folder!\n\nLook for email from:\nnoreply@devpath-capstone.firebaseapp.com\n\nIf found, mark it as "Not Spam"`);
     } catch (err) {
       console.error("❌ Password reset error:", err);
       console.error("Error details:", {
@@ -215,8 +215,11 @@ export default function LoginModal() {
           {/* Reset email success message */}
           {resetEmailSent && (
             <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
-              <p className="text-green-400 text-sm font-medium">
-                ✅ Password reset email sent! Check your inbox for a secure reset link from Firebase.
+              <p className="text-green-400 text-sm font-medium mb-2">
+                ✅ Password reset email sent to {inputs.email}!
+              </p>
+              <p className="text-green-300 text-xs">
+                📬 Check your <strong>inbox and spam/junk folder</strong> for an email from Firebase.
               </p>
             </div>
           )}
