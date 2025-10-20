@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../AuthContext.jsx";
 import { useTheme } from "../../../contexts/ThemeContext";
+import PasswordResetModal from "./PasswordResetModal";
 
 const initialState = { email: "", password: "", remember: false };
 
@@ -20,6 +21,7 @@ export default function LoginModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
 
   // Effect to handle redirect after user is authenticated
   useEffect(() => {
@@ -79,11 +81,20 @@ export default function LoginModal() {
     setResetEmailSent(false);
 
     try {
-      console.log("Sending password reset email to:", inputs.email);
-      await resetPassword(inputs.email);
-      setResetEmailSent(true);
-      setError("");
-      console.log("✅ Password reset email sent successfully");
+      console.log("Sending password reset code to:", inputs.email);
+      const result = await resetPassword(inputs.email);
+
+      if (result.requiresVerification) {
+        // Show the password reset modal for code verification
+        setShowResetModal(true);
+        setError("");
+      } else {
+        // Firebase sent email directly
+        setResetEmailSent(true);
+        setError("");
+      }
+
+      console.log("✅ Password reset code sent successfully");
     } catch (err) {
       console.error("❌ Password reset error:", err);
       setError(err.message || "Failed to send reset email. Please try again.");
@@ -229,7 +240,7 @@ export default function LoginModal() {
 
           {/* Signup redirect */}
           <p className="text-center text-sm text-primary-200 mt-4">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <button
               type="button"
               onClick={() => setActiveModal("sign-up")}
@@ -240,6 +251,13 @@ export default function LoginModal() {
           </p>
         </form>
       </div>
+
+      {/* Password Reset Modal */}
+      <PasswordResetModal
+        isOpen={showResetModal}
+        onClose={() => setShowResetModal(false)}
+        email={inputs.email}
+      />
     </section>
   );
 }
