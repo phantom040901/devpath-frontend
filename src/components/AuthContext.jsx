@@ -181,61 +181,37 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // ✅ Send password reset email using EmailJS
+  // ✅ Send password reset email using Firebase Auth
   const resetPassword = async (email) => {
     try {
       // Trim email to remove any whitespace
       const trimmedEmail = email.trim();
 
-      console.log("🔐 Attempting to send password reset email via EmailJS...");
+      console.log("🔐 Attempting to send password reset email via Firebase...");
 
-      // Import emailjs dynamically
-      const emailjs = (await import('@emailjs/browser')).default;
+      // Send password reset email using Firebase's built-in method
+      // This sends a secure reset link to the user's email
+      await sendPasswordResetEmail(auth, trimmedEmail, {
+        url: `${window.location.origin}/`, // Redirect to home page after reset
+        handleCodeInApp: false,
+      });
 
-      // Generate reset token (6-digit code for simplicity)
-      const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
-
-      // Store reset code in localStorage with expiry (10 minutes)
-      const resetData = {
-        email: trimmedEmail,
-        code: resetCode,
-        expiry: Date.now() + 10 * 60 * 1000, // 10 minutes
-      };
-      localStorage.setItem('passwordResetData', JSON.stringify(resetData));
-
-      // EmailJS configuration for password reset
-      const serviceId = 'service_fn2o6do';
-      const templateId = 'template_tyn0rjh'; // Password reset template
-      const publicKey = 'E0obOJjzr6CNIfzKR';
-
-      // Send reset code via EmailJS
-      const templateParams = {
-        to_email: trimmedEmail,
-        to_name: 'User', // We don't have the name in this context
-        reset_code: resetCode, // Using reset_code variable for password reset template
-        from_name: 'DevPath',
-        from_email: 'alfredcmelencion@gmail.com',
-        reply_to: trimmedEmail,
-      };
-
-      console.log("📧 Template params:", templateParams);
-
-      const response = await emailjs.send(
-        serviceId,
-        templateId,
-        templateParams,
-        publicKey
-      );
-
-      console.log("✅ Password reset email sent successfully via EmailJS", response);
-      return { success: true, requiresVerification: true };
+      console.log("✅ Password reset email sent successfully via Firebase");
+      return { success: true };
     } catch (error) {
       console.error("❌ Password reset error:", error);
-      console.error("Error details:", error.text || error.message);
+      console.error("Error code:", error.code);
+      console.error("Error message:", error.message);
 
-      if (error.text) {
-        throw new Error("Failed to send reset email. Please check your email address.");
-      } else if (error.message?.includes('network')) {
+      if (error.code === "auth/user-not-found") {
+        throw new Error("No account found with this email.");
+      } else if (error.code === "auth/invalid-email") {
+        throw new Error("Invalid email address.");
+      } else if (error.code === "auth/missing-email") {
+        throw new Error("Please enter an email address.");
+      } else if (error.code === "auth/too-many-requests") {
+        throw new Error("Too many requests. Please try again later.");
+      } else if (error.code === "auth/network-request-failed") {
         throw new Error("Network error. Please check your internet connection.");
       } else {
         throw new Error(error.message || "Failed to send reset email. Please try again.");

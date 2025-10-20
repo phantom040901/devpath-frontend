@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../../AuthContext.jsx";
 import { useTheme } from "../../../contexts/ThemeContext";
-import PasswordResetModal from "./PasswordResetModal";
 
 const initialState = { email: "", password: "", remember: false };
 
@@ -21,7 +20,6 @@ export default function LoginModal() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [resetEmailSent, setResetEmailSent] = useState(false);
-  const [showResetModal, setShowResetModal] = useState(false);
 
   // Effect to handle redirect after user is authenticated
   useEffect(() => {
@@ -81,20 +79,13 @@ export default function LoginModal() {
     setResetEmailSent(false);
 
     try {
-      console.log("Sending password reset code to:", inputs.email);
-      const result = await resetPassword(inputs.email);
+      console.log("Sending password reset email to:", inputs.email);
+      await resetPassword(inputs.email);
 
-      if (result.requiresVerification) {
-        // Show the password reset modal for code verification
-        setShowResetModal(true);
-        setError("");
-      } else {
-        // Firebase sent email directly
-        setResetEmailSent(true);
-        setError("");
-      }
-
-      console.log("✅ Password reset code sent successfully");
+      // Firebase sent email successfully
+      setResetEmailSent(true);
+      setError("");
+      console.log("✅ Password reset email sent successfully");
     } catch (err) {
       console.error("❌ Password reset error:", err);
       setError(err.message || "Failed to send reset email. Please try again.");
@@ -207,7 +198,7 @@ export default function LoginModal() {
           {resetEmailSent && (
             <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
               <p className="text-green-400 text-sm font-medium">
-                ✅ Password reset email sent! Check your inbox.
+                ✅ Password reset email sent! Check your inbox for a secure reset link from Firebase.
               </p>
             </div>
           )}
@@ -251,13 +242,6 @@ export default function LoginModal() {
           </p>
         </form>
       </div>
-
-      {/* Password Reset Modal */}
-      <PasswordResetModal
-        isOpen={showResetModal}
-        onClose={() => setShowResetModal(false)}
-        email={inputs.email}
-      />
     </section>
   );
 }
