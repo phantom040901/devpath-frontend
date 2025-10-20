@@ -10,7 +10,7 @@ const initialState = { email: "", password: "", remember: false };
 
 export default function LoginModal() {
   const { setActiveModal } = useModalContext();
-  const { login, user } = useAuth();
+  const { login, user, resetPassword } = useAuth();
   const { theme } = useTheme();
   const navigate = useNavigate();
 
@@ -19,6 +19,7 @@ export default function LoginModal() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const [resetEmailSent, setResetEmailSent] = useState(false);
 
   // Effect to handle redirect after user is authenticated
   useEffect(() => {
@@ -55,6 +56,27 @@ export default function LoginModal() {
       setLoginSuccess(true); // Trigger the useEffect to redirect
     } catch (err) {
       setError(err.message || "Login failed. Please try again.");
+      setIsLoading(false);
+    }
+  }
+
+  async function handleForgotPassword() {
+    if (!inputs.email) {
+      setError("Please enter your email address first.");
+      return;
+    }
+
+    setError("");
+    setIsLoading(true);
+    setResetEmailSent(false);
+
+    try {
+      await resetPassword(inputs.email);
+      setResetEmailSent(true);
+      setError("");
+    } catch (err) {
+      setError(err.message || "Failed to send reset email. Please try again.");
+    } finally {
       setIsLoading(false);
     }
   }
@@ -122,7 +144,19 @@ export default function LoginModal() {
 
           {/* Password */}
           <label className="flex flex-col gap-1 relative">
-            <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Password</span>
+            <div className="flex justify-between items-center">
+              <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Password</span>
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={isLoading}
+                className={`text-xs font-medium transition hover:underline ${
+                  theme === 'light' ? 'text-primary-600 hover:text-primary-700' : 'text-primary-400 hover:text-primary-300'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                Forgot Password?
+              </button>
+            </div>
             <div className="relative">
               <input
                 name="password"
@@ -130,7 +164,7 @@ export default function LoginModal() {
                 placeholder="Enter your password"
                 value={inputs.password}
                 onChange={handleInputs}
-                className="w-full rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3 pr-10 
+                className="w-full rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3 pr-10
                 placeholder:opacity-40 focus:ring-2 focus:ring-primary-500 outline-none"
                 required
                 disabled={isLoading}
@@ -145,6 +179,15 @@ export default function LoginModal() {
               </button>
             </div>
           </label>
+
+          {/* Reset email success message */}
+          {resetEmailSent && (
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3">
+              <p className="text-green-400 text-sm font-medium">
+                ✅ Password reset email sent! Check your inbox.
+              </p>
+            </div>
+          )}
 
           {/* Remember me */}
           <label className={`flex items-center gap-2 text-sm ${theme === 'light' ? 'text-gray-600' : 'text-primary-200'}`}>

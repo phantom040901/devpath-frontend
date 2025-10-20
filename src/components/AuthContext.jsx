@@ -7,6 +7,7 @@ import {
   signOut,
   onAuthStateChanged,
   updateProfile,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
@@ -180,6 +181,24 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // ✅ Send password reset email
+  const resetPassword = async (email) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return true;
+    } catch (error) {
+      console.error("❌ Password reset error:", error);
+
+      if (error.code === "auth/user-not-found") {
+        throw new Error("No account found with this email.");
+      } else if (error.code === "auth/invalid-email") {
+        throw new Error("Invalid email address.");
+      } else {
+        throw new Error(error.message || "Failed to send reset email. Please try again.");
+      }
+    }
+  };
+
   const value = {
     user,
     loading,
@@ -188,6 +207,7 @@ export function AuthProvider({ children }) {
     logout,
     updateUserProfile,
     refreshUserData,
+    resetPassword,
   };
 
   return (
