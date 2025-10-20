@@ -83,14 +83,30 @@ export default function PasswordResetModal({ isOpen, onClose, email }) {
     setError("");
 
     try {
-      // Use Firebase's built-in password reset
-      // Since we can't change password without being logged in, we'll use Firebase's sendPasswordResetEmail instead
-      // The user will get a secure Firebase reset link
+      // Get verification code from localStorage
+      const resetDataStr = localStorage.getItem('passwordResetData');
+      if (!resetDataStr) {
+        setError("Reset session expired. Please request a new password reset.");
+        setIsLoading(false);
+        return;
+      }
 
-      const { auth } = await import("../../../lib/firebase");
-      const { sendPasswordResetEmail } = await import("firebase/auth");
+      const resetData = JSON.parse(resetDataStr);
 
-      await sendPasswordResetEmail(auth, email);
+      // Call Firebase Cloud Function to reset password
+      const { functions } = await import("../../../lib/firebase");
+      const { httpsCallable } = await import("firebase/functions");
+
+      const resetUserPassword = httpsCallable(functions, 'resetUserPassword');
+
+      console.log("🔐 Calling Cloud Function to reset password...");
+      const result = await resetUserPassword({
+        email: email,
+        verificationCode: resetData.code,
+        newPassword: newPassword,
+      });
+
+      console.log("✅ Password reset successfully:", result.data);
 
       // Clean up localStorage
       localStorage.removeItem('passwordResetData');
@@ -98,7 +114,14 @@ export default function PasswordResetModal({ isOpen, onClose, email }) {
       setStep(3);
     } catch (err) {
       console.error("❌ Password reset error:", err);
-      setError(err.message || "Failed to reset password. Please try again.");
+
+      if (err.code === 'functions/not-found') {
+        setError("No user found with this email address.");
+      } else if (err.code === 'functions/invalid-argument') {
+        setError(err.message || "Password does not meet requirements.");
+      } else {
+        setError(err.message || "Failed to reset password. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -379,20 +402,20 @@ export default function PasswordResetModal({ isOpen, onClose, email }) {
                   <h2 className={`text-2xl font-bold mb-2 ${
                     theme === 'light' ? 'text-gray-900' : 'text-white'
                   }`}>
-                    Check Your Email
+                    Password Reset Successfully!
                   </h2>
                   <p className={`text-sm ${
                     theme === 'light' ? 'text-gray-600' : 'text-gray-400'
                   }`}>
-                    We've sent you a secure password reset link to <strong>{email}</strong>.
-                    Click the link in the email to complete your password reset.
+                    Your password has been changed successfully for <strong>{email}</strong>.
+                    You can now log in with your new password.
                   </p>
                 </div>
                 <button
                   onClick={handleClose}
                   className="w-full bg-gradient-to-r from-primary-500 to-emerald-400 hover:from-primary-600 hover:to-emerald-500 text-white rounded-xl py-3 font-semibold transition"
                 >
-                  Done
+                  Back to Login
                 </button>
               </div>
             )}

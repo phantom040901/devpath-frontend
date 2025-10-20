@@ -1,5 +1,9 @@
 const functions = require('firebase-functions');
+const admin = require('firebase-admin');
 const nodemailer = require('nodemailer');
+
+// Initialize Firebase Admin
+admin.initializeApp();
 
 // Configure Gmail transporter with your credentials
 const transporter = nodemailer.createTransport({
@@ -241,6 +245,75 @@ exports.sendWelcomeEmail = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError(
       'internal',
       'Failed to send welcome email: ' + error.message
+    );
+  }
+});
+
+// Reset Password Function
+exports.resetUserPassword = functions.https.onCall(async (data, context) => {
+  const { email, verificationCode, newPassword } = data;
+
+  // Validate input
+  if (!email || !verificationCode || !newPassword) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'Missing required fields: email, verificationCode, or newPassword'
+    );
+  }
+
+  // Validate password strength
+  if (newPassword.length < 8) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'Password must be at least 8 characters long'
+    );
+  }
+
+  if (!/[A-Z]/.test(newPassword)) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'Password must contain at least one uppercase letter'
+    );
+  }
+
+  if (!/[a-z]/.test(newPassword)) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'Password must contain at least one lowercase letter'
+    );
+  }
+
+  if (!/[0-9]/.test(newPassword)) {
+    throw new functions.https.HttpsError(
+      'invalid-argument',
+      'Password must contain at least one number'
+    );
+  }
+
+  try {
+    // Get user by email
+    const userRecord = await admin.auth().getUserByEmail(email);
+
+    // Update user password
+    await admin.auth().updateUser(userRecord.uid, {
+      password: newPassword,
+    });
+
+    console.log(`✅ Password reset successfully for user: ${email}`);
+    return { success: true, message: 'Password reset successfully' };
+  } catch (error) {
+    console.error('❌ Error resetting password:', error);
+
+    if (error.code === 'auth/user-not-found') {
+      throw new functions.https.HttpsError(
+        'not-found',
+        'No user found with this email address'
+      );
+    }
+
+    throw new functions.https.HttpsError(
+      'internal',
+      'Failed to reset password: ' + error.message
     );
   }
 });
