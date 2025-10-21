@@ -1,230 +1,206 @@
 // src/components/dashboard/DashboardFooter.jsx
+import { useState } from "react";
 import { Link } from 'react-router-dom';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Github, 
-  Linkedin, 
-  Twitter,
-  Heart,
-  ExternalLink
-} from 'lucide-react';
+import { Facebook, Twitter, Linkedin, Github } from "lucide-react";
+import ContactSupportModal from "../sections/ContactSupportModal";
+import PrivacyPolicyModal from "../sections/PrivacyPolicyModal";
+import TermsOfServiceModal from "../sections/TermsOfServiceModal";
+import logoImage from "../../assets/logo.png";
 
-export default function DashboardFooter() {
-  const currentYear = new Date().getFullYear();
+const socialIcons = {
+  facebook: Facebook,
+  twitter: Twitter,
+  linkedin: Linkedin,
+  github: Github,
+};
+
+const socialLinks = [
+  { id: 1, name: "Facebook", icon: "facebook", url: "https://facebook.com" },
+  { id: 2, name: "Twitter", icon: "twitter", url: "https://twitter.com" },
+  { id: 3, name: "LinkedIn", icon: "linkedin", url: "https://linkedin.com" },
+  { id: 4, name: "GitHub", icon: "github", url: "https://github.com" },
+];
+
+const dashboardFooterCols = [
+  {
+    id: 1,
+    category: "Dashboard",
+    links: [
+      { text: "Overview", href: "/student-dashboard" },
+      { text: "Assessments", href: "/assessments" },
+      { text: "Career Matches", href: "/career-matches" },
+      { text: "Learning Roadmap", href: "/career-roadmap" },
+    ],
+  },
+  {
+    id: 2,
+    category: "Support",
+    links: [
+      { text: "Messages", href: "/student/messaging" },
+      { text: "Contact Support", href: "#contact", isModal: true },
+      { text: "Help Center", href: "#" },
+    ],
+  },
+  {
+    id: 3,
+    category: "Legal",
+    links: [
+      { text: "Privacy Policy", href: "#privacy", isModal: true },
+      { text: "Terms of Service", href: "#terms", isModal: true },
+      { text: "Cookie Policy", href: "#privacy", isModal: true },
+    ],
+  },
+];
+
+function SocialMediaLinks() {
+  return (
+    <div className="flex gap-4 mt-6">
+      {socialLinks.map((social) => {
+        const Icon = socialIcons[social.icon];
+        return (
+          <a
+            key={social.id}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-11 h-11 rounded-full bg-gray-800 hover:bg-primary-600 hover:scale-110 flex items-center justify-center transition-all duration-300 group shadow-md hover:shadow-xl"
+            aria-label={social.name}
+          >
+            <Icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
+function FooterColumn({ col, onContactClick, onPrivacyClick, onTermsClick }) {
+  return (
+    <div>
+      <p className="text-white mb-6 text-lg font-semibold">
+        {col.category}
+      </p>
+      <ul className="flex flex-col gap-y-3">
+        {col.links.map((link, i) => (
+          <FooterLink
+            key={i}
+            link={link}
+            onContactClick={onContactClick}
+            onPrivacyClick={onPrivacyClick}
+            onTermsClick={onTermsClick}
+          />
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function FooterLink({ link, onContactClick, onPrivacyClick, onTermsClick }) {
+  const handleClick = (e) => {
+    if (link.isModal) {
+      e.preventDefault();
+      if (link.text === "Contact Support") {
+        onContactClick();
+      } else if (link.text === "Privacy Policy") {
+        onPrivacyClick();
+      } else if (link.text === "Terms of Service") {
+        onTermsClick();
+      }
+    }
+  };
+
+  const content = (
+    <span className="text-gray-400 hover:text-blue-400 transition-colors text-base font-normal hover:translate-x-1 inline-block transition-transform">
+      {link.text}
+    </span>
+  );
 
   return (
-    <footer className="bg-gray-900/70 border-t border-gray-800/50 backdrop-blur-sm mt-auto w-full">
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-          {/* Brand Section */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-white flex items-center gap-2">
-              <span className="text-primary-400">Dev</span>Path
-            </h3>
-            <p className="text-gray-400 text-sm leading-relaxed">
-              AI-powered career guidance platform helping students discover their ideal tech career path through personalized assessments and roadmaps.
-            </p>
-            <div className="flex items-center gap-3">
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 text-gray-400 hover:text-white transition-all"
-                aria-label="GitHub"
-              >
-                <Github size={18} />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 text-gray-400 hover:text-white transition-all"
-                aria-label="LinkedIn"
-              >
-                <Linkedin size={18} />
-              </a>
-              <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg bg-gray-800/50 hover:bg-gray-800 text-gray-400 hover:text-white transition-all"
-                aria-label="Twitter"
-              >
-                <Twitter size={18} />
-              </a>
+    <li className="cursor-pointer">
+      {link.href?.startsWith('/') ? (
+        <Link to={link.href} onClick={handleClick}>
+          {content}
+        </Link>
+      ) : (
+        <a href={link.href} onClick={handleClick}>
+          {content}
+        </a>
+      )}
+    </li>
+  );
+}
+
+export default function DashboardFooter() {
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+
+  return (
+    <>
+      <footer className="relative overflow-hidden bg-black border-t border-gray-800 mt-auto">
+        <div className="relative m-auto max-w-[90rem] px-8 py-16 max-lg:px-6">
+          {/* Main Footer Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-12 mb-12">
+            {/* Left Side - Logo and Social */}
+            <div>
+              <Link to="/student-dashboard" className="flex items-center gap-x-3 mb-4">
+                <img
+                  src={logoImage}
+                  alt="DevPath Logo"
+                  className="h-10 w-auto"
+                />
+                <p className="text-white text-2xl font-bold tracking-tight">
+                  DevPath
+                </p>
+              </Link>
+              <p className="text-gray-400 text-base mb-6 max-w-sm">
+                Discover your ideal tech career path with AI-powered assessments
+                and personalized recommendations.
+              </p>
+              <SocialMediaLinks />
+            </div>
+
+            {/* Right Side - Links */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+              {dashboardFooterCols.map((col) => (
+                <FooterColumn
+                  key={col.id}
+                  col={col}
+                  onContactClick={() => setIsContactModalOpen(true)}
+                  onPrivacyClick={() => setIsPrivacyModalOpen(true)}
+                  onTermsClick={() => setIsTermsModalOpen(true)}
+                />
+              ))}
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link 
-                  to="/student-dashboard" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-1 group"
-                >
-                  <span>Dashboard</span>
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/assessments" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-1 group"
-                >
-                  <span>Assessments</span>
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/career-roadmap" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-1 group"
-                >
-                  <span>Learning Roadmap</span>
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/career-matches" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-1 group"
-                >
-                  <span>Career Matches</span>
-                </Link>
-              </li>
-              <li>
-                <Link 
-                  to="/student/progress" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-1 group"
-                >
-                  <span>Progress</span>
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Resources */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Resources</h4>
-            <ul className="space-y-2">
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-1"
-                >
-                  Help Center
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-1"
-                >
-                  Documentation
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-1"
-                >
-                  Tutorials
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-1"
-                >
-                  FAQs
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-1"
-                >
-                  Community Forum
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Contact & Legal */}
-          <div>
-            <h4 className="text-white font-semibold mb-4">Contact & Legal</h4>
-            <ul className="space-y-2 mb-4">
-              <li>
-                <a 
-                  href="mailto:support@devpath.com" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-2"
-                >
-                  <Mail size={14} />
-                  <span>support@devpath.com</span>
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="tel:+1234567890" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors flex items-center gap-2"
-                >
-                  <Phone size={14} />
-                  <span>+1 (234) 567-890</span>
-                </a>
-              </li>
-            </ul>
-            <ul className="space-y-2">
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors"
-                >
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors"
-                >
-                  Terms of Service
-                </a>
-              </li>
-              <li>
-                <a 
-                  href="#" 
-                  className="text-gray-400 hover:text-primary-400 text-sm transition-colors"
-                >
-                  Cookie Policy
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="pt-6 border-t border-gray-800/50">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-gray-400 text-sm text-center sm:text-left">
-              © {currentYear} DevPath. All rights reserved.
-            </p>
-            
-            <div className="flex items-center gap-1 text-gray-400 text-sm">
-              <span>Made with</span>
-              <Heart size={14} className="text-red-400 fill-red-400" />
-              <span>for aspiring tech professionals</span>
-            </div>
-
-            <div className="flex items-center gap-4 text-xs text-gray-500">
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                All Systems Operational
-              </span>
+          {/* Bottom Bar */}
+          <div className="border-t border-gray-800 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="text-gray-500 text-sm">
+                © {new Date().getFullYear()} DevPath. All rights reserved.
+              </p>
+              <p className="text-gray-500 text-sm">
+                Made with ❤️ for aspiring developers
+              </p>
             </div>
           </div>
         </div>
-      </div>
-    </footer>
+      </footer>
+
+      {/* Modals */}
+      <ContactSupportModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
+      <PrivacyPolicyModal
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
+      />
+      <TermsOfServiceModal
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
+      />
+    </>
   );
 }
