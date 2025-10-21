@@ -393,8 +393,8 @@ const footerCols = [
     category: "Support",
     links: [
       { text: "Contact Support", href: "#contact", isModal: true },
-      { text: "Privacy Policy", href: "#privacy" },
-      { text: "Terms of Service", href: "#terms" },
+      { text: "Privacy Policy", href: "#privacy", isModal: true },
+      { text: "Terms of Service", href: "#terms", isModal: true },
     ],
   },
 ];

@@ -4,6 +4,8 @@ import Logo from "../icons/Logo";
 import { useTheme } from "../../contexts/ThemeContext";
 import { Facebook, Twitter, Linkedin, Github } from "lucide-react";
 import ContactSupportModal from "./ContactSupportModal";
+import PrivacyPolicyModal from "./PrivacyPolicyModal";
+import TermsOfServiceModal from "./TermsOfServiceModal";
 
 const socialIcons = {
   facebook: Facebook,
@@ -34,7 +36,7 @@ function SocialMediaLinks() {
   );
 }
 
-function FooterColumn({ col, onContactClick }) {
+function FooterColumn({ col, onContactClick, onPrivacyClick, onTermsClick }) {
   return (
     <div>
       <p className="dark:text-white light:text-black mb-6 text-lg font-semibold">
@@ -46,6 +48,8 @@ function FooterColumn({ col, onContactClick }) {
             key={i}
             link={link}
             onContactClick={onContactClick}
+            onPrivacyClick={onPrivacyClick}
+            onTermsClick={onTermsClick}
           />
         ))}
       </ul>
@@ -53,11 +57,17 @@ function FooterColumn({ col, onContactClick }) {
   );
 }
 
-function FooterLink({ link, onContactClick }) {
+function FooterLink({ link, onContactClick, onPrivacyClick, onTermsClick }) {
   const handleClick = (e) => {
     if (link.isModal) {
       e.preventDefault();
-      onContactClick();
+      if (link.text === "Contact Support") {
+        onContactClick();
+      } else if (link.text === "Privacy Policy") {
+        onPrivacyClick();
+      } else if (link.text === "Terms of Service") {
+        onTermsClick();
+      }
     }
   };
 
@@ -77,6 +87,8 @@ function FooterLink({ link, onContactClick }) {
 export default function Footer() {
   const { theme } = useTheme();
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   return (
     <>
@@ -110,6 +122,8 @@ export default function Footer() {
                   key={col.id}
                   col={col}
                   onContactClick={() => setIsContactModalOpen(true)}
+                  onPrivacyClick={() => setIsPrivacyModalOpen(true)}
+                  onTermsClick={() => setIsTermsModalOpen(true)}
                 />
               ))}
             </div>
@@ -129,10 +143,18 @@ export default function Footer() {
         </div>
       </footer>
 
-      {/* Contact Support Modal */}
+      {/* Modals */}
       <ContactSupportModal
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
+      />
+      <PrivacyPolicyModal
+        isOpen={isPrivacyModalOpen}
+        onClose={() => setIsPrivacyModalOpen(false)}
+      />
+      <TermsOfServiceModal
+        isOpen={isTermsModalOpen}
+        onClose={() => setIsTermsModalOpen(false)}
       />
     </>
   );
