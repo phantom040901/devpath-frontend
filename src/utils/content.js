@@ -374,27 +374,27 @@ const footerCols = [
     id: 1,
     category: "Product",
     links: [
-      { text: "Dashboard", href: "/dashboard" },
-      { text: "Assessments", href: "/dashboard" },
-      { text: "Career Matches", href: "/dashboard" },
+      { text: "Features", href: "#about" },
+      { text: "How It Works", href: "#how-it-works" },
+      { text: "System Preview", href: "#system-preview" },
     ],
   },
   {
     id: 2,
-    category: "Resources",
+    category: "Company",
     links: [
-      { text: "About Us", href: "#about" },
-      { text: "How It Works", href: "#how-it-works" },
+      { text: "About DevPath", href: "#about" },
       { text: "FAQs", href: "#faqs" },
+      { text: "Contact Support", href: "#contact", isModal: true },
     ],
   },
   {
     id: 3,
-    category: "Support",
+    category: "Legal",
     links: [
-      { text: "Contact Support", href: "#contact", isModal: true },
       { text: "Privacy Policy", href: "#privacy", isModal: true },
       { text: "Terms of Service", href: "#terms", isModal: true },
+      { text: "Cookie Policy", href: "#privacy", isModal: true },
     ],
   },
 ];
