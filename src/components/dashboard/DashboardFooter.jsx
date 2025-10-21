@@ -1,10 +1,11 @@
 // src/components/dashboard/DashboardFooter.jsx
 import { useState } from "react";
 import { Link } from 'react-router-dom';
-import { Facebook, Twitter, Linkedin, Github } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Github, Users } from "lucide-react";
 import ContactSupportModal from "../sections/ContactSupportModal";
 import PrivacyPolicyModal from "../sections/PrivacyPolicyModal";
 import TermsOfServiceModal from "../sections/TermsOfServiceModal";
+import { useUserPresence } from "../../hooks/useUserPresence";
 import logoImage from "../../assets/logo.png";
 
 const socialIcons = {
@@ -63,10 +64,10 @@ function SocialMediaLinks() {
             href={social.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-11 h-11 rounded-full bg-gray-800 hover:bg-primary-600 hover:scale-110 flex items-center justify-center transition-all duration-300 group shadow-md hover:shadow-xl"
+            className="w-11 h-11 rounded-full bg-gray-800 dark:bg-gray-800 hover:bg-primary-600 dark:hover:bg-primary-600 hover:scale-110 flex items-center justify-center transition-all duration-300 group shadow-md hover:shadow-xl"
             aria-label={social.name}
           >
-            <Icon className="w-5 h-5 text-gray-400 group-hover:text-white transition-colors" />
+            <Icon className="w-5 h-5 text-white dark:text-gray-400 group-hover:text-white transition-colors" />
           </a>
         );
       })}
@@ -77,7 +78,7 @@ function SocialMediaLinks() {
 function FooterColumn({ col, onContactClick, onPrivacyClick, onTermsClick }) {
   return (
     <div>
-      <p className="text-white mb-6 text-lg font-semibold">
+      <p className="text-gray-900 dark:text-white mb-6 text-lg font-semibold">
         {col.category}
       </p>
       <ul className="flex flex-col gap-y-3">
@@ -110,7 +111,7 @@ function FooterLink({ link, onContactClick, onPrivacyClick, onTermsClick }) {
   };
 
   const content = (
-    <span className="text-gray-400 hover:text-blue-400 transition-colors text-base font-normal hover:translate-x-1 inline-block transition-transform">
+    <span className="text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-base font-normal hover:translate-x-1 inline-block transition-transform">
       {link.text}
     </span>
   );
@@ -134,10 +135,11 @@ export default function DashboardFooter() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const { onlineUsers } = useUserPresence();
 
   return (
     <>
-      <footer className="relative overflow-hidden bg-black border-t border-gray-800 mt-auto">
+      <footer className="relative overflow-hidden bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-gray-800 mt-auto">
         <div className="relative m-auto max-w-[90rem] px-8 py-16 max-lg:px-6">
           {/* Main Footer Content */}
           <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-12 mb-12">
@@ -149,11 +151,11 @@ export default function DashboardFooter() {
                   alt="DevPath Logo"
                   className="h-10 w-auto"
                 />
-                <p className="text-white text-2xl font-bold tracking-tight">
+                <p className="text-gray-900 dark:text-white text-2xl font-bold tracking-tight">
                   DevPath
                 </p>
               </Link>
-              <p className="text-gray-400 text-base mb-6 max-w-sm">
+              <p className="text-gray-600 dark:text-gray-400 text-base mb-6 max-w-sm">
                 Discover your ideal tech career path with AI-powered assessments
                 and personalized recommendations.
               </p>
@@ -175,12 +177,21 @@ export default function DashboardFooter() {
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-gray-800 pt-8">
+          <div className="border-t border-gray-200 dark:border-gray-800 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-500 dark:text-gray-500 text-sm">
                 © {new Date().getFullYear()} DevPath. All rights reserved.
               </p>
-              <p className="text-gray-500 text-sm">
+
+              {/* Online Users Count */}
+              <div className="flex items-center gap-2 text-sm">
+                <span className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-medium">
+                  <Users className="w-4 h-4" />
+                  <span>{onlineUsers} {onlineUsers === 1 ? 'user' : 'users'} online</span>
+                </span>
+              </div>
+
+              <p className="text-gray-500 dark:text-gray-500 text-sm">
                 Made with ❤️ for aspiring developers
               </p>
             </div>

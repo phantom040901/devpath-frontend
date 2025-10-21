@@ -5,6 +5,7 @@ import { db } from "../../lib/firebase";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import AdminNav from "../../components/admin/AdminNav";
+import OnlineUsersWidget from "../../components/admin/OnlineUsersWidget";
 import Chart from 'chart.js/auto';
 import { useRef } from "react";
 import {
@@ -460,8 +461,9 @@ export default function AdminDashboard() {
             </motion.div>
           </div>
 
-          {/* Top Performers */}
-          <div>
+          {/* Right Sidebar - Top Performers and Online Users */}
+          <div className="space-y-6">
+            {/* Top Performers */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -505,6 +507,9 @@ export default function AdminDashboard() {
                 )}
               </div>
             </motion.div>
+
+            {/* Online Users Widget */}
+            <OnlineUsersWidget />
           </div>
         </div>
       </main>
