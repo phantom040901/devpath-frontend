@@ -372,23 +372,57 @@ const assessmentAreas = [
 const footerCols = [
   {
     id: 1,
-    category: "Explore",
-    links: ["Roadmaps", "Courses", "Projects", "Resources"],
+    category: "Product",
+    links: [
+      { text: "Dashboard", href: "/dashboard" },
+      { text: "Assessments", href: "/dashboard" },
+      { text: "Career Matches", href: "/dashboard" },
+    ],
   },
   {
     id: 2,
-    category: "Learning",
-    links: ["Tutorials", "Challenges", "Quizzes", "Certifications"],
+    category: "Resources",
+    links: [
+      { text: "About Us", href: "#about" },
+      { text: "How It Works", href: "#how-it-works" },
+      { text: "FAQs", href: "#faqs" },
+    ],
   },
   {
     id: 3,
-    category: "About",
-    links: ["Our Mission", "Team", "Contact", "Terms & Policies"],
+    category: "Support",
+    links: [
+      { text: "Contact Support", href: "#contact", isModal: true },
+      { text: "Privacy Policy", href: "#privacy" },
+      { text: "Terms of Service", href: "#terms" },
+    ],
+  },
+];
+
+const socialLinks = [
+  {
+    id: 1,
+    name: "Facebook",
+    icon: "facebook",
+    url: "https://facebook.com/devpath",
+  },
+  {
+    id: 2,
+    name: "Twitter",
+    icon: "twitter",
+    url: "https://twitter.com/devpath",
+  },
+  {
+    id: 3,
+    name: "LinkedIn",
+    icon: "linkedin",
+    url: "https://linkedin.com/company/devpath",
   },
   {
     id: 4,
-    category: "Community",
-    links: ["Forum", "Blog", "Events", "Mentorship"],
+    name: "GitHub",
+    icon: "github",
+    url: "https://github.com/devpath",
   },
 ];
 
@@ -420,5 +454,6 @@ export {
   careerPaths,
   assessmentAreas,
   footerCols,
+  socialLinks,
   features,
 };

@@ -1,71 +1,74 @@
-import { footerCols } from "../../utils/content";
+import { useState } from "react";
+import { footerCols, socialLinks } from "../../utils/content";
 import Logo from "../icons/Logo";
 import { useTheme } from "../../contexts/ThemeContext";
-import { useEffect, useRef } from "react";
+import { Facebook, Twitter, Linkedin, Github } from "lucide-react";
+import ContactSupportModal from "./ContactSupportModal";
 
-function FooterColumn({ col, theme }) {
-  const titleRef = useRef(null);
-  const containerRef = useRef(null);
+const socialIcons = {
+  facebook: Facebook,
+  twitter: Twitter,
+  linkedin: Linkedin,
+  github: Github,
+};
 
-  useEffect(() => {
-    if (titleRef.current) {
-      if (theme === 'light') {
-        titleRef.current.style.setProperty('color', '#000000', 'important');
-      } else {
-        titleRef.current.style.setProperty('color', '#ffffff', 'important');
-      }
-    }
-    if (containerRef.current) {
-      const allElements = containerRef.current.querySelectorAll('*');
-      allElements.forEach(el => {
-        if (theme === 'light') {
-          if (!el.hasAttribute('data-logo')) {
-            el.style.setProperty('color', '#374151', 'important');
-          }
-        } else {
-          if (!el.hasAttribute('data-logo')) {
-            el.style.setProperty('color', '#f3f4f6', 'important');
-          }
-        }
-      });
-    }
-  }, [theme]);
-
+function SocialMediaLinks() {
   return (
-    <div ref={containerRef}>
-      <p ref={titleRef} className="dark:text-white light:text-black mb-8 text-xl/loose font-semibold max-md:text-lg/8 max-md:tracking-tight">
+    <div className="flex gap-4 mt-6">
+      {socialLinks.map((social) => {
+        const Icon = socialIcons[social.icon];
+        return (
+          <a
+            key={social.id}
+            href={social.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-800 hover:bg-blue-600 dark:hover:bg-blue-600 flex items-center justify-center transition-all duration-300 group"
+            aria-label={social.name}
+          >
+            <Icon className="w-5 h-5 text-gray-600 dark:text-gray-400 group-hover:text-white transition-colors" />
+          </a>
+        );
+      })}
+    </div>
+  );
+}
+
+function FooterColumn({ col, onContactClick }) {
+  return (
+    <div>
+      <p className="dark:text-white light:text-black mb-6 text-lg font-semibold">
         {col.category}
       </p>
-      <ul className="flex flex-col gap-y-4">
+      <ul className="flex flex-col gap-y-3">
         {col.links.map((link, i) => (
-          <FooterLink key={i} link={link} theme={theme} />
+          <FooterLink
+            key={i}
+            link={link}
+            onContactClick={onContactClick}
+          />
         ))}
       </ul>
     </div>
   );
 }
 
-function FooterLink({ link, theme }) {
-  const linkRef = useRef(null);
-
-  useEffect(() => {
-    if (linkRef.current) {
-      if (theme === 'light') {
-        linkRef.current.style.setProperty('color', '#4b5563', 'important');
-      } else {
-        linkRef.current.style.setProperty('color', '#f3f4f6', 'important');
-      }
+function FooterLink({ link, onContactClick }) {
+  const handleClick = (e) => {
+    if (link.isModal) {
+      e.preventDefault();
+      onContactClick();
     }
-  }, [theme]);
+  };
 
   return (
     <li className="cursor-pointer">
       <a
-        ref={linkRef}
-        className="dark:text-gray-100 light:text-gray-600 dark:hover:text-cyan-400 light:hover:text-primary-600 transition-properties text-lg/8 font-light max-xl:text-base/loose"
-        href="#"
+        className="dark:text-gray-400 light:text-gray-600 dark:hover:text-blue-400 light:hover:text-blue-600 transition-colors text-base font-normal hover:translate-x-1 inline-block transition-transform"
+        href={link.href}
+        onClick={handleClick}
       >
-        {link}
+        {link.text}
       </a>
     </li>
   );
@@ -73,86 +76,64 @@ function FooterLink({ link, theme }) {
 
 export default function Footer() {
   const { theme } = useTheme();
-  const logoTextRef = useRef(null);
-  const logoContainerRef = useRef(null);
-  const footerRef = useRef(null);
-
-  useEffect(() => {
-    if (logoTextRef.current) {
-      if (theme === 'light') {
-        logoTextRef.current.style.setProperty('color', '#000000', 'important');
-      } else {
-        logoTextRef.current.style.setProperty('color', '#ffffff', 'important');
-      }
-    }
-    if (logoContainerRef.current) {
-      const logoText = logoContainerRef.current.querySelector('p');
-      if (logoText) {
-        logoText.setAttribute('data-logo', 'true');
-      }
-    }
-
-    // Force footer background color to match FAQ section
-    if (footerRef.current) {
-      if (theme === 'light') {
-        // Match FAQ light background (gray-50)
-        footerRef.current.style.setProperty('background-color', '#f9fafb', 'important');
-      } else {
-        // Match FAQ dark background - continue from black
-        footerRef.current.style.setProperty('background-color', '#000000', 'important');
-      }
-
-      // Hide the gradient overlay div to blend seamlessly with FAQ
-      const gradientDiv = footerRef.current.querySelector('.absolute.inset-0');
-      if (gradientDiv) {
-        gradientDiv.style.setProperty('display', 'none', 'important');
-      }
-
-      // Force all text in footer to be visible
-      const allTextElements = footerRef.current.querySelectorAll('p, a, li, span, div');
-      allTextElements.forEach(el => {
-        if (theme === 'light') {
-          el.style.setProperty('color', '#1f2937', 'important');
-        } else {
-          el.style.setProperty('color', '#f9fafb', 'important');
-        }
-      });
-
-      // Override for logo text specifically
-      if (logoTextRef.current) {
-        if (theme === 'light') {
-          logoTextRef.current.style.setProperty('color', '#000000', 'important');
-        } else {
-          logoTextRef.current.style.setProperty('color', '#ffffff', 'important');
-        }
-      }
-    }
-  }, [theme]);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
   return (
-    <footer ref={footerRef} className="relative overflow-hidden dark:bg-primary-1500 light:bg-gray-100">
-      {/* Smooth gradient blend from FAQ */}
-      <div className="absolute inset-0 dark:bg-gradient-to-b dark:from-black dark:to-primary-1500 light:bg-gray-100" />
+    <>
+      <footer className="relative overflow-hidden dark:bg-black light:bg-gray-50 border-t dark:border-gray-800 light:border-gray-200">
+        <div className="relative m-auto max-w-[90rem] px-8 py-16 max-lg:px-6">
+          {/* Main Footer Content */}
+          <div className="grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-12 mb-12">
+            {/* Left Side - Logo and Social */}
+            <div>
+              <a className="flex items-center gap-x-3 mb-4" href="/">
+                <Logo
+                  className="stroke-primary-500 h-7"
+                  alt="DevPath Logo Icon"
+                  width={5}
+                />
+                <p className="dark:text-white light:text-black text-2xl font-bold tracking-tight">
+                  DevPath
+                </p>
+              </a>
+              <p className="dark:text-gray-400 light:text-gray-600 text-base mb-6 max-w-sm">
+                Discover your ideal tech career path with AI-powered assessments
+                and personalized recommendations.
+              </p>
+              <SocialMediaLinks />
+            </div>
 
-      <div className="relative m-auto flex max-w-[90rem] justify-between px-24 py-20 max-xl:px-16 max-xl:py-16 max-lg:grid max-lg:gap-y-18 max-lg:px-8 max-md:px-6 max-sm:pb-16">
-        <div ref={logoContainerRef}>
-          <a className="flex items-center gap-x-3 max-md:gap-x-2" href="#">
-            <Logo
-              className="stroke-primary-500 h-6"
-              alt="NoteFlow Logo Icon"
-              width={5}
-            />
-            <p ref={logoTextRef} data-logo="true" className="dark:text-white light:text-black text-xl font-bold tracking-tight max-md:text-lg/8 max-md:tracking-tighter">
-              DevPath
-            </p>
-          </a>
+            {/* Right Side - Links */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+              {footerCols.map((col) => (
+                <FooterColumn
+                  key={col.id}
+                  col={col}
+                  onContactClick={() => setIsContactModalOpen(true)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom Bar */}
+          <div className="border-t dark:border-gray-800 light:border-gray-200 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+              <p className="dark:text-gray-500 light:text-gray-600 text-sm">
+                © {new Date().getFullYear()} DevPath. All rights reserved.
+              </p>
+              <p className="dark:text-gray-500 light:text-gray-600 text-sm">
+                Made with ❤️ for aspiring developers
+              </p>
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-[repeat(4,max-content)] gap-x-24 max-xl:gap-x-18 max-lg:gap-x-24 max-md:grid-cols-2 max-md:gap-y-14">
-          {footerCols.map((col) => (
-            <FooterColumn key={col.id} col={col} theme={theme} />
-          ))}
-        </div>
-      </div>
-    </footer>
+      </footer>
+
+      {/* Contact Support Modal */}
+      <ContactSupportModal
+        isOpen={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+      />
+    </>
   );
 }
