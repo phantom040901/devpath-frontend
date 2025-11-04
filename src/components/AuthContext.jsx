@@ -8,6 +8,11 @@ import {
   onAuthStateChanged,
   updateProfile,
   sendPasswordResetEmail,
+  GoogleAuthProvider,
+  GithubAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
 } from "firebase/auth";
 import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
@@ -181,6 +186,124 @@ export function AuthProvider({ children }) {
     }
   };
 
+  // ✅ Sign in with Google OAuth
+  const signInWithGoogle = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({
+        prompt: 'select_account'
+      });
+
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user already exists in Firestore
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        // Create new user profile in Firestore
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          firstName: user.displayName?.split(" ")[0] || "",
+          lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
+          photoURL: user.photoURL || "",
+          createdAt: new Date().toISOString(),
+          emailVerified: user.emailVerified,
+          authProvider: "google",
+          assessmentsCompleted: [],
+          careerPath: null,
+          progress: {
+            technical: 0,
+            personal: 0,
+            overall: 0,
+          },
+        };
+
+        await setDoc(userRef, userData);
+        console.log("✅ New Google user profile created");
+      } else {
+        console.log("✅ Existing user signed in with Google");
+      }
+
+      return result;
+    } catch (error) {
+      console.error("❌ Google sign-in error:", error);
+
+      if (error.code === "auth/popup-closed-by-user") {
+        throw new Error("Sign-in popup was closed. Please try again.");
+      } else if (error.code === "auth/popup-blocked") {
+        throw new Error("Popup was blocked by the browser. Please allow popups and try again.");
+      } else if (error.code === "auth/account-exists-with-different-credential") {
+        throw new Error("An account already exists with this email using a different sign-in method.");
+      } else if (error.code === "auth/cancelled-popup-request") {
+        throw new Error("Sign-in cancelled. Please try again.");
+      } else {
+        throw new Error(error.message || "Failed to sign in with Google. Please try again.");
+      }
+    }
+  };
+
+  // ✅ Sign in with GitHub OAuth
+  const signInWithGitHub = async () => {
+    try {
+      const provider = new GithubAuthProvider();
+      provider.setCustomParameters({
+        allow_signup: 'true'
+      });
+
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      // Check if user already exists in Firestore
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) {
+        // Create new user profile in Firestore
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          firstName: user.displayName?.split(" ")[0] || "",
+          lastName: user.displayName?.split(" ").slice(1).join(" ") || "",
+          photoURL: user.photoURL || "",
+          createdAt: new Date().toISOString(),
+          emailVerified: user.emailVerified,
+          authProvider: "github",
+          assessmentsCompleted: [],
+          careerPath: null,
+          progress: {
+            technical: 0,
+            personal: 0,
+            overall: 0,
+          },
+        };
+
+        await setDoc(userRef, userData);
+        console.log("✅ New GitHub user profile created");
+      } else {
+        console.log("✅ Existing user signed in with GitHub");
+      }
+
+      return result;
+    } catch (error) {
+      console.error("❌ GitHub sign-in error:", error);
+
+      if (error.code === "auth/popup-closed-by-user") {
+        throw new Error("Sign-in popup was closed. Please try again.");
+      } else if (error.code === "auth/popup-blocked") {
+        throw new Error("Popup was blocked by the browser. Please allow popups and try again.");
+      } else if (error.code === "auth/account-exists-with-different-credential") {
+        throw new Error("An account already exists with this email using a different sign-in method.");
+      } else if (error.code === "auth/cancelled-popup-request") {
+        throw new Error("Sign-in cancelled. Please try again.");
+      } else {
+        throw new Error(error.message || "Failed to sign in with GitHub. Please try again.");
+      }
+    }
+  };
+
   // ✅ Send password reset email using Firebase Auth
   const resetPassword = async (email) => {
     try {
@@ -261,6 +384,8 @@ export function AuthProvider({ children }) {
     signup,
     login,
     logout,
+    signInWithGoogle,
+    signInWithGitHub,
     updateUserProfile,
     refreshUserData,
     resetPassword,

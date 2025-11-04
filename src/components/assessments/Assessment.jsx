@@ -146,9 +146,8 @@ export default function Assessment({
           })
         );
 
-        if (data.passage?.text) {
-          setShowWarning(true);
-        }
+        // Always show warning for academic integrity
+        setShowWarning(true);
 
       } catch (err) {
         console.error("Failed to fetch assessment:", err);
@@ -614,35 +613,51 @@ export default function Assessment({
       </AnimatePresence>
 
       {/* Warning Modal */}
-      {showWarning && assessment?.passage && (
+      {showWarning && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md">
           <div className="max-w-lg mx-4 text-center bg-gray-900/95 border border-gray-700 rounded-2xl p-8 shadow-2xl">
             <h2 className="text-2xl sm:text-3xl font-bold text-yellow-400 mb-4">
               Important Notice
             </h2>
-            <p className="text-gray-200 text-lg leading-relaxed">
-              You will be shown a passage for a limited time. Please read it carefully, once the timer starts, you cannot pause or go back.
-            </p>
+            <div className="space-y-4 mb-6">
+              {assessment?.passage?.text && (
+                <p className="text-gray-200 text-lg leading-relaxed">
+                  You will be shown a passage for a limited time. Please read it carefully, once the timer starts, you cannot pause or go back.
+                </p>
+              )}
+
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="text-red-400 flex-shrink-0 mt-0.5" size={20} />
+                  <p className="text-red-300 text-sm text-left leading-relaxed">
+                    <span className="font-bold block mb-1">Academic Integrity Warning:</span>
+                    Please avoid using third-party tools, AI assistants, or external resources during this assessment. This assessment is designed to evaluate your authentic knowledge and skills.
+                  </p>
+                </div>
+              </div>
+            </div>
             <button
               onClick={() => {
                 setShowWarning(false);
-                setShowPassage(true);
-                const displaySeconds = assessment.passage.displayTime || 20;
-                setPassageTimeLeft(displaySeconds);
+                if (assessment?.passage?.text) {
+                  setShowPassage(true);
+                  const displaySeconds = assessment.passage.displayTime || 20;
+                  setPassageTimeLeft(displaySeconds);
 
-                const passageTimer = setInterval(() => {
-                  setPassageTimeLeft((prev) => {
-                    if (prev <= 1) {
-                      clearInterval(passageTimer);
-                      setShowPassage(false);
-                    }
-                    return prev - 1;
-                  });
-                }, 1000);
+                  const passageTimer = setInterval(() => {
+                    setPassageTimeLeft((prev) => {
+                      if (prev <= 1) {
+                        clearInterval(passageTimer);
+                        setShowPassage(false);
+                      }
+                      return prev - 1;
+                    });
+                  }, 1000);
+                }
               }}
-              className="mt-6 px-6 py-3 rounded-full bg-primary-500 text-primary-1300 font-semibold hover:bg-primary-400 transition"
+              className="mt-6 px-8 py-3 rounded-full bg-gradient-to-r from-primary-500 to-emerald-400 text-primary-1300 font-bold hover:scale-105 transition-all shadow-lg"
             >
-              Okay, I Understand
+              I Understand - Start Assessment
             </button>
           </div>
         </div>
