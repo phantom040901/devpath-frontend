@@ -13,14 +13,10 @@ import {
   BarChart3,
   Target,
   Award,
-  Globe,
   Zap,
-  Clock,
   Filter,
   FileCheck,
   Rocket,
-  Building2,
-  Quote,
 } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import logoImage from "../../assets/logo.png";
@@ -61,10 +57,10 @@ export default function EmployerLandingPage() {
   ];
 
   const stats = [
-    { label: "Active Students", value: "500+", icon: Users },
-    { label: "Career Paths", value: "50+", icon: Briefcase },
-    { label: "Success Rate", value: "95%", icon: TrendingUp },
-    { label: "Partner Companies", value: "100+", icon: Globe },
+    { label: "Registered Students", value: "Active", icon: Users },
+    { label: "Assessment Areas", value: "17", icon: Briefcase },
+    { label: "Career Paths", value: "7", icon: TrendingUp },
+    { label: "Verification Tiers", value: "2", icon: Shield },
   ];
 
   const benefits = [
@@ -103,35 +99,6 @@ export default function EmployerLandingPage() {
     },
   ];
 
-  const testimonials = [
-    {
-      company: "TechCorp Solutions",
-      logo: "TC",
-      name: "Sarah Johnson",
-      role: "Head of Recruitment",
-      quote:
-        "DevPath has completely transformed our hiring process. We've hired 15 exceptional developers in the last 6 months, all pre-assessed and ready to contribute from day one.",
-      rating: 5,
-    },
-    {
-      company: "InnovateSoft",
-      logo: "IS",
-      name: "Michael Chen",
-      role: "CTO",
-      quote:
-        "The quality of candidates on DevPath is outstanding. The detailed assessments save us countless hours in technical screening. Highly recommend!",
-      rating: 5,
-    },
-    {
-      company: "DataDrive Inc",
-      logo: "DD",
-      name: "Emily Rodriguez",
-      role: "Talent Acquisition Manager",
-      quote:
-        "We've reduced our time-to-hire by 60% using DevPath. The verification system ensures we're only seeing qualified, serious candidates.",
-      rating: 5,
-    },
-  ];
 
   const pricingTiers = [
     {
@@ -286,7 +253,7 @@ export default function EmployerLandingPage() {
             >
               <Shield className="text-emerald-400" size={20} />
               <span className="text-sm">
-                Trusted by 100+ companies • Verified students only
+                Verified student profiles • Comprehensive assessments
               </span>
             </motion.div>
           </motion.div>
@@ -554,59 +521,6 @@ export default function EmployerLandingPage() {
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Trusted by Leading Companies
-            </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              See what our partners have to say about hiring through DevPath
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="bg-gray-900/70 border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300"
-              >
-                <Quote className="text-blue-400/30 mb-4" size={40} />
-                <p className="text-gray-300 leading-relaxed mb-6 italic">
-                  "{testimonial.quote}"
-                </p>
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="text-yellow-400 fill-yellow-400" size={16} />
-                  ))}
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold">
-                    {testimonial.logo}
-                  </div>
-                  <div>
-                    <div className="text-white font-semibold">{testimonial.name}</div>
-                    <div className="text-gray-400 text-sm">{testimonial.role}</div>
-                    <div className="text-blue-400 text-sm">{testimonial.company}</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Pricing Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-950/30">
         <div className="max-w-6xl mx-auto">
@@ -690,8 +604,7 @@ export default function EmployerLandingPage() {
               Ready to Find Your Next Hire?
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Join 100+ companies already hiring through DevPath. Get verified
-              access to our talent pool today.
+              Get verified access to pre-assessed students with comprehensive career evaluations.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
