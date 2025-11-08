@@ -116,7 +116,7 @@ export default function Footer() {
             </div>
 
             {/* Right Side - Links */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {footerCols.map((col) => (
                 <FooterColumn
                   key={col.id}

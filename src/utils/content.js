@@ -390,6 +390,15 @@ const footerCols = [
   },
   {
     id: 3,
+    category: "For Employers",
+    links: [
+      { text: "Employer Portal", href: "/employers" },
+      { text: "Hire Talent", href: "/employer/signup" },
+      { text: "Employer Login", href: "/employer/login" },
+    ],
+  },
+  {
+    id: 4,
     category: "Legal",
     links: [
       { text: "Privacy Policy", href: "#privacy", isModal: true },

@@ -40,6 +40,7 @@ import EmployersList from "./pages/admin/EmployersList";
 import EmployerVerificationPage from "./pages/admin/EmployerVerification";
 
 // Employer Pages
+import EmployerLandingPage from "./pages/employer/EmployerLandingPage";
 import EmployerLogin from "./pages/employer/EmployerLogin";
 import EmployerSignup from "./pages/employer/EmployerSignup";
 import EmployerVerification from "./pages/employer/EmployerVerification";
@@ -387,6 +388,7 @@ function App() {
         />
 
         {/* Employer Routes */}
+        <Route path="/employers" element={<EmployerLandingPage />} />
         <Route path="/employer/login" element={<EmployerLogin />} />
         <Route path="/employer/signup" element={<EmployerSignup />} />
 
