@@ -133,8 +133,8 @@ export default function SystemPreview({ id = "system-preview" }) {
     },
     {
       icon: <Target className="text-purple-400" size={24} />,
-      title: "AI-Powered Career Matching",
-      description: "Advanced algorithms match you to the best-fit career from 7 tech categories",
+      title: "Career Matching System",
+      description: "Assessment-based matching to recommend the best-fit career from 7 tech categories",
       image: careerMatchesPreview,
       alt: "DevPath Career Matches"
     },
