@@ -1,7 +1,7 @@
 // src/pages/student/NotificationsPage.jsx
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bell, Check, Trash2, Filter, ExternalLink, Loader, AlertTriangle } from 'lucide-react';
+import { Bell, Check, Trash2, Filter, ExternalLink, Loader, AlertTriangle, X, Building2, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../components/AuthContext';
 import DashboardNav from '../../components/dashboard/DashboardNav';
@@ -12,6 +12,8 @@ import {
   markAllAsRead,
   deleteNotification
 } from '../../services/notificationService';
+import { db } from '../../lib/firebase';
+import { doc, updateDoc, getDoc, query, where, collection, getDocs } from 'firebase/firestore';
 
 export default function NotificationsPage() {
   const { user } = useAuth();
@@ -21,6 +23,9 @@ export default function NotificationsPage() {
   const [filter, setFilter] = useState('all'); // all, unread, read
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showContactRequestModal, setShowContactRequestModal] = useState(false);
+  const [selectedContactRequest, setSelectedContactRequest] = useState(null);
+  const [processingRequest, setProcessingRequest] = useState(false);
 
   useEffect(() => {
     if (user?.uid) {
@@ -48,7 +53,24 @@ export default function NotificationsPage() {
           prev.map(n => n.id === notification.id ? { ...n, read: true } : n)
         );
       }
-      
+
+      // Handle contact request notifications specially
+      if (notification.type === 'contact_request') {
+        // Fetch the full contact request details
+        const requestsRef = collection(db, 'contactRequests');
+        const q = query(requestsRef, where('employerId', '==', notification.employerId), where('studentId', '==', user.uid));
+        const snapshot = await getDocs(q);
+
+        if (!snapshot.empty) {
+          setSelectedContactRequest({
+            id: snapshot.docs[0].id,
+            ...snapshot.docs[0].data(),
+          });
+          setShowContactRequestModal(true);
+        }
+        return;
+      }
+
       if (notification.link) {
         navigate(notification.link);
       }
@@ -63,6 +85,61 @@ export default function NotificationsPage() {
       setNotifications(prev => prev.map(n => ({ ...n, read: true })));
     } catch (error) {
       console.error('Error marking all as read:', error);
+    }
+  };
+
+  const handleApproveContactRequest = async () => {
+    if (!selectedContactRequest) return;
+
+    try {
+      setProcessingRequest(true);
+
+      // Update the contact request status
+      const requestRef = doc(db, 'contactRequests', selectedContactRequest.id);
+      await updateDoc(requestRef, {
+        status: 'approved',
+        approvedAt: new Date().toISOString(),
+      });
+
+      // Close modal and refresh notifications
+      setShowContactRequestModal(false);
+      setSelectedContactRequest(null);
+      await loadNotifications();
+
+      // Optionally show success message
+      alert(`Contact request from ${selectedContactRequest.employerName} approved!`);
+    } catch (error) {
+      console.error('Error approving contact request:', error);
+      alert('Failed to approve contact request. Please try again.');
+    } finally {
+      setProcessingRequest(false);
+    }
+  };
+
+  const handleDeclineContactRequest = async () => {
+    if (!selectedContactRequest) return;
+
+    try {
+      setProcessingRequest(true);
+
+      // Update the contact request status
+      const requestRef = doc(db, 'contactRequests', selectedContactRequest.id);
+      await updateDoc(requestRef, {
+        status: 'declined',
+        declinedAt: new Date().toISOString(),
+      });
+
+      // Close modal and refresh notifications
+      setShowContactRequestModal(false);
+      setSelectedContactRequest(null);
+      await loadNotifications();
+
+      alert('Contact request declined.');
+    } catch (error) {
+      console.error('Error declining contact request:', error);
+      alert('Failed to decline contact request. Please try again.');
+    } finally {
+      setProcessingRequest(false);
     }
   };
 
@@ -341,6 +418,91 @@ export default function NotificationsPage() {
                     <>
                       <Trash2 size={18} />
                       Delete All
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Contact Request Modal */}
+      <AnimatePresence>
+        {showContactRequestModal && selectedContactRequest && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4"
+            onClick={() => !processingRequest && setShowContactRequestModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl max-w-md w-full p-6"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-4">
+                  <div className="p-3 bg-blue-500/20 rounded-full">
+                    <Building2 className="text-blue-400" size={28} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Contact Request</h3>
+                    <p className="text-sm text-gray-400 mt-1">From {selectedContactRequest.employerName}</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowContactRequestModal(false)}
+                  disabled={processingRequest}
+                  className="p-2 hover:bg-gray-800 rounded-lg transition"
+                >
+                  <X className="text-gray-400" size={20} />
+                </button>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-gray-300 leading-relaxed">
+                  <strong className="text-white">{selectedContactRequest.employerName}</strong> wants to connect with you.
+                </p>
+                <p className="text-gray-400 text-sm mt-2">
+                  If you approve this request, they will be able to see your contact information (email and phone number if you've made them visible).
+                </p>
+              </div>
+
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6">
+                <p className="text-sm text-blue-400">
+                  <strong>Company:</strong> {selectedContactRequest.employerName}
+                </p>
+                <p className="text-sm text-blue-400 mt-1">
+                  <strong>Email:</strong> {selectedContactRequest.employerEmail}
+                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleDeclineContactRequest}
+                  disabled={processingRequest}
+                  className="flex-1 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {processingRequest ? 'Processing...' : 'Decline'}
+                </button>
+                <button
+                  onClick={handleApproveContactRequest}
+                  disabled={processingRequest}
+                  className="flex-1 py-3 rounded-lg bg-green-500 hover:bg-green-600 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {processingRequest ? (
+                    <>
+                      <Loader size={18} className="animate-spin" />
+                      Approving...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle size={18} />
+                      Approve Request
                     </>
                   )}
                 </button>

@@ -274,7 +274,6 @@ export default function StudentDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:items-start">
           {/* Left Column - Career Path & Roadmap Progress */}
           <div className="lg:col-span-2 space-y-6 h-full">
-            {/* Selected Career Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

@@ -12,6 +12,7 @@ import Logo from "../components/icons/Logo";
 import Chart from 'chart.js/auto';
 import ApiLoadingState from "../components/loading/ApiLoadingState";
 import useApiWithColdStart from "../hooks/useApiWithColdStart";
+// PDF export using browser's native print
 import {
   TrendingUp,
   Award,
@@ -677,6 +678,11 @@ export default function CareerReports() {
   const performanceChartInstance = useRef(null);
   const matchChartInstance = useRef(null);
 
+  // PDF export using browser's native print
+  const handleDownloadReport = () => {
+    window.print();
+  };
+
   useEffect(() => {
     if (!user) return;
     checkCareerSelection();
@@ -1077,10 +1083,6 @@ export default function CareerReports() {
     }
   };
 
-  const handleDownloadReport = () => {
-    window.print();
-  };
-
   const calculateAverages = () => {
     if (!reportData) return { academic: 0, technical: 0, communication: 0 };
     
@@ -1233,6 +1235,197 @@ export default function CareerReports() {
 
   return (
     <div className="min-h-screen flex flex-col overflow-x-hidden w-full bg-gradient-to-b from-primary-1400 via-primary-1500 to-black text-primary-50">
+      {/* Print Styles - Single Page Layout */}
+      <style>{`
+        @media print {
+          @page {
+            size: A4 portrait;
+            margin: 0.4in;
+          }
+
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+          }
+
+          html, body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+            color: #1f2937 !important;
+          }
+
+          /* Force white background on all divs */
+          div, section, main {
+            background: white !important;
+            background-image: none !important;
+            background-gradient: none !important;
+            color: #1f2937 !important;
+          }
+
+          /* Main content container */
+          #career-report-content {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            background: white !important;
+            font-size: 7px !important;
+            min-height: auto !important;
+          }
+
+          /* Show print header */
+          .print-header {
+            display: block !important;
+            margin-bottom: 6px !important;
+          }
+
+          /* Hide screen-only elements */
+          .print\\:hidden,
+          nav, footer, button:not(.print-keep),
+          .tutorial, .loading, [data-print-hide] {
+            display: none !important;
+          }
+
+          /* Ultra compact spacing */
+          .space-y-6 > * + *, .space-y-4 > * + *, .space-y-8 > * + * {
+            margin-top: 4px !important;
+          }
+
+          /* Minimal padding */
+          .p-6, .p-8, .p-10, .p-12 {
+            padding: 6px !important;
+          }
+
+          .p-4, .p-3, .p-2 {
+            padding: 4px !important;
+          }
+
+          .px-6, .px-8, .px-4, .px-3 {
+            padding-left: 6px !important;
+            padding-right: 6px !important;
+          }
+
+          .py-6, .py-8, .py-4, .py-3 {
+            padding-top: 4px !important;
+            padding-bottom: 4px !important;
+          }
+
+          .pt-20, .pt-24 {
+            padding-top: 0 !important;
+          }
+
+          .pb-8, .pb-12 {
+            padding-bottom: 0 !important;
+          }
+
+          /* Compact text sizes */
+          h1, .text-4xl, .text-3xl {
+            font-size: 12px !important;
+            line-height: 1.2 !important;
+            margin: 2px 0 !important;
+            color: #1f2937 !important;
+          }
+
+          h2, .text-2xl, .text-xl {
+            font-size: 10px !important;
+            line-height: 1.2 !important;
+            margin: 2px 0 !important;
+            color: #1f2937 !important;
+          }
+
+          h3, .text-lg {
+            font-size: 8px !important;
+            line-height: 1.2 !important;
+            margin: 1px 0 !important;
+            color: #1f2937 !important;
+          }
+
+          .text-base {
+            font-size: 7px !important;
+            line-height: 1.3 !important;
+            color: #374151 !important;
+          }
+
+          .text-sm {
+            font-size: 6.5px !important;
+            line-height: 1.3 !important;
+            color: #374151 !important;
+          }
+
+          .text-xs {
+            font-size: 6px !important;
+            line-height: 1.2 !important;
+            color: #6b7280 !important;
+          }
+
+          /* Minimal gaps */
+          .gap-6, .gap-8 {
+            gap: 4px !important;
+          }
+
+          .gap-4 {
+            gap: 3px !important;
+          }
+
+          .gap-2, .gap-3 {
+            gap: 2px !important;
+          }
+
+          /* Compact corners */
+          .rounded-2xl, .rounded-3xl {
+            border-radius: 4px !important;
+          }
+
+          .rounded-xl {
+            border-radius: 3px !important;
+          }
+
+          .rounded-lg {
+            border-radius: 2px !important;
+          }
+
+          /* Compact grids */
+          .grid {
+            gap: 3px !important;
+          }
+
+          /* Minimal margins */
+          .mb-2, .mb-3, .mb-4, .mb-6, .mb-8 {
+            margin-bottom: 3px !important;
+          }
+
+          .mt-2, .mt-3, .mt-4, .mt-6, .mt-8 {
+            margin-top: 3px !important;
+          }
+
+          /* Make all sections compact and visible */
+          section, div[class*="space-y"] {
+            margin-top: 3px !important;
+            margin-bottom: 3px !important;
+          }
+
+          /* Ensure cards have borders and are visible */
+          .bg-gray-900, .bg-gray-800, .bg-primary-1300 {
+            background: white !important;
+            border: 1pt solid #e5e7eb !important;
+          }
+
+          /* Compact charts and progress bars */
+          canvas {
+            max-height: 60px !important;
+          }
+
+          /* No page breaks inside content blocks */
+          .readiness-section, .career-matches-section,
+          .skills-section, .recommendations-section {
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+          }
+        }
+      `}</style>
+
       {/* API Loading State with Cold Start Detection */}
       <ApiLoadingState
         isLoading={isApiLoading}
@@ -1248,7 +1441,7 @@ export default function CareerReports() {
         onComplete={() => setRunTutorial(false)}
       />
 
-      <main ref={reportRef} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-20 sm:pt-24 pb-8 sm:pb-12 w-full flex-1 space-y-4 sm:space-y-6">
+      <main id="career-report-content" ref={reportRef} className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pt-20 sm:pt-24 pb-8 sm:pb-12 w-full flex-1 space-y-4 sm:space-y-6">
 
         {/* PRINT ONLY - Horizontal Header with Logo */}
         <div className="hidden print:block print-header">

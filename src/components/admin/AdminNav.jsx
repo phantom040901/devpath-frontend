@@ -1,8 +1,10 @@
 // src/components/admin/AdminNav.jsx
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAdmin } from "../../contexts/AdminContext";
 import { motion } from "framer-motion";
+import { collection, query, where, getDocs } from "firebase/firestore";
+import { db } from "../../lib/firebase";
 import {
   LayoutDashboard,
   Users,
@@ -14,7 +16,8 @@ import {
   BarChart3,
   BookOpen,
   MessageSquare,
-  Briefcase
+  Briefcase,
+  Building2
 } from "lucide-react";
 
 export default function AdminNav() {
@@ -22,15 +25,48 @@ export default function AdminNav() {
   const navigate = useNavigate();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [pendingEmployersCount, setPendingEmployersCount] = useState(0);
+  const profileMenuRef = useRef(null);
+
+  useEffect(() => {
+    fetchPendingEmployersCount();
+  }, []);
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target)) {
+        setShowProfileMenu(false);
+      }
+    }
+
+    if (showProfileMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [showProfileMenu]);
+
+  const fetchPendingEmployersCount = async () => {
+    try {
+      const employersRef = collection(db, "employers");
+      const q = query(employersRef, where("verificationStatus", "==", "pending"));
+      const snapshot = await getDocs(q);
+      setPendingEmployersCount(snapshot.size);
+    } catch (error) {
+      console.error("Error fetching pending employers:", error);
+    }
+  };
 
   const navItems = [
     { path: "/admin/dashboard", label: "Dashboard", icon: <LayoutDashboard size={20} /> },
     { path: "/admin/students", label: "Students", icon: <Users size={20} /> },
-    { path: "/admin/analytics", label: "Analytics", icon: <BarChart3 size={20} /> },
-    { path: "/admin/career-analytics", label: "Careers", icon: <Briefcase size={20} /> },
+    { path: "/admin/employers", label: "Employers", icon: <Building2 size={20} />, badge: pendingEmployersCount },
     { path: "/admin/assessments", label: "Assessments", icon: <BookOpen size={20} /> },
+    { path: "/admin/career-analytics", label: "Careers", icon: <Briefcase size={20} /> },
     { path: "/admin/messaging", label: "Messages", icon: <MessageSquare size={20} /> },
-    { path: "/admin/settings", label: "Settings", icon: <Settings size={20} /> },
   ];
 
   const handleLogout = async () => {
@@ -62,7 +98,7 @@ export default function AdminNav() {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all relative ${
                   location.pathname === item.path
                     ? "bg-primary-500/20 text-primary-400 border border-primary-500/30"
                     : "text-gray-400 hover:text-white hover:bg-gray-800"
@@ -70,18 +106,65 @@ export default function AdminNav() {
               >
                 {item.icon}
                 <span className="text-sm font-medium">{item.label}</span>
+                {item.badge > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                    {item.badge}
+                  </span>
+                )}
               </button>
             ))}
           </div>
 
           {/* Admin Info & Logout */}
-          <div className="hidden md:flex items-center gap-4">
-            <div className="text-right">
-              <div className="text-sm font-medium text-white">
-                {admin?.displayName || admin?.email}
-              </div>
-              <div className="text-xs text-gray-400">Administrator</div>
+          <div className="hidden md:flex items-center gap-3">
+            {/* Profile Dropdown */}
+            <div className="relative" ref={profileMenuRef}>
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 transition-all"
+              >
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-white font-bold text-sm">
+                  {admin?.displayName?.charAt(0) || admin?.email?.charAt(0) || 'A'}
+                </div>
+                <div className="text-right">
+                  <div className="text-sm font-medium text-white">
+                    {admin?.displayName || admin?.email}
+                  </div>
+                  <div className="text-xs text-gray-400">Administrator</div>
+                </div>
+              </button>
+
+              {/* Dropdown Menu */}
+              {showProfileMenu && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl overflow-hidden z-50"
+                >
+                  <button
+                    onClick={() => {
+                      navigate("/admin/analytics");
+                      setShowProfileMenu(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition-colors text-gray-300 hover:text-white"
+                  >
+                    <BarChart3 size={18} />
+                    <span className="text-sm">Analytics</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate("/admin/settings");
+                      setShowProfileMenu(false);
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-700 transition-colors text-gray-300 hover:text-white"
+                  >
+                    <Settings size={18} />
+                    <span className="text-sm">Settings</span>
+                  </button>
+                </motion.div>
+              )}
             </div>
+
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all border border-red-500/30"
@@ -116,7 +199,7 @@ export default function AdminNav() {
                   navigate(item.path);
                   setMobileMenuOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all relative ${
                   location.pathname === item.path
                     ? "bg-primary-500/20 text-primary-400"
                     : "text-gray-400 hover:text-white hover:bg-gray-800"
@@ -124,8 +207,42 @@ export default function AdminNav() {
               >
                 {item.icon}
                 <span className="font-medium">{item.label}</span>
+                {item.badge > 0 && (
+                  <span className="ml-auto bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5">
+                    {item.badge}
+                  </span>
+                )}
               </button>
             ))}
+
+            {/* Divider */}
+            <div className="border-t border-gray-800 my-2"></div>
+
+            {/* Additional Menu Items */}
+            <button
+              onClick={() => {
+                navigate("/admin/analytics");
+                setMobileMenuOpen(false);
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-all"
+            >
+              <BarChart3 size={20} />
+              <span className="font-medium">Analytics</span>
+            </button>
+            <button
+              onClick={() => {
+                navigate("/admin/settings");
+                setMobileMenuOpen(false);
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-all"
+            >
+              <Settings size={20} />
+              <span className="font-medium">Settings</span>
+            </button>
+
+            {/* Divider */}
+            <div className="border-t border-gray-800 my-2"></div>
+
             <button
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-all"

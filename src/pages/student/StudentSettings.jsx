@@ -1,11 +1,13 @@
 // src/pages/student/StudentSettings.jsx
 import { useState, useEffect } from 'react';
-import { User, Lock, Shield, Save, Eye, EyeOff, CheckCircle, AlertCircle, Loader, Trash2, Download, Bell, Palette, Sun, Moon } from 'lucide-react';
+import { User, Lock, Shield, Save, Eye, EyeOff, CheckCircle, AlertCircle, Loader, Trash2, Download, Bell, Palette, Sun, Moon, GraduationCap } from 'lucide-react';
 import { useAuth } from '../../components/AuthContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { motion } from 'framer-motion';
 import DashboardNav from '../../components/dashboard/DashboardNav';
 import DashboardFooter from '../../components/dashboard/DashboardFooter';
+import { db } from '../../lib/firebase';
+import ProfileCompletionTracker from '../../components/student/ProfileCompletionTracker';
 import {
   getUserSettings,
   updatePersonalInfo,
@@ -67,6 +69,23 @@ export default function StudentSettings() {
     security: true
   });
 
+  // Privacy Settings State
+  const [privacySettings, setPrivacySettings] = useState({
+    profileVisibleToEmployers: false,
+    showFullNameToEmployers: false,
+    showCareerPath: true,
+    showSkills: true,
+    showAssessmentScores: false,
+    showContactInfo: false
+  });
+
+  // Enrollment Status State
+  const [enrollmentStatus, setEnrollmentStatus] = useState({
+    status: "current_pwc", // "current_pwc", "pwc_alumni", "external"
+    yearLevel: "",
+    graduationYear: "",
+  });
+
   // Load user data on mount
   useEffect(() => {
     const loadUserData = async () => {
@@ -100,6 +119,23 @@ export default function StudentSettings() {
             ...userData.settings.notifications
           });
         }
+
+        // Load privacy settings
+        setPrivacySettings({
+          profileVisibleToEmployers: userData.profileVisibleToEmployers || false,
+          showFullNameToEmployers: userData.privacy?.showFullNameToEmployers ?? false,
+          showCareerPath: userData.privacy?.showCareerPath ?? true,
+          showSkills: userData.privacy?.showSkills ?? true,
+          showAssessmentScores: userData.privacy?.showAssessmentScores ?? false,
+          showContactInfo: userData.privacy?.showContactInfo ?? false
+        });
+
+        // Load enrollment status
+        setEnrollmentStatus({
+          status: userData.enrollmentStatus || "current_pwc",
+          yearLevel: userData.yearLevel || "",
+          graduationYear: userData.graduationYear || "",
+        });
       } catch (error) {
         setSaveStatus({ type: 'error', message: 'Failed to load user settings' });
       } finally {
@@ -230,10 +266,74 @@ export default function StudentSettings() {
     }
   };
 
+  const handleSavePrivacySettings = async () => {
+    setLoading(true);
+    setSaveStatus(null);
+
+    try {
+      const { updateDoc, doc } = await import('firebase/firestore');
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        profileVisibleToEmployers: privacySettings.profileVisibleToEmployers,
+        privacy: {
+          showFullNameToEmployers: privacySettings.showFullNameToEmployers,
+          showCareerPath: privacySettings.showCareerPath,
+          showSkills: privacySettings.showSkills,
+          showAssessmentScores: privacySettings.showAssessmentScores,
+          showContactInfo: privacySettings.showContactInfo
+        },
+        updatedAt: new Date().toISOString()
+      });
+
+      setSaveStatus({ type: 'success', message: 'Privacy settings updated successfully!' });
+      setTimeout(() => setSaveStatus(null), 3000);
+    } catch (error) {
+      setSaveStatus({ type: 'error', message: 'Failed to save privacy settings' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSaveEnrollmentStatus = async () => {
+    setLoading(true);
+    setSaveStatus(null);
+
+    try {
+      const { updateDoc, doc } = await import('firebase/firestore');
+      const userRef = doc(db, 'users', user.uid);
+
+      const updateData = {
+        enrollmentStatus: enrollmentStatus.status,
+        isEnrolled: enrollmentStatus.status === "current_pwc",
+        updatedAt: new Date().toISOString()
+      };
+
+      // Add year level for current students
+      if (enrollmentStatus.status === "current_pwc") {
+        updateData.yearLevel = enrollmentStatus.yearLevel;
+      }
+
+      // Add graduation year for alumni
+      if (enrollmentStatus.status === "pwc_alumni" && enrollmentStatus.graduationYear) {
+        updateData.graduationYear = enrollmentStatus.graduationYear;
+      }
+
+      await updateDoc(userRef, updateData);
+
+      setSaveStatus({ type: 'success', message: 'Enrollment status updated successfully!' });
+      setTimeout(() => setSaveStatus(null), 3000);
+    } catch (error) {
+      setSaveStatus({ type: 'error', message: 'Failed to save enrollment status' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const tabs = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'appearance', label: 'Appearance', icon: Palette },
     { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'privacy', label: 'Privacy', icon: Eye },
     { id: 'account', label: 'Security', icon: Shield }
   ];
 
@@ -286,7 +386,7 @@ export default function StudentSettings() {
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-1"
           >
-            <div className="bg-gray-900/70 border border-gray-700/40 rounded-2xl p-2">
+            <div className="bg-gray-900/70 border border-gray-700/40 rounded-2xl p-2 lg:sticky lg:top-24">
               {/* Mobile: Horizontal scroll */}
               <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-x-visible scrollbar-hide">
                 {tabs.map((tab) => {
@@ -324,6 +424,9 @@ export default function StudentSettings() {
                   setPersonalInfo={setPersonalInfo}
                   careerFromAssessment={careerFromAssessment}
                   handleSavePersonalInfo={handleSavePersonalInfo}
+                  enrollmentStatus={enrollmentStatus}
+                  setEnrollmentStatus={setEnrollmentStatus}
+                  handleSaveEnrollmentStatus={handleSaveEnrollmentStatus}
                   loading={loading}
                 />
               )}
@@ -337,6 +440,16 @@ export default function StudentSettings() {
                   notificationPrefs={notificationPrefs}
                   setNotificationPrefs={setNotificationPrefs}
                   handleSaveNotificationPreferences={handleSaveNotificationPreferences}
+                  loading={loading}
+                />
+              )}
+
+              {/* Privacy Tab */}
+              {activeTab === 'privacy' && (
+                <PrivacyTab
+                  privacySettings={privacySettings}
+                  setPrivacySettings={setPrivacySettings}
+                  handleSavePrivacySettings={handleSavePrivacySettings}
                   loading={loading}
                 />
               )}
@@ -377,16 +490,109 @@ export default function StudentSettings() {
 }
 
 // Profile Tab Component
-function ProfileTab({ personalInfo, setPersonalInfo, careerFromAssessment, handleSavePersonalInfo, loading }) {
+function ProfileTab({ personalInfo, setPersonalInfo, careerFromAssessment, handleSavePersonalInfo, enrollmentStatus, setEnrollmentStatus, handleSaveEnrollmentStatus, loading }) {
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-6">
       <div>
         <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">Profile Information</h2>
-        <p className="text-sm sm:text-base text-gray-400 mb-4 sm:mb-6">Update your personal details</p>
+        <p className="text-sm sm:text-base text-gray-400">Update your personal details and complete your profile</p>
       </div>
 
-      {/* Personal Information Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Profile Completion Tracker */}
+      <ProfileCompletionTracker userData={{
+        firstName: personalInfo.firstName,
+        lastName: personalInfo.lastName,
+        email: personalInfo.email,
+        course: personalInfo.course,
+        yearLevel: personalInfo.yearLevel,
+        phoneNumber: personalInfo.phoneNumber,
+        dateOfBirth: personalInfo.dateOfBirth,
+        enrollmentStatus: enrollmentStatus.status
+      }} />
+
+      {/* Enrollment Status Section */}
+      <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <GraduationCap className="text-blue-400" size={20} />
+          Enrollment Status
+        </h3>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300 mb-2">
+              What is your status?
+            </label>
+            <select
+              value={enrollmentStatus.status}
+              onChange={(e) => {
+                const status = e.target.value;
+                setEnrollmentStatus({
+                  ...enrollmentStatus,
+                  status,
+                  yearLevel: status !== "current_pwc" ? "" : enrollmentStatus.yearLevel,
+                });
+              }}
+              className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors"
+            >
+              <option value="current_pwc">Current PWC Student</option>
+              <option value="pwc_alumni">PWC Alumni (Graduated)</option>
+              <option value="external">External User (Other school/Self-learner)</option>
+            </select>
+          </div>
+
+          {/* Year Level for Current Students */}
+          {enrollmentStatus.status === "current_pwc" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Year Level
+              </label>
+              <select
+                value={enrollmentStatus.yearLevel}
+                onChange={(e) => setEnrollmentStatus({ ...enrollmentStatus, yearLevel: e.target.value })}
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors"
+              >
+                <option value="">Select your year level</option>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+              </select>
+            </div>
+          )}
+
+          {/* Graduation Year for Alumni */}
+          {enrollmentStatus.status === "pwc_alumni" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Graduation Year (Optional)
+              </label>
+              <input
+                type="number"
+                value={enrollmentStatus.graduationYear}
+                onChange={(e) => setEnrollmentStatus({ ...enrollmentStatus, graduationYear: e.target.value })}
+                placeholder="e.g., 2023"
+                min="1990"
+                max={new Date().getFullYear()}
+                className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500 transition-colors"
+              />
+            </div>
+          )}
+
+          <button
+            onClick={handleSaveEnrollmentStatus}
+            disabled={loading}
+            className="w-full py-2 px-4 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Saving..." : "Save Enrollment Status"}
+          </button>
+        </div>
+      </div>
+
+      {/* Personal Information Section */}
+      <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-white mb-6">Personal Information</h3>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
           <input
@@ -477,10 +683,32 @@ function ProfileTab({ personalInfo, setPersonalInfo, careerFromAssessment, handl
             placeholder="Enter your complete address"
           />
         </div>
+        </div>
+
+        {/* Save Personal Info Button */}
+        <div className="flex justify-end pt-6 border-t border-gray-700/40 mt-6">
+          <button
+            onClick={handleSavePersonalInfo}
+            disabled={loading}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <>
+                <Loader size={18} className="animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Save size={18} />
+                Save Changes
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Career from Assessment (Read-only) */}
-      <div className="pt-4 border-t border-gray-700/40">
+      <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
         <h3 className="text-xl font-semibold text-white mb-4">Career Match Results</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
@@ -505,26 +733,6 @@ function ProfileTab({ personalInfo, setPersonalInfo, careerFromAssessment, handl
             <p className="text-xs text-gray-500 mt-1">Match Score: {careerFromAssessment.selectedCareerMatchScore}%</p>
           </div>
         </div>
-      </div>
-
-      <div className="flex justify-end pt-4">
-        <button
-          onClick={handleSavePersonalInfo}
-          disabled={loading}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? (
-            <>
-              <Loader size={18} className="animate-spin" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <Save size={18} />
-              Save Changes
-            </>
-          )}
-        </button>
       </div>
     </div>
   );
@@ -1075,6 +1283,167 @@ function DeleteModal({ deletePassword, setDeletePassword, setShowDeleteModal, ha
           </button>
         </div>
       </motion.div>
+    </div>
+  );
+}
+
+// Privacy Tab Component
+function PrivacyTab({ privacySettings, setPrivacySettings, handleSavePrivacySettings, loading }) {
+  const toggleSetting = (key) => {
+    setPrivacySettings({ ...privacySettings, [key]: !privacySettings[key] });
+  };
+
+  return (
+    <div>
+      <h2 className="text-2xl font-bold text-white mb-2">Privacy Settings</h2>
+      <p className="text-gray-400 mb-6">Control who can see your profile and information</p>
+
+      {/* Employer Visibility Section */}
+      <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6 mb-6">
+        <div className="flex items-start gap-4 mb-4">
+          <div className="p-3 bg-blue-500/20 rounded-lg">
+            <Eye className="text-blue-400" size={24} />
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-white mb-2">Profile Visibility to Employers</h3>
+            <p className="text-sm text-gray-300 mb-4">
+              Allow verified employers to view your profile and contact you for job opportunities.
+              Your profile will only be visible to employers who have been verified by DevPath administrators.
+            </p>
+            <button
+              onClick={() => toggleSetting('profileVisibleToEmployers')}
+              className={`flex items-center gap-3 px-6 py-3 rounded-lg transition-all font-medium ${
+                privacySettings.profileVisibleToEmployers
+                  ? 'bg-green-500/20 border-2 border-green-500/50 text-green-400'
+                  : 'bg-gray-800 border-2 border-gray-700 text-gray-400 hover:bg-gray-750'
+              }`}
+            >
+              {privacySettings.profileVisibleToEmployers ? (
+                <>
+                  <CheckCircle size={20} />
+                  Profile Visible to Employers
+                </>
+              ) : (
+                <>
+                  <EyeOff size={20} />
+                  Profile Hidden from Employers
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {privacySettings.profileVisibleToEmployers && (
+          <div className="ml-16 border-t border-blue-500/30 pt-4">
+            <p className="text-sm font-medium text-blue-300 mb-3">
+              Choose what employers can see:
+            </p>
+            <div className="space-y-3">
+              <PrivacyToggle
+                label="Full Name"
+                description="Show your full name (default: only initials visible until contact approval)"
+                enabled={privacySettings.showFullNameToEmployers}
+                onToggle={() => toggleSetting('showFullNameToEmployers')}
+              />
+              <PrivacyToggle
+                label="Career Path & Recommendations"
+                description="Show your predicted career path and match scores"
+                enabled={privacySettings.showCareerPath}
+                onToggle={() => toggleSetting('showCareerPath')}
+              />
+              <PrivacyToggle
+                label="Skills & Competencies"
+                description="Display your technical and soft skills"
+                enabled={privacySettings.showSkills}
+                onToggle={() => toggleSetting('showSkills')}
+              />
+              <PrivacyToggle
+                label="Assessment Scores"
+                description="Share your detailed assessment results"
+                enabled={privacySettings.showAssessmentScores}
+                onToggle={() => toggleSetting('showAssessmentScores')}
+              />
+              <PrivacyToggle
+                label="Contact Information"
+                description="Allow employers to see your email and phone number"
+                enabled={privacySettings.showContactInfo}
+                onToggle={() => toggleSetting('showContactInfo')}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Privacy Tips */}
+      <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-6">
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <Shield className="text-primary-400" size={20} />
+          Privacy Tips
+        </h3>
+        <ul className="space-y-3 text-sm text-gray-300">
+          <li className="flex items-start gap-2">
+            <span className="text-primary-400 mt-1">•</span>
+            <span>Only verified employers who have passed our verification process can view your profile</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-primary-400 mt-1">•</span>
+            <span>You can turn off employer visibility at any time without affecting your learning progress</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-primary-400 mt-1">•</span>
+            <span>Showing more information increases your chances of being discovered by employers</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-primary-400 mt-1">•</span>
+            <span>Your personal information is never shared without your explicit consent</span>
+          </li>
+        </ul>
+      </div>
+
+      {/* Save Button */}
+      <div className="flex flex-col sm:flex-row gap-3 justify-end">
+        <button
+          onClick={handleSavePrivacySettings}
+          disabled={loading}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? (
+            <>
+              <Loader size={18} className="animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save size={18} />
+              Save Privacy Settings
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Privacy Toggle Component
+function PrivacyToggle({ label, description, enabled, onToggle }) {
+  return (
+    <div className="flex items-start justify-between gap-4 p-4 bg-gray-900/50 rounded-lg">
+      <div className="flex-1">
+        <p className="text-white font-medium mb-1">{label}</p>
+        <p className="text-sm text-gray-400">{description}</p>
+      </div>
+      <button
+        onClick={onToggle}
+        className={`relative w-12 h-6 rounded-full transition-colors ${
+          enabled ? 'bg-green-500' : 'bg-gray-700'
+        }`}
+      >
+        <div
+          className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${
+            enabled ? 'translate-x-7' : 'translate-x-1'
+          }`}
+        />
+      </button>
     </div>
   );
 }

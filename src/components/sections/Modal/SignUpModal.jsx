@@ -19,7 +19,9 @@ const initialState = {
   course: "",
   otherCourse: "",
   isEnrolled: "",
+  enrollmentStatus: "", // "current_pwc", "pwc_alumni", "external"
   yearLevel: "",
+  graduationYear: "",
 };
 
 export default function SignUpModal() {
@@ -168,13 +170,21 @@ export default function SignUpModal() {
 
     try {
       // OTP verified, create account
-      await signup(inputs.email, inputs.password, {
+      const profileData = {
         firstName: inputs.firstName,
         lastName: inputs.lastName,
         course: inputs.course === "Other" ? inputs.otherCourse : inputs.course,
         isEnrolled: inputs.isEnrolled === "yes",
-        yearLevel: inputs.yearLevel,
-      });
+        enrollmentStatus: inputs.enrollmentStatus,
+        yearLevel: inputs.yearLevel || "",
+      };
+
+      // Add graduation year for alumni
+      if (inputs.enrollmentStatus === "pwc_alumni" && inputs.graduationYear) {
+        profileData.graduationYear = inputs.graduationYear;
+      }
+
+      await signup(inputs.email, inputs.password, profileData);
 
       setInputs(initialState);
       setChecked(false);
@@ -530,56 +540,84 @@ export default function SignUpModal() {
             {/* Enrollment Status */}
             <label className="flex flex-col gap-1">
               <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>
-                Are you currently enrolled?
+                What is your status?
               </span>
               <select
-                name="isEnrolled"
-                value={inputs.isEnrolled}
-                onChange={handleInputs}
+                name="enrollmentStatus"
+                value={inputs.enrollmentStatus}
+                onChange={(e) => {
+                  const status = e.target.value;
+                  setInputs(prev => ({
+                    ...prev,
+                    enrollmentStatus: status,
+                    isEnrolled: status === "current_pwc" ? "yes" : "no",
+                    yearLevel: status !== "current_pwc" ? "" : prev.yearLevel
+                  }));
+                  setError("");
+                }}
                 className="rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3
                 focus:ring-2 focus:ring-primary-500 outline-none"
                 required
                 disabled={isLoading}
               >
-                <option value="">Select enrollment status</option>
-                <option value="yes">Yes, I am currently enrolled</option>
-                <option value="no">No, I am not currently enrolled</option>
+                <option value="">Select your status</option>
+                <option value="current_pwc">Current PWC Student</option>
+                <option value="pwc_alumni">PWC Alumni (Graduated)</option>
+                <option value="external">External User (Other school/Self-learner)</option>
               </select>
+              {inputs.enrollmentStatus && (
+                <span className="text-xs text-gray-400 mt-1">
+                  {inputs.enrollmentStatus === "current_pwc" && "✓ You'll have access to all PWC student features"}
+                  {inputs.enrollmentStatus === "pwc_alumni" && "✓ Welcome back! Alumni profiles are visible to employers"}
+                  {inputs.enrollmentStatus === "external" && "✓ You can still use all career development features"}
+                </span>
+              )}
             </label>
 
-            {/* Year Level - Conditional based on enrollment */}
-            <label className="flex flex-col gap-1">
-              <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>
-                Year Level
-              </span>
-              <select
-                name="yearLevel"
-                value={inputs.yearLevel}
-                onChange={handleInputs}
-                className="rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3
-                focus:ring-2 focus:ring-primary-500 outline-none"
-                required
-                disabled={isLoading || !inputs.isEnrolled}
-              >
-                <option value="">
-                  {!inputs.isEnrolled ? "Select enrollment status first" : "Select year level"}
-                </option>
-                {inputs.isEnrolled === "yes" && (
-                  <>
-                    <option value="1st Year">1st Year</option>
-                    <option value="2nd Year">2nd Year</option>
-                    <option value="3rd Year">3rd Year</option>
-                    <option value="4th Year">4th Year</option>
-                  </>
-                )}
-                {inputs.isEnrolled === "no" && (
-                  <>
-                    <option value="1st Year">1st Year</option>
-                    <option value="2nd Year">2nd Year</option>
-                  </>
-                )}
-              </select>
-            </label>
+            {/* Year Level - Only for current PWC students */}
+            {inputs.enrollmentStatus === "current_pwc" && (
+              <label className="flex flex-col gap-1">
+                <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>
+                  Year Level
+                </span>
+                <select
+                  name="yearLevel"
+                  value={inputs.yearLevel}
+                  onChange={handleInputs}
+                  className="rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3
+                  focus:ring-2 focus:ring-primary-500 outline-none"
+                  required
+                  disabled={isLoading}
+                >
+                  <option value="">Select your year level</option>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year">2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                </select>
+              </label>
+            )}
+
+            {/* Graduation Year - For alumni */}
+            {inputs.enrollmentStatus === "pwc_alumni" && (
+              <label className="flex flex-col gap-1">
+                <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>
+                  Graduation Year (Optional)
+                </span>
+                <input
+                  type="number"
+                  name="graduationYear"
+                  value={inputs.graduationYear || ""}
+                  onChange={handleInputs}
+                  placeholder="e.g., 2023"
+                  min="1990"
+                  max={new Date().getFullYear()}
+                  className="rounded-xl bg-primary-75/80 backdrop-blur-sm text-primary-1300 px-4 py-3
+                  focus:ring-2 focus:ring-primary-500 outline-none"
+                  disabled={isLoading}
+                />
+              </label>
+            )}
 
             {/* Error */}
             {error && <p className="text-red-400 text-sm font-medium">{error}</p>}

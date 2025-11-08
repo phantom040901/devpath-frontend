@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Student Assessments - Admin Tool</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #1a1a1a;
+      color: #fff;
+    }
+    button {
+      background: #3b82f6;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 0;
+    }
+    button:hover { background: #2563eb; }
+    button:disabled { background: #666; cursor: not-allowed; }
+    #log {
+      background: #000;
+      padding: 15px;
+      border-radius: 8px;
+      height: 400px;
+      overflow-y: auto;
+      font-family: monospace;
+      font-size: 13px;
+    }
+    .success { color: #4ade80; }
+    .error { color: #f87171; }
+    .info { color: #60a5fa; }
+  </style>
+</head>
+<body>
+  <h1>Add Assessment Data to Students</h1>
+  <p>This tool will add realistic assessment data to all students who haven't completed their assessment.</p>
+
+  <button id="runBtn" onclick="addAssessments()">Add Assessments to Students</button>
+
+  <div id="log"></div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+    import { getFirestore, collection, getDocs, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyD3-3vCQq9jS0WKzUKZvxbkhQs0D31zlZU",
+      authDomain: "devpath-capstone.firebaseapp.com",
+      projectId: "devpath-capstone",
+      storageBucket: "devpath-capstone.appspot.com",
+      messagingSenderId: "181305261700",
+      appId: "1:181305261700:web:a1ac888626bc2a0d058cd1"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    function log(message, type = 'info') {
+      const logDiv = document.getElementById('log');
+      const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+      logDiv.innerHTML += `<div class="${className}">${message}</div>`;
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+
+    function random(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function randomChoice(array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function generateAssessment() {
+      const profiles = [
+        { base: 85, variance: 8 },
+        { base: 75, variance: 15 },
+        { base: 78, variance: 12 },
+        { base: 72, variance: 10 },
+        { base: 68, variance: 15 },
+        { base: 90, variance: 5 }
+      ];
+
+      const profile = randomChoice(profiles);
+      const categories = [
+        { name: "Programming Logic", questions: 20 },
+        { name: "Data Structures", questions: 15 },
+        { name: "Web Development", questions: 15 },
+        { name: "Database Management", questions: 12 },
+        { name: "Software Engineering", questions: 10 },
+        { name: "Problem Solving", questions: 8 }
+      ];
+
+      const results = categories.map(cat => {
+        const score = Math.max(60, Math.min(98, profile.base + random(-profile.variance, profile.variance)));
+        const correctAnswers = Math.floor((score / 100) * cat.questions);
+        return { category: cat.name, score, totalQuestions: cat.questions, correctAnswers };
+      });
+
+      return {
+        results,
+        overallScore: Math.round(results.reduce((sum, r) => sum + r.score, 0) / results.length)
+      };
+    }
+
+    window.addAssessments = async function() {
+      const btn = document.getElementById('runBtn');
+      btn.disabled = true;
+      log('Starting...', 'info');
+
+      try {
+        const usersRef = collection(db, 'users');
+        const snapshot = await getDocs(usersRef);
+
+        const careers = [
+          { category: "Software Engineer", roles: ["Backend Developer", "Frontend Developer"] },
+          { category: "Full-Stack Developer", roles: ["MERN Stack Developer", "Full-Stack Web Developer"] },
+          { category: "Data Analyst", roles: ["Business Intelligence Analyst", "Data Visualization Specialist"] },
+          { category: "Cybersecurity Specialist", roles: ["Security Analyst", "Penetration Tester"] }
+        ];
+
+        const skills = [
+          ["JavaScript", "React", "Node.js", "MongoDB", "Git", "Communication", "Teamwork"],
+          ["Python", "Django", "PostgreSQL", "Docker", "AWS", "Leadership", "Problem Solving"],
+          ["Java", "Spring Boot", "MySQL", "REST API", "Agile", "Critical Thinking"],
+          ["TypeScript", "Vue.js", "Firebase", "GraphQL", "Creativity", "Time Management"]
+        ];
+
+        let updated = 0;
+
+        for (const docSnap of snapshot.docs) {
+          const userData = docSnap.data();
+
+          if (userData.role === 'student' && !userData.assessmentCompleted) {
+            const uid = docSnap.id;
+            const name = `${userData.firstName || ''} ${userData.lastName || ''}`;
+
+            const assessment = generateAssessment();
+            const career = randomChoice(careers);
+            const role = randomChoice(career.roles);
+            const gpa = ((assessment.overallScore / 100) * 4).toFixed(2);
+
+            await updateDoc(doc(db, 'users', uid), {
+              assessmentCompleted: true,
+              assessmentResults: assessment.results,
+              overallAssessmentScore: assessment.overallScore,
+              careerCategory: career.category,
+              selectedCareerJobRole: role,
+              selectedCareerMatchScore: random(75, 95),
+              skills: randomChoice(skills),
+              gpa: parseFloat(gpa),
+              updatedAt: new Date().toISOString()
+            });
+
+            log(`✓ Updated: ${name} - Score: ${assessment.overallScore}%`, 'success');
+            updated++;
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+        }
+
+        log(`\n✓ Complete! Updated ${updated} students`, 'success');
+      } catch (error) {
+        log(`✗ Error: ${error.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+  </script>
+</body>
+</html>

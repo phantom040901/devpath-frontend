@@ -32,9 +32,22 @@ import StudentsAnalytics from "./pages/admin/StudentsAnalytics";
 import CareerAnalytics from "./pages/admin/CareerAnalytics";
 import AssessmentManagement from "./pages/admin/AssessmentManagement";
 import StudentDetails from "./pages/admin/StudentDetails";
+import StudentImpersonation from "./pages/admin/StudentImpersonation";
 import SystemSettings from "./pages/admin/SystemSettings";
 import ResourcesManagement from "./pages/admin/ResourcesManagement";
 import AdminMessaging from "./pages/admin/AdminMessaging";
+import EmployersList from "./pages/admin/EmployersList";
+import EmployerVerificationPage from "./pages/admin/EmployerVerification";
+
+// Employer Pages
+import EmployerLogin from "./pages/employer/EmployerLogin";
+import EmployerSignup from "./pages/employer/EmployerSignup";
+import EmployerVerification from "./pages/employer/EmployerVerification";
+import EmployerDashboard from "./pages/employer/EmployerDashboard";
+import BrowseStudents from "./pages/employer/BrowseStudents";
+import StudentDetail from "./pages/employer/StudentDetail";
+import SavedStudents from "./pages/employer/SavedStudents";
+import EmployerSettings from "./pages/employer/EmployerSettings";
 
 // Scripts
 import FirebaseInitializer from "./scripts/runInitialization";
@@ -42,12 +55,13 @@ import FirebaseInitializer from "./scripts/runInitialization";
 // Auth Components
 import RequireAuth from "./components/RequireAuth";
 import { AdminProvider, useAdmin } from "./contexts/AdminContext";
+import { EmployerProvider, useEmployer } from "./contexts/EmployerContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
 // Admin Auth Guard Component
 function RequireAdmin({ children }) {
   const { admin, loading } = useAdmin();
-  
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 via-gray-950 to-black">
@@ -55,15 +69,31 @@ function RequireAdmin({ children }) {
       </div>
     );
   }
-  
+
   return admin ? children : <Navigate to="/admin/login" replace />;
+}
+
+// Employer Auth Guard Component
+function RequireEmployer({ children }) {
+  const { employer, loading } = useEmployer();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-900 via-gray-950 to-black">
+        <Loader2 className="animate-spin text-blue-400" size={48} />
+      </div>
+    );
+  }
+
+  return employer ? children : <Navigate to="/employer/login" replace />;
 }
 
 function App() {
   return (
     <ThemeProvider>
       <AdminProvider>
-        <Routes>
+        <EmployerProvider>
+          <Routes>
         {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/predictor" element={<PredictorDashboard />} />
@@ -121,7 +151,17 @@ function App() {
             </RequireAdmin>
           }
         />
-        
+
+        {/* Student Impersonation - Take Assessments on Behalf */}
+        <Route
+          path="/admin/students/impersonate/:studentId"
+          element={
+            <RequireAdmin>
+              <StudentImpersonation />
+            </RequireAdmin>
+          }
+        />
+
         {/* Assessment Management */}
         <Route
           path="/admin/assessments"
@@ -153,6 +193,25 @@ function App() {
         />
 
         <Route path="/admin/resources" element={<ResourcesManagement />} />
+
+        {/* Employer Management */}
+        <Route
+          path="/admin/employers"
+          element={
+            <RequireAdmin>
+              <EmployersList />
+            </RequireAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/employer-verification"
+          element={
+            <RequireAdmin>
+              <EmployerVerificationPage />
+            </RequireAdmin>
+          }
+        />
 
         {/* Firebase Initializer - Development Tool */}
         <Route path="/initialize-firebase" element={<FirebaseInitializer />} />
@@ -327,9 +386,69 @@ function App() {
           }
         />
 
+        {/* Employer Routes */}
+        <Route path="/employer/login" element={<EmployerLogin />} />
+        <Route path="/employer/signup" element={<EmployerSignup />} />
+
+        {/* Protected Employer Routes */}
+        <Route
+          path="/employer/verification"
+          element={
+            <RequireEmployer>
+              <EmployerVerification />
+            </RequireEmployer>
+          }
+        />
+
+        <Route
+          path="/employer/dashboard"
+          element={
+            <RequireEmployer>
+              <EmployerDashboard />
+            </RequireEmployer>
+          }
+        />
+
+        <Route
+          path="/employer/browse-students"
+          element={
+            <RequireEmployer>
+              <BrowseStudents />
+            </RequireEmployer>
+          }
+        />
+
+        <Route
+          path="/employer/student/:id"
+          element={
+            <RequireEmployer>
+              <StudentDetail />
+            </RequireEmployer>
+          }
+        />
+
+        <Route
+          path="/employer/saved-students"
+          element={
+            <RequireEmployer>
+              <SavedStudents />
+            </RequireEmployer>
+          }
+        />
+
+        <Route
+          path="/employer/settings"
+          element={
+            <RequireEmployer>
+              <EmployerSettings />
+            </RequireEmployer>
+          }
+        />
+
         {/* 404 Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        </EmployerProvider>
       </AdminProvider>
     </ThemeProvider>
   );

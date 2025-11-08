@@ -1,0 +1,12 @@
+      if (careerDoc.exists()) {
+        setSelectedCareer(careerDoc.data());
+      }
+
+      // Fetch user data for profile completion tracker
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+      if (userDoc.exists()) {
+        setUserData({ uid: user.uid, ...userDoc.data() });
+      }
+
+      // Load roadmap progress

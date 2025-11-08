@@ -8,6 +8,18 @@ service cloud.firestore {
              get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
+    // Helper function to check if user is employer
+    function isEmployer() {
+      return request.auth != null &&
+             exists(/databases/$(database)/documents/employers/$(request.auth.uid));
+    }
+
+    // Helper function to check if employer is verified
+    function isVerifiedEmployer() {
+      return isEmployer() &&
+             get(/databases/$(database)/documents/employers/$(request.auth.uid)).data.verificationStatus in ['tier1_verified', 'tier2_verified'];
+    }
+
     // Helper function to check if user is authenticated
     function isAuthenticated() {
       return request.auth != null;
@@ -116,6 +128,30 @@ service cloud.firestore {
 
     match /analytics/{document=**} {
       allow read, write: if isAdmin();
+    }
+
+    // ========== EMPLOYER COLLECTION ==========
+    // Employers can read/write their own profile, admins can access all
+    match /employers/{employerId} {
+      allow read: if isAuthenticated() && (isOwner(employerId) || isAdmin());
+      allow create: if isAuthenticated() && isOwner(employerId);
+      allow update: if isAuthenticated() && (isOwner(employerId) || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // ========== STUDENT PROFILES (FOR EMPLOYERS) ==========
+    // Verified employers can read student profiles who have opted in
+    // This will be implemented when we add student opt-in feature
+    // For now, only admins can access user data
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow write: if isAuthenticated() && (isOwner(userId) || isAdmin());
+
+      // User subcollections (results, selectedCareer, etc.)
+      match /{subcollection}/{document=**} {
+        allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+        allow write: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      }
     }
 
     // ========== FALLBACK RULE ==========
