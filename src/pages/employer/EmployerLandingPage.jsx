@@ -28,30 +28,30 @@ export default function EmployerLandingPage() {
   const features = [
     {
       icon: Search,
-      title: "Search Top Talent",
+      title: "Browse Verified Students",
       description:
-        "Browse verified students with comprehensive career assessments and skill evaluations.",
+        "View career assessments and skill evaluations for each candidate.",
       color: "blue",
     },
     {
       icon: BarChart3,
-      title: "Data-Driven Insights",
+      title: "Performance Analytics",
       description:
-        "Access detailed performance analytics, technical assessments, and career readiness scores.",
+        "See technical scores, academic performance, and career readiness metrics.",
       color: "emerald",
     },
     {
       icon: Shield,
       title: "Verified Profiles",
       description:
-        "All student profiles are verified with authentic assessment results and credentials.",
+        "All profiles include authentic assessment results and credentials.",
       color: "purple",
     },
     {
       icon: Target,
-      title: "Perfect Match",
+      title: "Filter by Skills",
       description:
-        "Find candidates that match your exact requirements using our advanced filtering system.",
+        "Search candidates by role, technical skills, and performance level.",
       color: "orange",
     },
   ];
@@ -64,37 +64,37 @@ export default function EmployerLandingPage() {
   ];
 
   const benefits = [
-    "Access to pre-assessed talent pool",
-    "Detailed technical and academic evaluations",
-    "Career readiness scores and rankings",
-    "Direct contact with qualified candidates",
-    "Save time on initial screening",
-    "Tier-based verification system",
+    "Pre-assessed talent pool",
+    "Technical and academic scores",
+    "Career path recommendations",
+    "Direct candidate contact",
+    "Skip initial screening rounds",
+    "Two verification tiers available",
   ];
 
   const processSteps = [
     {
       step: "01",
-      title: "Create Account",
-      description: "Sign up and get verified to access our talent pool",
+      title: "Sign Up",
+      description: "Create your employer account and get verified",
       icon: FileCheck,
     },
     {
       step: "02",
-      title: "Search & Filter",
-      description: "Use advanced filters to find perfect candidates",
+      title: "Search",
+      description: "Filter by skills, scores, and career paths",
       icon: Filter,
     },
     {
       step: "03",
-      title: "Review Profiles",
-      description: "Analyze comprehensive assessments and scores",
+      title: "Review",
+      description: "View assessments and performance metrics",
       icon: BarChart3,
     },
     {
       step: "04",
-      title: "Connect & Hire",
-      description: "Reach out to candidates and build your team",
+      title: "Hire",
+      description: "Contact candidates directly to start hiring",
       icon: Rocket,
     },
   ];
@@ -176,10 +176,11 @@ export default function EmployerLandingPage() {
               transition={{ delay: 0.2 }}
               className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
             >
-              Hire Pre-Assessed{" "}
+              Hire{" "}
               <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-primary-500 bg-clip-text text-transparent">
-                Top Talent
-              </span>
+                Pre-Assessed
+              </span>{" "}
+              Students
             </motion.h1>
 
             <motion.p
@@ -188,8 +189,7 @@ export default function EmployerLandingPage() {
               transition={{ delay: 0.3 }}
               className="text-xl text-gray-300 mb-8 leading-relaxed"
             >
-              Access a curated pool of verified, career-ready students with
-              comprehensive performance data. Skip the screening, hire smarter.
+              Browse verified students who've completed career assessments. View their technical scores, academic performance, and recommended roles.
             </motion.p>
 
             <motion.div
@@ -267,7 +267,7 @@ export default function EmployerLandingPage() {
               How It Works
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Get started in minutes and find your perfect hire in 4 simple steps
+              Four simple steps to find your next hire
             </p>
           </motion.div>
 
@@ -314,11 +314,10 @@ export default function EmployerLandingPage() {
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-white mb-4">
-              Why Choose DevPath?
+              What You Get
             </h2>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Everything you need to find and hire exceptional talent, all in
-              one platform.
+              Access to verified students with complete assessment records
             </p>
           </motion.div>
 
@@ -358,13 +357,10 @@ export default function EmployerLandingPage() {
               viewport={{ once: true }}
             >
               <h2 className="text-4xl font-bold text-white mb-6">
-                Access Pre-Qualified Talent
+                Students With Results
               </h2>
               <p className="text-lg text-gray-400 mb-8">
-                Every student on DevPath has completed comprehensive assessments
-                covering technical skills, academic performance, and career
-                readiness. Get detailed insights before you even schedule an
-                interview.
+                Each student has completed assessments in 17 areas covering technical skills, academics, and career interests. Review their scores before reaching out.
               </p>
 
               <div className="space-y-4">
@@ -500,10 +496,10 @@ export default function EmployerLandingPage() {
           >
             <Rocket className="mx-auto mb-6 text-blue-400" size={60} />
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to Find Your Next Hire?
+              Start Hiring Today
             </h2>
             <p className="text-xl text-gray-300 mb-8">
-              Get verified access to pre-assessed students with comprehensive career evaluations.
+              Create an account to browse student profiles and assessment results.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
@@ -543,8 +539,7 @@ export default function EmployerLandingPage() {
                 </span>
               </div>
               <p className="text-gray-400 mb-4 max-w-md">
-                Connecting exceptional talent with exceptional companies through
-                data-driven career assessments and verified profiles.
+                Career assessment platform connecting students with employers through verified skill evaluations.
               </p>
             </div>
             <div>
