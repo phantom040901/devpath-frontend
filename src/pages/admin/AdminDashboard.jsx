@@ -76,80 +76,79 @@ export default function AdminDashboard() {
 
   const loadDashboardData = async () => {
     try {
-      console.log('Loading dashboard data...');
-      
-      // Get all users
-      const usersSnap = await getDocs(collection(db, "users"));
+      // Get all users and assessments in parallel
+      const [usersSnap, academicSnap, technicalSnap, personalSnap] = await Promise.all([
+        getDocs(collection(db, "users")),
+        getDocs(collection(db, "assessments")),
+        getDocs(collection(db, "technicalAssessments")),
+        getDocs(collection(db, "personalAssessments"))
+      ]);
+
       const totalStudents = usersSnap.size;
-      console.log('Total students:', totalStudents);
+      const totalAssessments = academicSnap.size + technicalSnap.size + personalSnap.size;
 
       // Calculate active students (students with results in last 30 days)
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-      let activeStudents = 0;
-      let totalAttempts = 0;
-      let totalScores = [];
-      let studentPerformance = [];
+      // Process all students in parallel
+      const studentResults = await Promise.all(
+        usersSnap.docs.map(async (userDoc) => {
+          const userData = userDoc.data();
+          const resultsSnap = await getDocs(collection(db, "users", userDoc.id, "results"));
 
-      for (const userDoc of usersSnap.docs) {
-        const userData = userDoc.data();
-        const resultsRef = collection(db, "users", userDoc.id, "results");
-        const resultsSnap = await getDocs(resultsRef);
+          if (resultsSnap.size === 0) {
+            return null;
+          }
 
-        if (resultsSnap.size > 0) {
           // Check for recent activity using safe date conversion
           const recentResults = resultsSnap.docs.filter(doc => {
             const data = doc.data();
             const timestamp = safeToDate(data.submittedAt);
-            
+
             // If no timestamp, consider as recent (fallback)
             if (!timestamp) return true;
-            
+
             return timestamp >= thirtyDaysAgo;
           });
 
-          // If has recent results OR no timestamp data (new users), count as active
-          if (recentResults.length > 0 || resultsSnap.docs.some(doc => !doc.data().submittedAt)) {
-            activeStudents++;
-          }
-
-          totalAttempts += resultsSnap.size;
+          const isActive = recentResults.length > 0 || resultsSnap.docs.some(doc => !doc.data().submittedAt);
 
           // Calculate student average
           const scores = resultsSnap.docs
             .map(doc => doc.data().score)
             .filter(score => score !== undefined && score !== null);
 
-          if (scores.length > 0) {
-            const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
-            totalScores.push(...scores);
-            
-            const displayName = userData.displayName || 
-                               `${userData.firstName || ''} ${userData.lastName || ''}`.trim() ||
-                               userData.email?.split('@')[0] ||
-                               "Unknown";
-            
-            studentPerformance.push({
+          if (scores.length === 0) {
+            return { isActive, attempts: resultsSnap.size };
+          }
+
+          const avgScore = scores.reduce((a, b) => a + b, 0) / scores.length;
+          const displayName = userData.displayName ||
+                             `${userData.firstName || ''} ${userData.lastName || ''}`.trim() ||
+                             userData.email?.split('@')[0] ||
+                             "Unknown";
+
+          return {
+            isActive,
+            attempts: resultsSnap.size,
+            scores,
+            performance: {
               name: displayName,
               score: Math.round(avgScore),
               attempts: scores.length
-            });
-          }
-        }
-      }
+            }
+          };
+        })
+      );
 
-      console.log('Student performance data:', studentPerformance.length);
-
-      // Get total assessments
-      const [academicSnap, technicalSnap, personalSnap] = await Promise.all([
-        getDocs(collection(db, "assessments")),
-        getDocs(collection(db, "technicalAssessments")),
-        getDocs(collection(db, "personalAssessments"))
-      ]);
-
-      const totalAssessments = academicSnap.size + technicalSnap.size + personalSnap.size;
-      console.log('Total assessments:', totalAssessments);
+      // Aggregate results
+      const activeStudents = studentResults.filter(r => r?.isActive).length;
+      const totalAttempts = studentResults.reduce((sum, r) => sum + (r?.attempts || 0), 0);
+      const totalScores = studentResults.flatMap(r => r?.scores || []);
+      const studentPerformance = studentResults
+        .filter(r => r?.performance)
+        .map(r => r.performance);
 
       // Calculate average score
       const averageScore = totalScores.length > 0
@@ -165,8 +164,6 @@ export default function AdminDashboard() {
       const topPerformers = studentPerformance
         .sort((a, b) => b.score - a.score)
         .slice(0, 5);
-
-      console.log('Top performers:', topPerformers);
 
       setStats({
         totalStudents,
@@ -193,15 +190,13 @@ export default function AdminDashboard() {
   };
 
   const createPerformanceChart = (studentData) => {
-    console.log('Creating chart with data:', studentData.length);
-    
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
 
     if (chartRef.current && studentData.length > 0) {
       const ctx = chartRef.current.getContext('2d');
-      
+
       // Categorize students by career readiness based on score
       const readinessLevels = {
         'Career Ready': 0,           // 80-100: Exceptional - Ready for mid-senior roles
@@ -210,7 +205,7 @@ export default function AdminDashboard() {
         'Needs Development': 0,       // 50-59: Basic - Needs targeted training
         'Foundation Level': 0         // 0-49: Developing - Building core skills
       };
-      
+
       studentData.forEach(student => {
         const score = student.score;
         if (score >= 80) readinessLevels['Career Ready']++;
@@ -219,8 +214,6 @@ export default function AdminDashboard() {
         else if (score >= 50) readinessLevels['Needs Development']++;
         else readinessLevels['Foundation Level']++;
       });
-
-      console.log('Career readiness levels:', readinessLevels);
 
       chartInstance.current = new Chart(ctx, {
         type: 'bar',
@@ -289,10 +282,6 @@ export default function AdminDashboard() {
           }
         }
       });
-
-      console.log('Chart created successfully');
-    } else {
-      console.log('Cannot create chart - missing ref or no data');
     }
   };
 
@@ -461,8 +450,8 @@ export default function AdminDashboard() {
             </motion.div>
           </div>
 
-          {/* Right Sidebar - Top Performers and Online Users */}
-          <div className="space-y-6">
+          {/* Right Sidebar - Top Performers */}
+          <div>
             {/* Top Performers */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -507,12 +496,12 @@ export default function AdminDashboard() {
                 )}
               </div>
             </motion.div>
-
-            {/* Online Users Widget */}
-            <OnlineUsersWidget />
           </div>
         </div>
       </main>
+
+      {/* Floating Online Users Widget */}
+      <OnlineUsersWidget />
     </div>
   );
 }

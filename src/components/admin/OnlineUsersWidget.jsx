@@ -1,13 +1,14 @@
 // src/components/admin/OnlineUsersWidget.jsx
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Users, Circle, User, Mail, Clock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Users, Circle, User, Mail, Clock, Minimize2, Maximize2 } from 'lucide-react';
 import { ref, onValue } from 'firebase/database';
 import { realtimeDb } from '../../lib/firebase';
 
 export default function OnlineUsersWidget() {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMinimized, setIsMinimized] = useState(false);
 
   useEffect(() => {
     const onlineUsersRef = ref(realtimeDb, 'presence');
@@ -46,95 +47,145 @@ export default function OnlineUsersWidget() {
   };
 
   return (
-    <div className="bg-gray-900/70 border border-gray-700/40 rounded-xl p-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="p-3 rounded-lg bg-emerald-500/20">
-            <Users className="w-6 h-6 text-emerald-400" />
-          </div>
-          <div>
-            <h3 className="text-lg font-bold text-white">Online Users</h3>
-            <p className="text-sm text-gray-400">Currently active students</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-          <Circle className="w-3 h-3 text-emerald-400 fill-emerald-400 animate-pulse" />
-          <span className="text-lg font-bold text-emerald-400">
-            {onlineUsers.length}
-          </span>
-          <span className="text-sm text-emerald-400/80">online</span>
-        </div>
-      </div>
-
-      {/* Users List */}
-      {loading ? (
-        <div className="flex items-center justify-center py-8">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-400"></div>
-        </div>
-      ) : onlineUsers.length === 0 ? (
-        <div className="text-center py-8">
-          <Users className="w-12 h-12 mx-auto mb-3 text-gray-600 opacity-50" />
-          <p className="text-gray-400 text-sm">No users currently online</p>
-        </div>
-      ) : (
-        <div className="space-y-3 max-h-96 overflow-y-auto">
-          {onlineUsers.map((user, index) => (
-            <motion.div
-              key={user.uid}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-all group"
-            >
-              {/* Avatar */}
-              <div className="relative">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-emerald-500 flex items-center justify-center">
-                  <User className="w-5 h-5 text-white" />
-                </div>
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-gray-900"></div>
-              </div>
-
-              {/* User Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="font-semibold text-white text-sm truncate">
-                    {user.name || 'Anonymous User'}
-                  </p>
-                  {user.status === 'online' && (
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium">
-                      Active
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
-                  <Mail className="w-3 h-3" />
-                  <span className="truncate">{user.email || 'No email'}</span>
-                </div>
-              </div>
-
-              {/* Last Seen */}
-              <div className="flex items-center gap-1 text-xs text-gray-500">
-                <Clock className="w-3 h-3" />
-                <span>{formatLastSeen(user.lastSeen)}</span>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      )}
-
-      {/* Footer Stats */}
-      {onlineUsers.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-gray-700/40">
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <span>Real-time updates enabled</span>
-            <div className="flex items-center gap-1">
-              <Circle className="w-2 h-2 text-emerald-400 fill-emerald-400 animate-pulse" />
-              <span>Live</span>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      className="fixed bottom-6 right-6 z-50 w-96 shadow-2xl"
+    >
+      <div className="bg-gray-900/95 backdrop-blur-lg border border-gray-700/40 rounded-xl overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-emerald-500/10 to-primary-500/10 border-b border-gray-700/40">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-emerald-500/20">
+              <Users className="w-5 h-5 text-emerald-400" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-white">Online Users</h3>
+              <p className="text-xs text-gray-400">Currently active students</p>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
+              <Circle className="w-2.5 h-2.5 text-emerald-400 fill-emerald-400 animate-pulse" />
+              <span className="text-base font-bold text-emerald-400">
+                {onlineUsers.length}
+              </span>
+              <span className="text-xs text-emerald-400/80">online</span>
+            </div>
+            <button
+              onClick={() => setIsMinimized(!isMinimized)}
+              className="p-2 rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              {isMinimized ? (
+                <Maximize2 className="w-4 h-4 text-gray-400" />
+              ) : (
+                <Minimize2 className="w-4 h-4 text-gray-400" />
+              )}
+            </button>
+          </div>
         </div>
-      )}
-    </div>
+
+        {/* Content - Collapsible */}
+        <AnimatePresence>
+          {!isMinimized && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="p-4">
+                {/* Users List */}
+                {loading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-400"></div>
+                  </div>
+                ) : onlineUsers.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Users className="w-12 h-12 mx-auto mb-3 text-gray-600 opacity-50" />
+                    <p className="text-gray-400 text-sm">No users currently online</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                    {onlineUsers.map((user, index) => (
+                      <motion.div
+                        key={user.uid}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                        className="flex items-center gap-3 p-3 rounded-lg bg-gray-800/50 hover:bg-gray-800 transition-all group"
+                      >
+                        {/* Avatar */}
+                        <div className="relative flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-emerald-500 flex items-center justify-center">
+                            <User className="w-5 h-5 text-white" />
+                          </div>
+                          <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-400 rounded-full border-2 border-gray-900"></div>
+                        </div>
+
+                        {/* User Info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold text-white text-sm truncate">
+                              {user.name || 'Anonymous User'}
+                            </p>
+                            {user.status === 'online' && (
+                              <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium">
+                                Active
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 text-xs text-gray-400 mt-0.5">
+                            <Mail className="w-3 h-3" />
+                            <span className="truncate">{user.email || 'No email'}</span>
+                          </div>
+                        </div>
+
+                        {/* Last Seen */}
+                        <div className="flex items-center gap-1 text-xs text-gray-500 flex-shrink-0">
+                          <Clock className="w-3 h-3" />
+                          <span className="whitespace-nowrap">{formatLastSeen(user.lastSeen)}</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Footer Stats */}
+                {onlineUsers.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-gray-700/40">
+                    <div className="flex items-center justify-between text-xs text-gray-400">
+                      <span>Real-time updates enabled</span>
+                      <div className="flex items-center gap-1">
+                        <Circle className="w-2 h-2 text-emerald-400 fill-emerald-400 animate-pulse" />
+                        <span>Live</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(31, 41, 55, 0.5);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(75, 85, 99, 0.8);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(107, 114, 128, 0.9);
+        }
+      `}</style>
+    </motion.div>
   );
 }

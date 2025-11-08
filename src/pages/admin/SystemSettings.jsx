@@ -52,6 +52,9 @@ export default function SystemSettings() {
     dataRetentionDays: 365,
     autoBackup: true,
     backupFrequency: "daily",
+
+    // Admin Permissions
+    enableAdvancedStudentManagement: false,
   });
 
   // Load settings from Firebase on mount
@@ -314,6 +317,16 @@ export default function SystemSettings() {
               min="3"
               max="10"
             />
+            <div className="pt-4 border-t border-gray-700 mt-4">
+              <SettingToggle
+                label="Enable Advanced Student Management"
+                description="Allow admins to manually assign scores, careers, and delete students (WARNING: Use with caution)"
+                checked={settings.enableAdvancedStudentManagement}
+                onChange={(checked) =>
+                  handleChange("enableAdvancedStudentManagement", checked)
+                }
+              />
+            </div>
           </SettingsSection>
 
           {/* Data Settings */}

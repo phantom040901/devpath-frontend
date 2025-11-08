@@ -1,7 +1,8 @@
 // src/components/admin/StudentTable.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { getSystemSettings } from "../../services/systemSettingsService";
 import {
   Search,
   Filter,
@@ -17,13 +18,15 @@ import {
   Edit2,
   Trash2,
   ClipboardList,
-  Zap
+  Zap,
+  BarChart3
 } from "lucide-react";
 
 export default function StudentTable({ students, loading }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [filterEnrollment, setFilterEnrollment] = useState("all");
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +36,59 @@ export default function StudentTable({ students, loading }) {
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [generatingFor, setGeneratingFor] = useState(null);
   const [assigningCareer, setAssigningCareer] = useState(null);
+  const [assigningScores, setAssigningScores] = useState(null);
+  const [advancedManagementEnabled, setAdvancedManagementEnabled] = useState(false);
   const itemsPerPage = 10;
+
+  // Load system settings to check if advanced management is enabled
+  useEffect(() => {
+    const loadSettings = async () => {
+      const result = await getSystemSettings();
+      if (result.success && result.data) {
+        setAdvancedManagementEnabled(result.data.enableAdvancedStudentManagement || false);
+      }
+    };
+    loadSettings();
+  }, []);
+
+  // Performance level presets
+  const performanceLevels = [
+    {
+      label: "Excellent (80-95%)",
+      value: "excellent",
+      academicRange: [80, 95],
+      technicalRange: [80, 95],
+      color: "text-emerald-400"
+    },
+    {
+      label: "Good (65-79%)",
+      value: "good",
+      academicRange: [65, 79],
+      technicalRange: [65, 79],
+      color: "text-blue-400"
+    },
+    {
+      label: "Average (50-64%)",
+      value: "average",
+      academicRange: [50, 64],
+      technicalRange: [50, 64],
+      color: "text-yellow-400"
+    },
+    {
+      label: "Struggling (30-49%)",
+      value: "struggling",
+      academicRange: [30, 49],
+      technicalRange: [30, 49],
+      color: "text-orange-400"
+    },
+    {
+      label: "Needs Help (15-29%)",
+      value: "needs_help",
+      academicRange: [15, 29],
+      technicalRange: [15, 29],
+      color: "text-red-400"
+    }
+  ];
 
   // Available career options - matching backend ML model
   const careerOptions = [
@@ -86,13 +141,16 @@ export default function StudentTable({ students, loading }) {
   // Filter students
   const filteredStudents = students
     .filter(student => {
-      const matchesSearch = 
+      const matchesSearch =
         student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         student.email.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       const matchesStatus = filterStatus === "all" || student.status === filterStatus;
-      
-      return matchesSearch && matchesStatus;
+
+      const matchesEnrollment = filterEnrollment === "all" ||
+        student.enrollmentStatus === filterEnrollment;
+
+      return matchesSearch && matchesStatus && matchesEnrollment;
     })
     .sort((a, b) => {
       let comparison = 0;
@@ -114,6 +172,14 @@ export default function StudentTable({ students, loading }) {
       }
       return sortOrder === "asc" ? comparison : -comparison;
     });
+
+  // Calculate enrollment statistics
+  const enrollmentStats = {
+    total: students.length,
+    pwc_students: students.filter(s => s.enrollmentStatus === "current_pwc").length,
+    pwc_alumni: students.filter(s => s.enrollmentStatus === "pwc_alumni").length,
+    external: students.filter(s => s.enrollmentStatus === "external").length
+  };
 
   // Pagination
   const totalPages = Math.ceil(filteredStudents.length / itemsPerPage);
@@ -176,25 +242,139 @@ export default function StudentTable({ students, loading }) {
 
   const handleEnrollmentChange = async (studentId, newStatus) => {
     try {
+      console.log("Starting enrollment update:", { studentId, newStatus });
       const { doc, updateDoc } = await import('firebase/firestore');
       const { db } = await import('../../lib/firebase');
 
       const studentRef = doc(db, 'users', studentId);
+      console.log("Updating document with:", {
+        enrollmentStatus: newStatus,
+        isEnrolled: newStatus === "current_pwc",
+        updatedAt: new Date().toISOString()
+      });
+
       await updateDoc(studentRef, {
         enrollmentStatus: newStatus,
         isEnrolled: newStatus === "current_pwc",
         updatedAt: new Date().toISOString()
       });
 
+      console.log("Update successful!");
+
       // Update local state
       setEnrollmentChanges({ ...enrollmentChanges, [studentId]: newStatus });
       setEditingEnrollment(null);
+
+      alert(`✓ Successfully updated enrollment status!`);
 
       // Refresh the page to show updated data
       window.location.reload();
     } catch (error) {
       console.error("Error updating enrollment status:", error);
-      alert("Failed to update enrollment status");
+      alert(`Failed to update enrollment status: ${error.message}`);
+    }
+  };
+
+  const handleAssignScores = async (student, level) => {
+    setAssigningScores(student.id);
+
+    try {
+      const { doc, setDoc, updateDoc, collection, getDocs } = await import('firebase/firestore');
+      const { db } = await import('../../lib/firebase');
+
+      const timestamp = new Date().toISOString();
+
+      // Helper function to generate random score in range
+      const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+      const randPercentage = (min, max) => {
+        const minTens = Math.ceil(min / 10);
+        const maxTens = Math.floor(max / 10);
+        return randInt(minTens, maxTens) * 10;
+      };
+
+      // Fetch real assessments from Firestore
+      const academicSnap = await getDocs(collection(db, "assessments"));
+      const technicalSnap = await getDocs(collection(db, "technicalAssessments"));
+      const personalSnap = await getDocs(collection(db, "personalAssessments"));
+
+      const academicAssessments = academicSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const technicalAssessments = technicalSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const personalAssessments = personalSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      // Get the performance level ranges
+      const [academicMin, academicMax] = level.academicRange;
+      const [technicalMin, technicalMax] = level.technicalRange;
+
+      // Create assessment results with scores in the specified range
+      for (const assessment of academicAssessments) {
+        const score = randPercentage(academicMin, academicMax);
+        await setDoc(doc(db, "users", student.id, "results", `assessments_${assessment.id}_${Date.now()}`), {
+          assessmentId: assessment.id,
+          score: score,
+          completedAt: timestamp,
+          type: "academic"
+        });
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+
+      for (const assessment of technicalAssessments) {
+        const score = randPercentage(technicalMin, technicalMax);
+        await setDoc(doc(db, "users", student.id, "results", `technicalAssessments_${assessment.id}_${Date.now()}`), {
+          assessmentId: assessment.id,
+          score: score,
+          completedAt: timestamp,
+          type: "technical"
+        });
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+
+      // Create personal assessment responses
+      const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+      for (const assessment of personalAssessments) {
+        await setDoc(doc(db, "users", student.id, "results", `survey_${assessment.id}_${Date.now()}`), {
+          assessmentId: assessment.id,
+          completedAt: timestamp,
+          type: "personal",
+          responses: {
+            behavior: pick(["stubborn", "gentle"]),
+            introvert: pick(["yes", "no"]),
+            work_style: pick(["hard worker", "smart worker"]),
+            relationship: pick(["yes", "no"]),
+            seniors_input: pick(["yes", "no"]),
+            gaming_interest: pick(["yes", "no"]),
+            management_tech: pick(["Technical", "Management"]),
+            salary_work: pick(["salary", "work"]),
+            team_exp: pick(["yes", "no"]),
+            books: pick(["Technical", "Science fiction", "Self help", "Fantasy"]),
+            interested_subjects: pick(["networks", "cloud computing", "Software Engineering", "Computer Architecture", "IOT", "Management"]),
+            career_area: pick(["cloud computing", "data engineering", "system developer", "security", "testing"]),
+            company_type: pick(["Product based", "Service Based", "Cloud Services", "Web Services"]),
+            public_speaking: randInt(2, 5),
+            logical_quotient: randInt(3, 5),
+            coding_skills: randInt(3, 5),
+            hackathons: randInt(0, 5),
+            hours_working: randInt(4, 10),
+            memory_score: randInt(6, 10)
+          }
+        });
+        await new Promise(resolve => setTimeout(resolve, 10));
+      }
+
+      // Update user document
+      await updateDoc(doc(db, 'users', student.id), {
+        assessmentCompleted: true,
+        lastAssessmentDate: timestamp,
+        updatedAt: timestamp
+      });
+
+      alert(`✓ Successfully assigned ${level.label} scores to ${student.name}!`);
+      window.location.reload();
+
+    } catch (error) {
+      console.error("Error assigning scores:", error);
+      alert(`Failed to assign scores: ${error.message}`);
+    } finally {
+      setAssigningScores(null);
     }
   };
 
@@ -551,6 +731,32 @@ export default function StudentTable({ students, loading }) {
               <option value="inactive">Inactive</option>
             </select>
           </div>
+
+          {/* Enrollment Filter */}
+          <div className="flex items-center gap-2">
+            <GraduationCap className="text-gray-400" size={20} />
+            <select
+              value={filterEnrollment}
+              onChange={(e) => {
+                setFilterEnrollment(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-primary-500 transition-colors"
+            >
+              <option value="all">
+                All Students ({students.length})
+              </option>
+              <option value="current_pwc">
+                PWC Students ({students.filter(s => s.enrollmentStatus === "current_pwc").length})
+              </option>
+              <option value="pwc_alumni">
+                PWC Alumni ({students.filter(s => s.enrollmentStatus === "pwc_alumni").length})
+              </option>
+              <option value="external">
+                External ({students.filter(s => s.enrollmentStatus === "external").length})
+              </option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -658,8 +864,12 @@ export default function StudentTable({ students, loading }) {
                           <div className="flex items-center gap-1">
                             <select
                               defaultValue={student.enrollmentStatus || "current_pwc"}
-                              onChange={(e) => handleEnrollmentChange(student.id, e.target.value)}
+                              onChange={(e) => {
+                                console.log("Enrollment changed to:", e.target.value);
+                                handleEnrollmentChange(student.id, e.target.value);
+                              }}
                               className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-white text-xs focus:outline-none focus:border-blue-500"
+                              autoFocus
                             >
                               <option value="current_pwc">PWC Student</option>
                               <option value="pwc_alumni">PWC Alumni</option>
@@ -668,6 +878,7 @@ export default function StudentTable({ students, loading }) {
                             <button
                               onClick={() => setEditingEnrollment(null)}
                               className="text-gray-400 hover:text-white text-xs px-1"
+                              title="Cancel"
                             >
                               ✕
                             </button>
@@ -679,7 +890,10 @@ export default function StudentTable({ students, loading }) {
                               {getEnrollmentBadge(student).text}
                             </div>
                             <button
-                              onClick={() => setEditingEnrollment(student.id)}
+                              onClick={() => {
+                                console.log("Editing enrollment for:", student.id);
+                                setEditingEnrollment(student.id);
+                              }}
                               className="text-gray-400 hover:text-blue-400 transition-colors p-1"
                               title="Edit enrollment status"
                             >
@@ -699,8 +913,11 @@ export default function StudentTable({ students, loading }) {
                             View
                           </button>
 
-                          {/* Career Assignment Dropdown */}
-                          <div className="relative group">
+                          {/* Advanced Management Actions - Only show if enabled */}
+                          {advancedManagementEnabled && (
+                            <>
+                              {/* Career Assignment Dropdown */}
+                              <div className="relative group">
                             <button
                               disabled={assigningCareer === student.id}
                               className="flex items-center gap-1 text-purple-400 hover:text-purple-300 text-xs font-medium transition-colors px-2 py-1 rounded hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -737,6 +954,43 @@ export default function StudentTable({ students, loading }) {
                             </div>
                           </div>
 
+                          {/* Score Assignment Dropdown */}
+                          <div className="relative group">
+                            <button
+                              disabled={assigningScores === student.id}
+                              className="flex items-center gap-1 text-yellow-400 hover:text-yellow-300 text-xs font-medium transition-colors px-2 py-1 rounded hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                              title="Assign performance level scores"
+                            >
+                              {assigningScores === student.id ? (
+                                <>
+                                  <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-yellow-400" />
+                                  <span className="text-[10px]">Assigning...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <BarChart3 size={12} />
+                                  Scores
+                                </>
+                              )}
+                            </button>
+
+                            {/* Dropdown menu */}
+                            <div className="absolute left-0 mt-1 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                              <div className="sticky top-0 bg-gray-800 px-3 py-2 border-b border-gray-700">
+                                <p className="text-xs text-gray-400 font-medium">Set Performance Level</p>
+                              </div>
+                              {performanceLevels.map((level, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => handleAssignScores(student, level)}
+                                  className={`w-full text-left px-3 py-2 text-sm hover:bg-gray-700 transition-colors border-b border-gray-800 last:border-b-0 ${level.color}`}
+                                >
+                                  <div className="font-medium text-xs">{level.label}</div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
                           <button
                             onClick={() => handleAutoGenerateAssessment(student)}
                             disabled={generatingFor === student.id}
@@ -755,14 +1009,16 @@ export default function StudentTable({ students, loading }) {
                               </>
                             )}
                           </button>
-                          <button
-                            onClick={() => setDeletingStudent(student)}
-                            className="flex items-center gap-1 text-red-400 hover:text-red-300 text-xs font-medium transition-colors px-2 py-1 rounded hover:bg-gray-800"
-                            title="Delete student"
-                          >
-                            <Trash2 size={12} />
-                            Delete
-                          </button>
+                              <button
+                                onClick={() => setDeletingStudent(student)}
+                                className="flex items-center gap-1 text-red-400 hover:text-red-300 text-xs font-medium transition-colors px-2 py-1 rounded hover:bg-gray-800"
+                                title="Delete student"
+                              >
+                                <Trash2 size={12} />
+                                Delete
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </motion.tr>
