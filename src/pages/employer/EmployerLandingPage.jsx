@@ -100,37 +100,6 @@ export default function EmployerLandingPage() {
   ];
 
 
-  const pricingTiers = [
-    {
-      name: "Tier 1",
-      subtitle: "Basic Verification",
-      price: "Free",
-      features: [
-        "Browse student profiles",
-        "Basic search filters",
-        "Limited profile views (10/month)",
-        "Email support",
-      ],
-      cta: "Get Started",
-      popular: false,
-    },
-    {
-      name: "Tier 2",
-      subtitle: "Enhanced Access",
-      price: "$99/mo",
-      features: [
-        "Unlimited profile views",
-        "Advanced search & filters",
-        "Detailed assessment reports",
-        "Direct messaging",
-        "Priority support",
-        "Save candidate lists",
-      ],
-      cta: "Start Free Trial",
-      popular: true,
-    },
-  ];
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-950 to-black">
       {/* Navigation */}
@@ -517,76 +486,6 @@ export default function EmployerLandingPage() {
                 </motion.div>
               </div>
             </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-950/30">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Simple, Transparent Pricing
-            </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Choose the plan that fits your hiring needs
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {pricingTiers.map((tier, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className={`bg-gray-900/70 border rounded-2xl p-8 relative ${
-                  tier.popular
-                    ? "border-blue-500 shadow-2xl shadow-blue-500/20"
-                    : "border-gray-800"
-                }`}
-              >
-                {tier.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-sm font-semibold">
-                    Most Popular
-                  </div>
-                )}
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    {tier.name}
-                  </h3>
-                  <p className="text-gray-400 text-sm mb-4">{tier.subtitle}</p>
-                  <div className="text-5xl font-bold text-white mb-2">
-                    {tier.price}
-                  </div>
-                </div>
-                <ul className="space-y-4 mb-8">
-                  {tier.features.map((feature, i) => (
-                    <li key={i} className="flex items-start gap-3">
-                      <CheckCircle className="text-emerald-400 flex-shrink-0 mt-0.5" size={20} />
-                      <span className="text-gray-300">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <button
-                  onClick={() => navigate("/employer/signup")}
-                  className={`w-full py-4 rounded-lg font-semibold transition-all duration-200 ${
-                    tier.popular
-                      ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-700 hover:to-cyan-700 shadow-lg hover:shadow-blue-500/50"
-                      : "bg-gray-800 text-white hover:bg-gray-700"
-                  }`}
-                >
-                  {tier.cta}
-                </button>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>
