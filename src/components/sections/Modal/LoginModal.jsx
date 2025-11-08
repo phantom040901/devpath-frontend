@@ -207,19 +207,9 @@ export default function LoginModal() {
           </label>
 
           {/* Password */}
-          <label className="flex flex-col gap-1 relative">
+          <label className="flex flex-col gap-2 relative">
             <div className="flex justify-between items-center">
               <span className={`text-sm font-semibold ${theme === 'light' ? 'text-gray-700' : 'text-primary-100'}`}>Password</span>
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                disabled={isLoading}
-                className={`text-xs font-medium transition hover:underline ${
-                  theme === 'light' ? 'text-primary-600 hover:text-primary-700' : 'text-primary-400 hover:text-primary-300'
-                } disabled:opacity-50 disabled:cursor-not-allowed`}
-              >
-                Forgot Password?
-              </button>
             </div>
             <div className="relative">
               <input
@@ -235,13 +225,23 @@ export default function LoginModal() {
               />
               <button
                 type="button"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-600 hover:text-primary-800"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-600 hover:text-primary-800 z-10"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={isLoading}
               >
                 {showPassword ? <EyeOff size={20} strokeWidth={2.5} /> : <Eye size={20} strokeWidth={2.5} />}
               </button>
             </div>
+            <button
+              type="button"
+              onClick={handleForgotPassword}
+              disabled={isLoading}
+              className={`text-xs font-medium transition hover:underline self-end -mt-1 ${
+                theme === 'light' ? 'text-primary-600 hover:text-primary-700' : 'text-primary-400 hover:text-primary-300'
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              Forgot Password?
+            </button>
           </label>
 
           {/* Reset email success message */}
