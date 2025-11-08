@@ -14,6 +14,13 @@ import {
   Target,
   Award,
   Globe,
+  Zap,
+  Clock,
+  Filter,
+  FileCheck,
+  Rocket,
+  Building2,
+  Quote,
 } from "lucide-react";
 import { useTheme } from "../../contexts/ThemeContext";
 import logoImage from "../../assets/logo.png";
@@ -69,6 +76,94 @@ export default function EmployerLandingPage() {
     "Tier-based verification system",
   ];
 
+  const processSteps = [
+    {
+      step: "01",
+      title: "Create Account",
+      description: "Sign up and get verified to access our talent pool",
+      icon: FileCheck,
+    },
+    {
+      step: "02",
+      title: "Search & Filter",
+      description: "Use advanced filters to find perfect candidates",
+      icon: Filter,
+    },
+    {
+      step: "03",
+      title: "Review Profiles",
+      description: "Analyze comprehensive assessments and scores",
+      icon: BarChart3,
+    },
+    {
+      step: "04",
+      title: "Connect & Hire",
+      description: "Reach out to candidates and build your team",
+      icon: Rocket,
+    },
+  ];
+
+  const testimonials = [
+    {
+      company: "TechCorp Solutions",
+      logo: "TC",
+      name: "Sarah Johnson",
+      role: "Head of Recruitment",
+      quote:
+        "DevPath has completely transformed our hiring process. We've hired 15 exceptional developers in the last 6 months, all pre-assessed and ready to contribute from day one.",
+      rating: 5,
+    },
+    {
+      company: "InnovateSoft",
+      logo: "IS",
+      name: "Michael Chen",
+      role: "CTO",
+      quote:
+        "The quality of candidates on DevPath is outstanding. The detailed assessments save us countless hours in technical screening. Highly recommend!",
+      rating: 5,
+    },
+    {
+      company: "DataDrive Inc",
+      logo: "DD",
+      name: "Emily Rodriguez",
+      role: "Talent Acquisition Manager",
+      quote:
+        "We've reduced our time-to-hire by 60% using DevPath. The verification system ensures we're only seeing qualified, serious candidates.",
+      rating: 5,
+    },
+  ];
+
+  const pricingTiers = [
+    {
+      name: "Tier 1",
+      subtitle: "Basic Verification",
+      price: "Free",
+      features: [
+        "Browse student profiles",
+        "Basic search filters",
+        "Limited profile views (10/month)",
+        "Email support",
+      ],
+      cta: "Get Started",
+      popular: false,
+    },
+    {
+      name: "Tier 2",
+      subtitle: "Enhanced Access",
+      price: "$99/mo",
+      features: [
+        "Unlimited profile views",
+        "Advanced search & filters",
+        "Detailed assessment reports",
+        "Direct messaging",
+        "Priority support",
+        "Save candidate lists",
+      ],
+      cta: "Start Free Trial",
+      popular: true,
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-950 to-black">
       {/* Navigation */}
@@ -114,40 +209,65 @@ export default function EmployerLandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center max-w-4xl mx-auto"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 mb-6">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.1 }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 mb-6"
+            >
               <Briefcase className="text-blue-400" size={20} />
               <span className="text-blue-400 font-medium">
                 Employer Portal
               </span>
-            </div>
+            </motion.div>
 
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Find Your Next{" "}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight"
+            >
+              Hire Pre-Assessed{" "}
               <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-primary-500 bg-clip-text text-transparent">
-                Top Performer
+                Top Talent
               </span>
-            </h1>
+            </motion.h1>
 
-            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Access a curated pool of pre-assessed, career-ready students with
-              verified skills and comprehensive performance data. Hire smarter,
-              faster, and better.
-            </p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="text-xl text-gray-300 mb-8 leading-relaxed"
+            >
+              Access a curated pool of verified, career-ready students with
+              comprehensive performance data. Skip the screening, hire smarter.
+            </motion.p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+            >
               <button
                 onClick={() => navigate("/employer/signup")}
-                className="w-full sm:w-auto px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold text-lg hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-xl hover:shadow-blue-500/50 flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold text-lg hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-xl hover:shadow-blue-500/50 flex items-center justify-center gap-2 group"
               >
                 Start Hiring Now
-                <ArrowRight size={20} />
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
               <button
                 onClick={() => navigate("/employer/login")}
@@ -155,42 +275,101 @@ export default function EmployerLandingPage() {
               >
                 Already a Partner? Login
               </button>
-            </div>
+            </motion.div>
 
             {/* Trust Badge */}
-            <div className="mt-12 flex items-center justify-center gap-2 text-gray-400">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+              className="mt-12 flex items-center justify-center gap-2 text-gray-400"
+            >
               <Shield className="text-emerald-400" size={20} />
               <span className="text-sm">
                 Trusted by 100+ companies • Verified students only
               </span>
-            </div>
+            </motion.div>
           </motion.div>
 
           {/* Stats */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.6 }}
             className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20"
           >
             {stats.map((stat, index) => (
-              <div
+              <motion.div
                 key={index}
-                className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-blue-500/50 transition-all duration-300"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.7 + index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+                className="bg-gray-900/50 border border-gray-800 rounded-xl p-6 text-center hover:border-blue-500/50 transition-all duration-300 group"
               >
-                <stat.icon className="mx-auto mb-3 text-blue-400" size={32} />
+                <stat.icon className="mx-auto mb-3 text-blue-400 group-hover:text-cyan-400 transition-colors" size={32} />
                 <div className="text-3xl font-bold text-white mb-1">
                   {stat.value}
                 </div>
                 <div className="text-gray-400 text-sm">{stat.label}</div>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-950/30">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-white mb-4">
+              How It Works
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Get started in minutes and find your perfect hire in 4 simple steps
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {processSteps.map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                className="relative"
+              >
+                <div className="bg-gray-900/70 border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300 h-full">
+                  <div className="text-6xl font-bold text-blue-500/20 mb-4">
+                    {step.step}
+                  </div>
+                  <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 w-fit mb-4">
+                    <step.icon className="text-blue-400" size={28} />
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">
+                    {step.title}
+                  </h3>
+                  <p className="text-gray-400">
+                    {step.description}
+                  </p>
+                </div>
+                {index < processSteps.length - 1 && (
+                  <div className="hidden lg:block absolute top-1/2 -right-4 w-8 h-0.5 bg-gradient-to-r from-blue-500/50 to-transparent"></div>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-950/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -215,6 +394,7 @@ export default function EmployerLandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
                 className="bg-gray-900/70 border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300 group"
               >
                 <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 w-fit mb-4 group-hover:bg-blue-500/20 transition-colors">
@@ -233,7 +413,7 @@ export default function EmployerLandingPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-950/30">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <motion.div
@@ -259,20 +439,22 @@ export default function EmployerLandingPage() {
                     whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="flex items-center gap-3"
+                    className="flex items-center gap-3 group"
                   >
-                    <CheckCircle className="text-emerald-400 flex-shrink-0" size={24} />
-                    <span className="text-gray-300 text-lg">{benefit}</span>
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500/30 transition-colors">
+                      <CheckCircle className="text-emerald-400" size={16} />
+                    </div>
+                    <span className="text-gray-300 text-lg group-hover:text-white transition-colors">{benefit}</span>
                   </motion.div>
                 ))}
               </div>
 
               <button
                 onClick={() => navigate("/employer/signup")}
-                className="mt-8 px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold text-lg hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-xl hover:shadow-blue-500/50 flex items-center gap-2"
+                className="mt-8 px-8 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold text-lg hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-xl hover:shadow-blue-500/50 flex items-center gap-2 group"
               >
                 Create Employer Account
-                <ArrowRight size={20} />
+                <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </motion.div>
 
@@ -283,7 +465,10 @@ export default function EmployerLandingPage() {
               className="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-2xl p-8"
             >
               <div className="space-y-6">
-                <div className="bg-gray-900/80 rounded-xl p-6 border border-gray-800">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-gray-900/80 rounded-xl p-6 border border-gray-800"
+                >
                   <div className="flex items-center gap-4 mb-4">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
                       <Award className="text-white" size={24} />
@@ -298,30 +483,60 @@ export default function EmployerLandingPage() {
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Technical Skills</span>
-                      <span className="text-emerald-400 font-semibold">
-                        95%
-                      </span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400 text-sm">Technical Skills</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-32 h-2 bg-gray-800 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            whileInView={{ width: "95%" }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, delay: 0.2 }}
+                            className="h-full bg-gradient-to-r from-emerald-500 to-cyan-500"
+                          ></motion.div>
+                        </div>
+                        <span className="text-emerald-400 font-semibold text-sm">95%</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Academic Performance</span>
-                      <span className="text-emerald-400 font-semibold">
-                        88%
-                      </span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400 text-sm">Academic Performance</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-32 h-2 bg-gray-800 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            whileInView={{ width: "88%" }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, delay: 0.4 }}
+                            className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                          ></motion.div>
+                        </div>
+                        <span className="text-emerald-400 font-semibold text-sm">88%</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-400">Career Readiness</span>
-                      <span className="text-emerald-400 font-semibold">
-                        93%
-                      </span>
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-400 text-sm">Career Readiness</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-32 h-2 bg-gray-800 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            whileInView={{ width: "93%" }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 1, delay: 0.6 }}
+                            className="h-full bg-gradient-to-r from-yellow-500 to-orange-500"
+                          ></motion.div>
+                        </div>
+                        <span className="text-emerald-400 font-semibold text-sm">93%</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </motion.div>
 
-                <div className="bg-gray-900/80 rounded-xl p-6 border border-gray-800">
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="bg-gray-900/80 rounded-xl p-6 border border-gray-800"
+                >
                   <div className="flex items-center gap-2 mb-3">
-                    <Star className="text-yellow-400" size={20} />
+                    <Star className="text-yellow-400 fill-yellow-400" size={20} />
                     <span className="text-white font-semibold">
                       Recommended Career
                     </span>
@@ -332,9 +547,132 @@ export default function EmployerLandingPage() {
                   <div className="inline-block px-4 py-2 rounded-lg bg-blue-500/20 border border-blue-500/30 text-blue-400 font-medium">
                     Full-Stack Developer
                   </div>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Trusted by Leading Companies
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              See what our partners have to say about hiring through DevPath
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+                className="bg-gray-900/70 border border-gray-800 rounded-xl p-6 hover:border-blue-500/50 transition-all duration-300"
+              >
+                <Quote className="text-blue-400/30 mb-4" size={40} />
+                <p className="text-gray-300 leading-relaxed mb-6 italic">
+                  "{testimonial.quote}"
+                </p>
+                <div className="flex items-center gap-1 mb-4">
+                  {[...Array(testimonial.rating)].map((_, i) => (
+                    <Star key={i} className="text-yellow-400 fill-yellow-400" size={16} />
+                  ))}
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold">
+                    {testimonial.logo}
+                  </div>
+                  <div>
+                    <div className="text-white font-semibold">{testimonial.name}</div>
+                    <div className="text-gray-400 text-sm">{testimonial.role}</div>
+                    <div className="text-blue-400 text-sm">{testimonial.company}</div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-950/30">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Simple, Transparent Pricing
+            </h2>
+            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+              Choose the plan that fits your hiring needs
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {pricingTiers.map((tier, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ y: -5 }}
+                className={`bg-gray-900/70 border rounded-2xl p-8 relative ${
+                  tier.popular
+                    ? "border-blue-500 shadow-2xl shadow-blue-500/20"
+                    : "border-gray-800"
+                }`}
+              >
+                {tier.popular && (
+                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white text-sm font-semibold">
+                    Most Popular
+                  </div>
+                )}
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-bold text-white mb-2">
+                    {tier.name}
+                  </h3>
+                  <p className="text-gray-400 text-sm mb-4">{tier.subtitle}</p>
+                  <div className="text-5xl font-bold text-white mb-2">
+                    {tier.price}
+                  </div>
+                </div>
+                <ul className="space-y-4 mb-8">
+                  {tier.features.map((feature, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <CheckCircle className="text-emerald-400 flex-shrink-0 mt-0.5" size={20} />
+                      <span className="text-gray-300">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => navigate("/employer/signup")}
+                  className={`w-full py-4 rounded-lg font-semibold transition-all duration-200 ${
+                    tier.popular
+                      ? "bg-gradient-to-r from-blue-600 to-cyan-600 text-white hover:from-blue-700 hover:to-cyan-700 shadow-lg hover:shadow-blue-500/50"
+                      : "bg-gray-800 text-white hover:bg-gray-700"
+                  }`}
+                >
+                  {tier.cta}
+                </button>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -347,6 +685,7 @@ export default function EmployerLandingPage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
+            <Rocket className="mx-auto mb-6 text-blue-400" size={60} />
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Ready to Find Your Next Hire?
             </h2>
@@ -357,9 +696,10 @@ export default function EmployerLandingPage() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <button
                 onClick={() => navigate("/employer/signup")}
-                className="w-full sm:w-auto px-10 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold text-lg hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-xl hover:shadow-blue-500/50"
+                className="w-full sm:w-auto px-10 py-4 rounded-lg bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-semibold text-lg hover:from-blue-700 hover:to-cyan-700 transition-all duration-200 shadow-xl hover:shadow-blue-500/50 flex items-center justify-center gap-2 group"
               >
                 Get Started Free
+                <Zap size={20} className="group-hover:rotate-12 transition-transform" />
               </button>
               <button
                 onClick={() => navigate("/")}
@@ -374,48 +714,69 @@ export default function EmployerLandingPage() {
 
       {/* Footer */}
       <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <img
-              src={logoImage}
-              alt="DevPath Logo"
-              className="h-10"
-              style={{
-                filter: "drop-shadow(0 0 8px rgba(6, 182, 212, 0.6)) brightness(1.2)",
-              }}
-            />
-            <span className="text-xl font-bold bg-gradient-to-r from-cyan-300 via-primary-500 to-cyan-400 bg-clip-text text-transparent">
-              DevPath
-            </span>
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-8 mb-8">
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-3 mb-4">
+                <img
+                  src={logoImage}
+                  alt="DevPath Logo"
+                  className="h-10"
+                  style={{
+                    filter: "drop-shadow(0 0 8px rgba(6, 182, 212, 0.6)) brightness(1.2)",
+                  }}
+                />
+                <span className="text-xl font-bold bg-gradient-to-r from-cyan-300 via-primary-500 to-cyan-400 bg-clip-text text-transparent">
+                  DevPath
+                </span>
+              </div>
+              <p className="text-gray-400 mb-4 max-w-md">
+                Connecting exceptional talent with exceptional companies through
+                data-driven career assessments and verified profiles.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-4">Quick Links</h4>
+              <ul className="space-y-2">
+                <li>
+                  <button
+                    onClick={() => navigate("/")}
+                    className="text-gray-400 hover:text-blue-400 transition-colors"
+                  >
+                    For Students
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => navigate("/employer/login")}
+                    className="text-gray-400 hover:text-blue-400 transition-colors"
+                  >
+                    Employer Login
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => navigate("/admin/login")}
+                    className="text-gray-400 hover:text-blue-400 transition-colors"
+                  >
+                    Admin Portal
+                  </button>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-white font-semibold mb-4">Contact</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>support@devpath.com</li>
+                <li>1-800-DEVPATH</li>
+              </ul>
+            </div>
           </div>
-          <p className="text-gray-400 mb-4">
-            Connecting exceptional talent with exceptional companies.
-          </p>
-          <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
-            <button
-              onClick={() => navigate("/")}
-              className="hover:text-blue-400 transition-colors"
-            >
-              For Students
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => navigate("/employer/login")}
-              className="hover:text-blue-400 transition-colors"
-            >
-              Employer Login
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => navigate("/admin/login")}
-              className="hover:text-blue-400 transition-colors"
-            >
-              Admin Portal
-            </button>
+          <div className="border-t border-gray-800 pt-8 text-center">
+            <p className="text-gray-600 text-sm">
+              © 2025 DevPath. All rights reserved.
+            </p>
           </div>
-          <p className="text-gray-600 text-sm mt-6">
-            © 2025 DevPath. All rights reserved.
-          </p>
         </div>
       </footer>
     </div>
