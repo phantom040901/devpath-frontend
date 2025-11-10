@@ -28,7 +28,10 @@ import {
   Check,
   Brain,
   Code,
-  BarChart3
+  BarChart3,
+  ChevronDown,
+  ChevronUp,
+  Users
 } from "lucide-react";
 
 export default function CareerMatches() {
@@ -833,6 +836,8 @@ function CompletionCard({ title, completed, total, icon, link, color }) {
 
 // Career Card Component
 function CareerCard({ match, rank, onSelect }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const getRankIcon = (rank) => {
     switch(rank) {
       case 1: return <Rocket className="text-yellow-400" size={20} />;
@@ -942,6 +947,72 @@ function CareerCard({ match, rank, onSelect }) {
             <Brain size={14} className="text-emerald-400 dark:text-emerald-400 light:text-emerald-600" />
             <span>Data Matched</span>
           </div>
+        </div>
+
+        {/* Collapsible Student Count Section */}
+        <div className="mb-6">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-gray-800/50 dark:bg-gray-800/50 light:bg-gray-100 border border-gray-700/50 dark:border-gray-700/50 light:border-gray-300 hover:bg-gray-800 dark:hover:bg-gray-800 light:hover:bg-gray-200 transition-all"
+          >
+            <div className="flex items-center gap-2">
+              <Users size={16} className="text-primary-400 dark:text-primary-400 light:text-primary-600" />
+              <span className="text-sm font-semibold text-gray-300 dark:text-gray-300 light:text-gray-700">
+                Student Interest
+              </span>
+            </div>
+            {isExpanded ? (
+              <ChevronUp size={18} className="text-gray-400 dark:text-gray-400 light:text-gray-600" />
+            ) : (
+              <ChevronDown size={18} className="text-gray-400 dark:text-gray-400 light:text-gray-600" />
+            )}
+          </button>
+
+          <AnimatePresence>
+            {isExpanded && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <div className="mt-2 px-4 py-3 rounded-xl bg-gray-900/60 dark:bg-gray-900/60 light:bg-gray-50 border border-gray-700/30 dark:border-gray-700/30 light:border-gray-300">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="p-2 rounded-lg bg-primary-500/20 dark:bg-primary-500/20 light:bg-primary-100">
+                        <Users size={18} className="text-primary-400 dark:text-primary-400 light:text-primary-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 light:text-gray-600">Students Selected</p>
+                        <p className="text-lg font-bold text-white dark:text-white light:text-gray-900">
+                          {match.studentCount || 0}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs text-gray-500 dark:text-gray-500 light:text-gray-600">Popularity</p>
+                      <div className="flex items-center gap-1">
+                        <TrendingUp size={14} className="text-emerald-400 dark:text-emerald-400 light:text-emerald-600" />
+                        <span className="text-sm font-semibold text-emerald-400 dark:text-emerald-400 light:text-emerald-600">
+                          {match.popularityPercentage || 0}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-3 pt-3 border-t border-gray-700/30 dark:border-gray-700/30 light:border-gray-300">
+                    <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">
+                      This career path has been selected by{' '}
+                      <span className="text-primary-400 dark:text-primary-400 light:text-primary-600 font-semibold">
+                        {match.studentCount || 0} students
+                      </span>
+                      {' '}in our platform
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Select Button */}

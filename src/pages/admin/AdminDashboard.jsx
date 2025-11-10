@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import AdminNav from "../../components/admin/AdminNav";
 import OnlineUsersWidget from "../../components/admin/OnlineUsersWidget";
+import MigrationProgressCard from "../../components/admin/MigrationProgressCard";
 import Chart from 'chart.js/auto';
 import { useRef } from "react";
 import {
@@ -403,6 +404,11 @@ export default function AdminDashboard() {
             change={stats.averageCompletion >= 60 ? "On track" : "Below target"}
             positive={stats.averageCompletion >= 60}
           />
+        </div>
+
+        {/* Migration Progress Card */}
+        <div className="mb-6">
+          <MigrationProgressCard />
         </div>
 
         {/* Main Content Grid */}

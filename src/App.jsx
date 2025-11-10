@@ -38,6 +38,8 @@ import ResourcesManagement from "./pages/admin/ResourcesManagement";
 import AdminMessaging from "./pages/admin/AdminMessaging";
 import EmployersList from "./pages/admin/EmployersList";
 import EmployerVerificationPage from "./pages/admin/EmployerVerification";
+import MigrationGuide from "./pages/admin/MigrationGuide";
+import DatasetViewer from "./pages/admin/DatasetViewer";
 
 // Employer Pages
 import EmployerLandingPage from "./pages/employer/EmployerLandingPage";
@@ -194,6 +196,25 @@ function App() {
         />
 
         <Route path="/admin/resources" element={<ResourcesManagement />} />
+
+        {/* Migration & Dataset Routes */}
+        <Route
+          path="/admin/migration-guide"
+          element={
+            <RequireAdmin>
+              <MigrationGuide />
+            </RequireAdmin>
+          }
+        />
+
+        <Route
+          path="/admin/dataset-viewer"
+          element={
+            <RequireAdmin>
+              <DatasetViewer />
+            </RequireAdmin>
+          }
+        />
 
         {/* Employer Management */}
         <Route
