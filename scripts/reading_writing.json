@@ -1,0 +1,166 @@
+{
+  "title": "Reading & Writing Skills Assessment",
+  "description": "Test your reading comprehension and language skills",
+  "duration": 10,
+  "mode": "mcq",
+  "field": "reading and writing skills",
+  "scoringType": "categorical",
+  "passage": "Cloud computing has revolutionized how businesses and individuals store and process data. Instead of relying on local servers or personal computers, cloud computing uses remote servers hosted on the internet to manage, store, and process data. This shift offers several advantages, including cost efficiency, scalability, and accessibility from anywhere with an internet connection. Major cloud service providers like Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform have made it easier for organizations to adopt cloud solutions without significant upfront infrastructure investments. However, concerns about data security and privacy remain important considerations for users and organizations alike.",
+  "questions": [
+    {
+      "id": 1,
+      "question": "According to the passage, where is data stored in cloud computing?",
+      "options": [
+        {
+          "value": "A",
+          "label": "On local servers only",
+          "correct": false
+        },
+        {
+          "value": "B",
+          "label": "On personal computers",
+          "correct": false
+        },
+        {
+          "value": "C",
+          "label": "On remote servers hosted on the internet",
+          "correct": true
+        },
+        {
+          "value": "D",
+          "label": "On physical external drives",
+          "correct": false
+        },
+        {
+          "value": "E",
+          "label": "On company-owned data centers exclusively",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "Which of the following is NOT mentioned as an advantage of cloud computing?",
+      "options": [
+        {
+          "value": "A",
+          "label": "Cost efficiency",
+          "correct": false
+        },
+        {
+          "value": "B",
+          "label": "Scalability",
+          "correct": false
+        },
+        {
+          "value": "C",
+          "label": "Faster internet speeds",
+          "correct": true
+        },
+        {
+          "value": "D",
+          "label": "Accessibility from anywhere",
+          "correct": false
+        },
+        {
+          "value": "E",
+          "label": "Reduced infrastructure investments",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "Complete the sentence correctly: 'Cloud computing has _____ how businesses store data.'",
+      "options": [
+        {
+          "value": "A",
+          "label": "complicated",
+          "correct": false
+        },
+        {
+          "value": "B",
+          "label": "revolutionized",
+          "correct": true
+        },
+        {
+          "value": "C",
+          "label": "revolution",
+          "correct": false
+        },
+        {
+          "value": "D",
+          "label": "revolutionize",
+          "correct": false
+        },
+        {
+          "value": "E",
+          "label": "revolted",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "What is the main concern mentioned about cloud computing?",
+      "options": [
+        {
+          "value": "A",
+          "label": "High costs",
+          "correct": false
+        },
+        {
+          "value": "B",
+          "label": "Data security and privacy",
+          "correct": true
+        },
+        {
+          "value": "C",
+          "label": "Slow processing speeds",
+          "correct": false
+        },
+        {
+          "value": "D",
+          "label": "Limited storage capacity",
+          "correct": false
+        },
+        {
+          "value": "E",
+          "label": "Difficulty of implementation",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "question": "Identify the sentence with correct grammar:",
+      "options": [
+        {
+          "value": "A",
+          "label": "The data are stored on the cloud servers.",
+          "correct": false
+        },
+        {
+          "value": "B",
+          "label": "Organizations have made it easier to adopt solutions.",
+          "correct": true
+        },
+        {
+          "value": "C",
+          "label": "Cloud computing have revolutionized businesses.",
+          "correct": false
+        },
+        {
+          "value": "D",
+          "label": "Users concerns about security is important.",
+          "correct": false
+        },
+        {
+          "value": "E",
+          "label": "Major providers has made adoption easier.",
+          "correct": false
+        }
+      ]
+    }
+  ]
+}

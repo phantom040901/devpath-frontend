@@ -17,7 +17,6 @@ import DashboardFooter from "../components/dashboard/DashboardFooter";
 export default function AssessmentsList() {
   const [academic, setAcademic] = useState([]);
   const [technical, setTechnical] = useState([]);
-  const [personal, setPersonal] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -35,7 +34,6 @@ export default function AssessmentsList() {
 
   const academicHeaderRef = useRef(null);
   const technicalHeaderRef = useRef(null);
-  const personalHeaderRef = useRef(null);
 
   useEffect(() => {
     async function fetchAll() {
@@ -62,22 +60,9 @@ export default function AssessmentsList() {
           };
         });
 
-        const personalRef = collection(db, "personalAssessments");
-        const personalSnap = await getDocs(personalRef);
-        const personalData = personalSnap.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            type: "personal",
-            mode: data.mode || "survey",
-            ...data,
-          };
-        });
-
         if (!user) {
           setAcademic(academicData);
           setTechnical(techData);
-          setPersonal(personalData);
           return;
         }
 
@@ -164,7 +149,6 @@ export default function AssessmentsList() {
 
         setAcademic(mergeWithResults(academicData));
         setTechnical(mergeWithResults(techData));
-        setPersonal(mergeWithResults(personalData));
       } catch (err) {
         console.error("Failed to fetch assessments:", err);
       } finally {
@@ -216,8 +200,6 @@ export default function AssessmentsList() {
         targetRef = academicHeaderRef;
       } else if (tab === "technical") {
         targetRef = technicalHeaderRef;
-      } else if (tab === "personal") {
-        targetRef = personalHeaderRef;
       }
 
       if (targetRef?.current) {
@@ -263,11 +245,7 @@ export default function AssessmentsList() {
 
   const navigateToAssessment = (assessment) => {
     if (assessment.mode === "survey") {
-      if (assessment.type === "personal") {
-        navigate(`/survey/personal/${assessment.id}`);
-      } else {
-        navigate(`/survey/technical/${assessment.id}`);
-      }
+      navigate(`/survey/technical/${assessment.id}`);
     } else if (assessment.type === "technical") {
       navigate(`/technical-assessments/${assessment.id}`);
     } else {
@@ -354,16 +332,6 @@ export default function AssessmentsList() {
             weakAreas={weakAreas}
             userScores={userScores}
           />
-          <Section
-            title="Personal Assessments"
-            icon={<Award size={32} />}
-            items={personal}
-            onStart={handleStartTest}
-            headerRef={personalHeaderRef}
-            learningProgress={learningProgress}
-            weakAreas={weakAreas}
-            userScores={userScores}
-          />
         </div>
 
         <AnimatePresence>
@@ -383,15 +351,6 @@ export default function AssessmentsList() {
                 >
                   <Code size={18} />
                   <span className="text-sm font-semibold">Technical</span>
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => scrollToSection(personalHeaderRef)}
-                  className="flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-emerald-500 to-cyan-500 text-white shadow-lg hover:shadow-emerald-500/50 transition-all"
-                >
-                  <Award size={18} />
-                  <span className="text-sm font-semibold">Personal</span>
                 </motion.button>
               </div>
 
@@ -416,17 +375,6 @@ export default function AssessmentsList() {
                 >
                   <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
                     Technical
-                  </span>
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.2 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => scrollToSection(personalHeaderRef)}
-                  className="group relative w-3 h-3 rounded-full bg-emerald-400 hover:bg-emerald-300 dark:bg-emerald-400 dark:hover:bg-emerald-300 light:bg-emerald-600 light:hover:bg-emerald-500 transition-all shadow-lg"
-                  title="Personal"
-                >
-                  <span className="absolute right-6 top-1/2 -translate-y-1/2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs px-3 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg border border-gray-700 dark:border-gray-700 light:border-gray-300">
-                    Personal
                   </span>
                 </motion.button>
               </div>

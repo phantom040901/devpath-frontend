@@ -17,16 +17,16 @@ const ASSESSMENT_MODES = {
   coding_skills: "mcq",
   logical_quotient: "mcq",
   memory_test: "mcq",
-  hackathons: "survey",
-  hours_working: "survey",
+  public_speaking: "mcq",
+  reading_writing: "mcq",
 };
 
 const ASSESSMENT_TITLES = {
   coding_skills: "Coding Skills Assessment",
   logical_quotient: "Logical Quotient Test",
   memory_test: "Memory Passage Test",
-  hackathons: "Hackathon Experience Survey",
-  hours_working: "Study Habits Survey",
+  public_speaking: "Public Speaking Assessment",
+  reading_writing: "Reading & Writing Skills Assessment",
 };
 
 async function uploadAssessment(fileName, docId) {
@@ -55,14 +55,14 @@ async function uploadAll() {
     { file: "coding_skills.json", id: "coding_skills" },
     { file: "logical_quotient.json", id: "logical_quotient" },
     { file: "memory_test.json", id: "memory_test" },
-    { file: "hackathons.json", id: "hackathons" },
-    { file: "hours_working.json", id: "hours_working" },
+    { file: "public_speaking.json", id: "public_speaking" },
+    { file: "reading_writing.json", id: "reading_writing" },
   ];
 
   for (const { file, id } of assessments) {
     await uploadAssessment(file, id);
   }
-  
+
   console.log("\n🎉 All technical assessments uploaded!");
   process.exit(0);
 }

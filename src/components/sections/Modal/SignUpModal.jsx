@@ -44,6 +44,18 @@ export default function SignUpModal() {
   const [generatedOTP, setGeneratedOTP] = useState("");
   const [otpExpiry, setOtpExpiry] = useState(null);
 
+  // EmailJS toggle for testing (stored in localStorage)
+  const [skipEmailVerification, setSkipEmailVerification] = useState(
+    localStorage.getItem("devpath_skip_email") === "true"
+  );
+
+  // Toggle EmailJS skip mode
+  const handleToggleEmailSkip = () => {
+    const newValue = !skipEmailVerification;
+    setSkipEmailVerification(newValue);
+    localStorage.setItem("devpath_skip_email", newValue.toString());
+  };
+
   // Password validation checks
   const passwordRequirements = {
     minLength: inputs.password.length >= 8,
@@ -144,11 +156,57 @@ export default function SignUpModal() {
     setError("");
 
     try {
-      // Send OTP instead of directly signing up
-      await sendOTP();
-      setShowOTP(true);
+      // Skip email verification if toggle is enabled (for testing)
+      if (skipEmailVerification) {
+        console.log("⚠️ EMAIL VERIFICATION SKIPPED - Testing Mode");
+        // Directly create account without OTP
+        await createAccountDirectly();
+      } else {
+        // Send OTP instead of directly signing up
+        await sendOTP();
+        setShowOTP(true);
+      }
     } catch (err) {
       setError(err.message || "Failed to send verification code. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  // Create account directly without OTP (for testing)
+  async function createAccountDirectly() {
+    setIsLoading(true);
+
+    try {
+      const profileData = {
+        firstName: inputs.firstName,
+        lastName: inputs.lastName,
+        course: inputs.course === "Other" ? inputs.otherCourse : inputs.course,
+        isEnrolled: inputs.isEnrolled === "yes",
+        enrollmentStatus: inputs.enrollmentStatus,
+        yearLevel: inputs.yearLevel || "",
+      };
+
+      // Add graduation year for alumni
+      if (inputs.enrollmentStatus === "pwc_alumni" && inputs.graduationYear) {
+        profileData.graduationYear = inputs.graduationYear;
+      }
+
+      await signup(inputs.email, inputs.password, profileData);
+
+      setInputs(initialState);
+      setChecked(false);
+      setActiveModal("");
+
+      // Scroll to top before navigating
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Navigate to profile survey for new users
+      setTimeout(() => {
+        navigate("/profile-survey");
+      }, 100);
+    } catch (err) {
+      throw new Error(err.message || "Signup failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -194,9 +252,9 @@ export default function SignUpModal() {
       // Scroll to top before navigating
       window.scrollTo({ top: 0, behavior: 'instant' });
 
-      // Navigate to dashboard
+      // Navigate to profile survey for new users
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/profile-survey");
       }, 100);
     } catch (err) {
       throw new Error(err.message || "Signup failed. Please try again.");
@@ -621,6 +679,41 @@ export default function SignUpModal() {
 
             {/* Error */}
             {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
+
+            {/* Testing Mode Toggle */}
+            <div className="bg-yellow-500/10 border-2 border-yellow-400/30 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-yellow-400 text-sm font-bold">⚙️ TESTING MODE</span>
+                  </div>
+                  <p className="text-xs text-gray-300 mb-2">
+                    Skip email verification to create test accounts faster.
+                    <span className="text-yellow-400 font-medium"> Disable this in production!</span>
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleToggleEmailSkip}
+                  disabled={isLoading}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-primary-1400 ${
+                    skipEmailVerification ? 'bg-yellow-500' : 'bg-gray-600'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      skipEmailVerification ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <div className={`w-2 h-2 rounded-full ${skipEmailVerification ? 'bg-yellow-400 animate-pulse' : 'bg-gray-500'}`} />
+                <span className={`text-xs font-medium ${skipEmailVerification ? 'text-yellow-400' : 'text-gray-400'}`}>
+                  {skipEmailVerification ? 'Email verification disabled' : 'Email verification enabled'}
+                </span>
+              </div>
+            </div>
 
             {/* Terms */}
             <div

@@ -6,7 +6,6 @@ import { Loader2 } from "lucide-react";
 import LandingPage from "./pages/LandingPage";
 import StudentDashboard from "./pages/StudentDashboard";
 import PredictorDashboard from "./pages/PredictorDashboard";
-import AssessmentsList from "./pages/AssessmentsList";
 import Assessment from "./components/assessments/Assessment";
 import Survey from "./pages/Survey";
 import DebugUserData from "./pages/DebugUserData";
@@ -19,6 +18,14 @@ import StudentSettings from "./pages/student/StudentSettings";
 import NotificationsPage from "./pages/student/NotificationsPage";
 import StudentMessaging from "./pages/student/StudentMessaging";
 import ResetPassword from "./pages/ResetPassword";
+
+// NEW: Profile and Assessment Flow
+import ProfileSurvey from "./pages/ProfileSurvey";
+import ProfileView from "./pages/ProfileView";
+import AcademicTestsList from "./pages/AcademicTestsList";
+import AcademicAssessmentsList from "./pages/AcademicAssessmentsList";
+import TechnicalAssessmentsList from "./pages/TechnicalAssessmentsList";
+import TechnicalAssessmentRouter from "./pages/TechnicalAssessmentRouter";
 
 // Career Roadmap Pages
 import CareerRoadmap from "./pages/CareerRoadmap";
@@ -54,6 +61,8 @@ import EmployerSettings from "./pages/employer/EmployerSettings";
 
 // Scripts
 import FirebaseInitializer from "./scripts/runInitialization";
+import UploadCodingChallenge from "./pages/UploadCodingChallenge";
+import AssessmentDebug from "./pages/AssessmentDebug";
 
 // Auth Components
 import RequireAuth from "./components/RequireAuth";
@@ -238,6 +247,12 @@ function App() {
         {/* Firebase Initializer - Development Tool */}
         <Route path="/initialize-firebase" element={<FirebaseInitializer />} />
 
+        {/* Upload Coding Challenge - Temporary Route */}
+        <Route path="/upload-coding-challenge" element={<UploadCodingChallenge />} />
+
+        {/* Assessment Debug - Temporary Route */}
+        <Route path="/assessment-debug" element={<AssessmentDebug />} />
+
         {/* Protected Student Routes */}
         <Route
           path="/dashboard"
@@ -306,13 +321,65 @@ function App() {
           }
         />
 
+        {/* NEW: Profile and Assessment Flow Routes */}
         <Route
-          path="/assessments"
+          path="/profile-survey"
           element={
             <RequireAuth>
-              <AssessmentsList />
+              <ProfileSurvey />
             </RequireAuth>
           }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <RequireAuth>
+              <ProfileView />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/academic-tests"
+          element={
+            <RequireAuth>
+              <AcademicTestsList />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/academic-assessments"
+          element={
+            <RequireAuth>
+              <AcademicAssessmentsList />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/technical-assessments"
+          element={
+            <RequireAuth>
+              <TechnicalAssessmentsList />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/technical-assessment/:id"
+          element={
+            <RequireAuth>
+              <TechnicalAssessmentRouter />
+            </RequireAuth>
+          }
+        />
+
+        {/* Redirect old /assessments route to academic assessments */}
+        <Route
+          path="/assessments"
+          element={<Navigate to="/academic-assessments" replace />}
         />
 
         <Route

@@ -38,6 +38,30 @@ export default function StudentProgress() {
   const [progressData, setProgressData] = useState(null);
   const [showAllSubjects, setShowAllSubjects] = useState(false);
 
+  // Helper function to get readiness level label
+  const getReadinessLabel = (level) => {
+    const labels = {
+      "READY": "Market Ready",
+      "READY_WITH_GROWTH": "Ready with growth areas",
+      "CONDITIONAL": "Needs improvement",
+      "NOT_READY": "Building foundations",
+      "NOT_ASSESSED": "Complete assessments"
+    };
+    return labels[level] || "Not assessed";
+  };
+
+  // Helper function to get readiness level color
+  const getReadinessColor = (level) => {
+    const colors = {
+      "READY": "text-emerald-400",
+      "READY_WITH_GROWTH": "text-blue-400",
+      "CONDITIONAL": "text-yellow-400",
+      "NOT_READY": "text-orange-400",
+      "NOT_ASSESSED": "text-gray-400"
+    };
+    return colors[level] || "text-gray-400";
+  };
+
   useEffect(() => {
     if (!user) return;
     loadProgressData();
@@ -49,11 +73,16 @@ export default function StudentProgress() {
       // Fetch all assessment results
       const resultsRef = collection(db, "users", user.uid, "results");
       const resultsSnap = await getDocs(resultsRef);
-      
+
       const results = resultsSnap.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
+
+      // Also fetch technical assessments from assessments/technical
+      const technicalAssessmentsRef = doc(db, "users", user.uid, "assessments", "technical");
+      const technicalAssessmentsDoc = await getDoc(technicalAssessmentsRef);
+      const technicalAssessments = technicalAssessmentsDoc.exists() ? technicalAssessmentsDoc.data() : {};
 
       // Fetch all assessments to get total counts
       const [academicSnap, technicalSnap, personalSnap] = await Promise.all([
@@ -74,8 +103,13 @@ export default function StudentProgress() {
       const userDoc = await getDoc(userDocRef);
       const userData = userDoc.exists() ? userDoc.data() : {};
 
+      // Fetch career recommendations (if available) for detailed readiness
+      const careerRecsRef = doc(db, "users", user.uid, "careerData", "latestRecommendations");
+      const careerRecsDoc = await getDoc(careerRecsRef);
+      const careerRecommendations = careerRecsDoc.exists() ? careerRecsDoc.data() : null;
+
       // Calculate comprehensive progress metrics
-      const metrics = calculateProgressMetrics(results, totalAssessments, userData);
+      const metrics = calculateProgressMetrics(results, totalAssessments, userData, careerRecommendations, technicalAssessments);
       setProgressData(metrics);
 
     } catch (err) {
@@ -85,7 +119,7 @@ export default function StudentProgress() {
     }
   };
 
-  const calculateProgressMetrics = (results, totalAssessments, userData) => {
+  const calculateProgressMetrics = (results, totalAssessments, userData, careerRecommendations, technicalAssessments = {}) => {
     // Group results by assessment type
     const academic = results.filter(r => r.id.includes("assessments_"));
     const technical = results.filter(r => r.id.includes("technicalAssessments_"));
@@ -96,24 +130,38 @@ export default function StudentProgress() {
     const uniqueTechnical = [...new Set(technical.map(r => r.assessmentId))];
     const uniquePersonal = [...new Set(personal.map(r => r.assessmentId))];
 
+    // For technical assessments from assessments/technical document
+    const technicalScoresFromDoc = Object.values(technicalAssessments).filter(score => typeof score === 'number');
+    const uniqueTechnicalCount = Object.keys(technicalAssessments).length;
+
     // Calculate scores
     const academicScores = academic.filter(r => r.score !== undefined).map(r => r.score);
-    const technicalScores = technical.filter(r => r.score !== undefined).map(r => r.score);
+    const technicalScoresFromResults = technical.filter(r => r.score !== undefined).map(r => r.score);
 
-    const avgAcademic = academicScores.length > 0 
-      ? academicScores.reduce((a, b) => a + b, 0) / academicScores.length 
+    // Combine technical scores from both sources and convert 1-9 scale to percentage
+    const allTechnicalScores = [...technicalScoresFromResults, ...technicalScoresFromDoc].map(score => {
+      // Technical assessments use 1-9 scale, convert to 0-100 percentage
+      if (score >= 1 && score <= 9) {
+        return ((score - 1) / 8) * 100; // Convert 1-9 to 0-100
+      }
+      return score; // Already a percentage
+    });
+
+    const avgAcademic = academicScores.length > 0
+      ? academicScores.reduce((a, b) => a + b, 0) / academicScores.length
       : 0;
-    const avgTechnical = technicalScores.length > 0 
-      ? technicalScores.reduce((a, b) => a + b, 0) / technicalScores.length 
+    const avgTechnical = allTechnicalScores.length > 0
+      ? allTechnicalScores.reduce((a, b) => a + b, 0) / allTechnicalScores.length
       : 0;
 
     // Calculate completion percentages
     const academicCompletion = totalAssessments.academic > 0 ? (uniqueAcademic.length / totalAssessments.academic) * 100 : 0;
-    const technicalCompletion = totalAssessments.technical > 0 ? (uniqueTechnical.length / totalAssessments.technical) * 100 : 0;
+    const technicalCompletionCount = Math.max(uniqueTechnical.length, uniqueTechnicalCount);
+    const technicalCompletion = totalAssessments.technical > 0 ? (technicalCompletionCount / totalAssessments.technical) * 100 : 0;
     const personalCompletion = totalAssessments.personal > 0 ? (uniquePersonal.length / totalAssessments.personal) * 100 : 0;
 
-    // Overall completion
-    const totalCompleted = uniqueAcademic.length + uniqueTechnical.length + uniquePersonal.length;
+    // Overall completion - use the combined technical count
+    const totalCompleted = uniqueAcademic.length + technicalCompletionCount + uniquePersonal.length;
     const overallCompletion = totalAssessments.total > 0 ? (totalCompleted / totalAssessments.total) * 100 : 0;
 
     // Calculate improvement trends (compare first vs latest attempt)
@@ -125,11 +173,12 @@ export default function StudentProgress() {
     // Performance breakdown by subject
     const subjectBreakdown = calculateSubjectBreakdown(academic, technical);
 
-    // Career readiness score (weighted average)
-    const careerReadiness = Math.round(
-      (avgAcademic * 0.4) + 
-      (avgTechnical * 0.4) + 
-      (overallCompletion * 0.2)
+    // Enhanced Career Readiness Calculation
+    const readinessData = calculateCareerReadiness(
+      avgAcademic,
+      avgTechnical,
+      overallCompletion,
+      careerRecommendations
     );
 
     return {
@@ -137,7 +186,9 @@ export default function StudentProgress() {
         totalCompleted,
         totalAssessments: totalAssessments.total,
         overallCompletion,
-        careerReadiness,
+        careerReadiness: readinessData.score,
+        careerReadinessLevel: readinessData.level,
+        careerReadinessBreakdown: readinessData.breakdown,
         memberSince: userData.createdAt || new Date().toISOString()
       },
       assessments: {
@@ -162,11 +213,67 @@ export default function StudentProgress() {
       performance: {
         improvements,
         subjectBreakdown,
-        recentScores: [...academicScores, ...technicalScores].slice(-5),
-        highestScore: Math.max(...academicScores, ...technicalScores, 0),
-        lowestScore: Math.min(...academicScores.filter(s => s > 0), ...technicalScores.filter(s => s > 0), 100)
+        recentScores: [...academicScores, ...allTechnicalScores].slice(-5),
+        highestScore: Math.max(...academicScores, ...allTechnicalScores, 0),
+        lowestScore: Math.min(...academicScores.filter(s => s > 0), ...allTechnicalScores.filter(s => s > 0), 100)
       },
-      studyAnalytics
+      studyAnalytics,
+      careerMatches: careerRecommendations?.job_matches || []
+    };
+  };
+
+  const calculateCareerReadiness = (avgAcademic, avgTechnical, overallCompletion, careerRecommendations) => {
+    // Component scores (0-100)
+    const academicScore = avgAcademic; // Already 0-100
+    const technicalScore = avgTechnical; // Already 0-100
+    const completionScore = overallCompletion; // Already 0-100
+
+    // Weighted overall score (40% academic, 40% technical, 20% completion)
+    const baseScore = Math.round(
+      (academicScore * 0.4) +
+      (technicalScore * 0.4) +
+      (completionScore * 0.2)
+    );
+
+    // Determine readiness level from API recommendations if available
+    let level = "NOT_ASSESSED";
+    if (careerRecommendations?.detailed_explanations?.length > 0) {
+      // Use the readiness level from the top career match
+      const topMatch = careerRecommendations.detailed_explanations[0];
+      level = topMatch.readiness || "NOT_ASSESSED";
+    } else {
+      // Fallback: Calculate level based on scores
+      if (baseScore >= 85 && completionScore === 100) {
+        level = "READY";
+      } else if (baseScore >= 70 && completionScore >= 80) {
+        level = "READY_WITH_GROWTH";
+      } else if (baseScore >= 50 && completionScore >= 60) {
+        level = "CONDITIONAL";
+      } else {
+        level = "NOT_READY";
+      }
+    }
+
+    return {
+      score: baseScore,
+      level,
+      breakdown: {
+        academic: {
+          score: Math.round(academicScore),
+          weight: 40,
+          contribution: Math.round(academicScore * 0.4)
+        },
+        technical: {
+          score: Math.round(technicalScore),
+          weight: 40,
+          contribution: Math.round(technicalScore * 0.4)
+        },
+        completion: {
+          score: Math.round(completionScore),
+          weight: 20,
+          contribution: Math.round(completionScore * 0.2)
+        }
+      }
     };
   };
 
@@ -330,7 +437,8 @@ export default function StudentProgress() {
             icon={<Trophy className="text-primary-400" size={24} />}
             label="Career Readiness"
             value={`${overview.careerReadiness}%`}
-            subtitle="Market ready score"
+            subtitle={getReadinessLabel(overview.careerReadinessLevel)}
+            level={overview.careerReadinessLevel}
           />
 
           <MetricCard
@@ -347,6 +455,185 @@ export default function StudentProgress() {
             subtitle="Personal best"
           />
         </div>
+
+        {/* Career Readiness Detailed Breakdown */}
+        {overview.careerReadinessBreakdown && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-gradient-to-br from-gray-900/90 to-gray-800/90 border-2 border-primary-500/30 rounded-2xl p-6 mb-8 shadow-2xl"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <Trophy className="text-primary-400" size={28} />
+                  Career Readiness Analysis
+                </h2>
+                <p className="text-gray-400 text-sm mt-1">
+                  Comprehensive assessment of your market readiness
+                </p>
+              </div>
+              <div className="text-right">
+                <div className="text-4xl font-bold text-primary-400 mb-1">
+                  {overview.careerReadiness}%
+                </div>
+                <div className={`text-sm font-semibold ${getReadinessColor(overview.careerReadinessLevel)}`}>
+                  {getReadinessLabel(overview.careerReadinessLevel)}
+                </div>
+              </div>
+            </div>
+
+            {/* Component Breakdown */}
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              {/* Academic Component */}
+              <div className="bg-gray-800/50 border border-gray-700/40 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="text-blue-400" size={18} />
+                    <span className="text-white font-semibold text-sm">Academic</span>
+                  </div>
+                  <span className="text-gray-400 text-xs">40% weight</span>
+                </div>
+                <div className="text-3xl font-bold text-blue-400 mb-2">
+                  {overview.careerReadinessBreakdown.academic.score}%
+                </div>
+                <div className="w-full bg-gray-900/50 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="h-full bg-blue-500 transition-all duration-500"
+                    style={{ width: `${overview.careerReadinessBreakdown.academic.score}%` }}
+                  />
+                </div>
+                <div className="text-xs text-gray-400 mt-2">
+                  Contributes {overview.careerReadinessBreakdown.academic.contribution}% to total
+                </div>
+              </div>
+
+              {/* Technical Component */}
+              <div className="bg-gray-800/50 border border-gray-700/40 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Code className="text-purple-400" size={18} />
+                    <span className="text-white font-semibold text-sm">Technical</span>
+                  </div>
+                  <span className="text-gray-400 text-xs">40% weight</span>
+                </div>
+                <div className="text-3xl font-bold text-purple-400 mb-2">
+                  {overview.careerReadinessBreakdown.technical.score}%
+                </div>
+                <div className="w-full bg-gray-900/50 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="h-full bg-purple-500 transition-all duration-500"
+                    style={{ width: `${overview.careerReadinessBreakdown.technical.score}%` }}
+                  />
+                </div>
+                <div className="text-xs text-gray-400 mt-2">
+                  Contributes {overview.careerReadinessBreakdown.technical.contribution}% to total
+                </div>
+              </div>
+
+              {/* Completion Component */}
+              <div className="bg-gray-800/50 border border-gray-700/40 rounded-xl p-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Target className="text-emerald-400" size={18} />
+                    <span className="text-white font-semibold text-sm">Completion</span>
+                  </div>
+                  <span className="text-gray-400 text-xs">20% weight</span>
+                </div>
+                <div className="text-3xl font-bold text-emerald-400 mb-2">
+                  {overview.careerReadinessBreakdown.completion.score}%
+                </div>
+                <div className="w-full bg-gray-900/50 rounded-full h-2 overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-500 transition-all duration-500"
+                    style={{ width: `${overview.careerReadinessBreakdown.completion.score}%` }}
+                  />
+                </div>
+                <div className="text-xs text-gray-400 mt-2">
+                  Contributes {overview.careerReadinessBreakdown.completion.contribution}% to total
+                </div>
+              </div>
+            </div>
+
+            {/* Readiness Level Description */}
+            <div className={`p-4 rounded-xl border ${
+              overview.careerReadinessLevel === "READY" ? "bg-emerald-500/10 border-emerald-500/30" :
+              overview.careerReadinessLevel === "READY_WITH_GROWTH" ? "bg-blue-500/10 border-blue-500/30" :
+              overview.careerReadinessLevel === "CONDITIONAL" ? "bg-yellow-500/10 border-yellow-500/30" :
+              "bg-orange-500/10 border-orange-500/30"
+            }`}>
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0">
+                  {overview.careerReadinessLevel === "READY" && <CheckCircle className="text-emerald-400" size={24} />}
+                  {overview.careerReadinessLevel === "READY_WITH_GROWTH" && <CheckCircle className="text-blue-400" size={24} />}
+                  {overview.careerReadinessLevel === "CONDITIONAL" && <AlertCircle className="text-yellow-400" size={24} />}
+                  {(overview.careerReadinessLevel === "NOT_READY" || overview.careerReadinessLevel === "NOT_ASSESSED") && <AlertCircle className="text-orange-400" size={24} />}
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-white font-bold mb-1">
+                    {overview.careerReadinessLevel === "READY" && "Excellent! You're Market Ready"}
+                    {overview.careerReadinessLevel === "READY_WITH_GROWTH" && "Strong Foundation with Growth Opportunities"}
+                    {overview.careerReadinessLevel === "CONDITIONAL" && "Making Progress - Focus on Key Areas"}
+                    {overview.careerReadinessLevel === "NOT_READY" && "Building Your Foundation"}
+                    {overview.careerReadinessLevel === "NOT_ASSESSED" && "Complete Assessments to Get Evaluated"}
+                  </h3>
+                  <p className="text-gray-300 text-sm leading-relaxed">
+                    {overview.careerReadinessLevel === "READY" && "You have demonstrated excellent proficiency across all areas. You're well-prepared to enter the job market and pursue your chosen career path with confidence."}
+                    {overview.careerReadinessLevel === "READY_WITH_GROWTH" && "You have a solid foundation with some areas for improvement. Continue developing your skills through practice and focused learning to maximize your career potential."}
+                    {overview.careerReadinessLevel === "CONDITIONAL" && "You're making progress but need to strengthen core competencies. Focus on completing assessments and improving scores in your weaker areas to enhance your career readiness."}
+                    {overview.careerReadinessLevel === "NOT_READY" && "You're at the beginning of your journey. Continue taking assessments and building your skills systematically. Each completed assessment brings you closer to career readiness."}
+                    {overview.careerReadinessLevel === "NOT_ASSESSED" && "Complete all assessments to receive a comprehensive career readiness evaluation based on your academic performance, technical skills, and profile completion."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Career Matches from API (if available) */}
+            {progressData.careerMatches && progressData.careerMatches.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-gray-700/40">
+                <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                  <Target className="text-primary-400" size={20} />
+                  Top Career Matches
+                </h3>
+                <div className="grid md:grid-cols-3 gap-3">
+                  {progressData.careerMatches.slice(0, 3).map((match, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-gray-800/50 border border-gray-700/40 hover:border-primary-500/50 rounded-lg p-4 transition-all"
+                    >
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="text-2xl font-bold text-primary-400">
+                          #{idx + 1}
+                        </div>
+                        <div className="flex-1">
+                          <div className="text-white font-semibold text-sm line-clamp-1">
+                            {match.job_role}
+                          </div>
+                          <div className="text-xs text-gray-400">
+                            {match.category}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-700/40">
+                        <span className="text-xs text-gray-400">Match Score</span>
+                        <span className="text-lg font-bold text-primary-400">
+                          {match.match_score}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={() => navigate("/career-matches")}
+                  className="mt-4 w-full py-2.5 bg-primary-500/20 border border-primary-500/30 text-primary-300 rounded-lg hover:bg-primary-500/30 transition-all font-semibold text-sm"
+                >
+                  View Detailed Career Analysis
+                </button>
+              </div>
+            )}
+          </motion.div>
+        )}
 
         {/* Main Content Grid */}
         <div className="grid lg:grid-cols-3 gap-6 mb-8">
@@ -558,7 +845,21 @@ export default function StudentProgress() {
 }
 
 // Component: Metric Card
-function MetricCard({ icon, label, value, subtitle }) {
+function MetricCard({ icon, label, value, subtitle, level }) {
+  // Get readiness color for Career Readiness card
+  const getReadinessColor = (lvl) => {
+    const colors = {
+      "READY": "text-emerald-400",
+      "READY_WITH_GROWTH": "text-blue-400",
+      "CONDITIONAL": "text-yellow-400",
+      "NOT_READY": "text-orange-400",
+      "NOT_ASSESSED": "text-gray-400"
+    };
+    return colors[lvl] || "text-primary-400";
+  };
+
+  const subtitleColor = level ? getReadinessColor(level) : "text-gray-400";
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -573,7 +874,7 @@ function MetricCard({ icon, label, value, subtitle }) {
         <div className="text-xs font-bold text-gray-300 group-hover:text-gray-200 uppercase tracking-wider transition-colors">{label}</div>
       </div>
       <div className="text-3xl sm:text-4xl font-extrabold text-white mb-1 sm:mb-2 group-hover:text-primary-400 transition-colors">{value}</div>
-      <div className="text-xs text-gray-400 font-semibold">{subtitle}</div>
+      <div className={`text-xs font-semibold ${subtitleColor}`}>{subtitle}</div>
     </motion.div>
   );
 }

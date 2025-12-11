@@ -25,12 +25,15 @@ export default function ResultCard({ title, score }) {
   });
 
   // Extract category from title to decide which tab to open
-  let tab = "academic"; 
+  let tab = "academic";
+  let currentAssessmentType = "academic";
   if (title.toLowerCase().includes("technical") || title.toLowerCase().includes("coding") || title.toLowerCase().includes("logical") || title.toLowerCase().includes("memory")) {
     tab = "technical";
+    currentAssessmentType = "technical";
   }
   if (title.toLowerCase().includes("personal")) {
     tab = "personal";
+    currentAssessmentType = "personal";
   }
 
   const backPath = `/assessments?tab=${tab}`;
@@ -55,39 +58,43 @@ export default function ResultCard({ title, score }) {
       }
 
       try {
-        // Fetch all assessments from all collections
-        const academicRef = collection(db, "assessments");
-        const academicSnap = await getDocs(academicRef);
-        const academicData = academicSnap.docs.map((doc) => ({
-          id: doc.id,
-          type: "academic",
-          mode: "mcq",
-          collectionName: "assessments",
-          ...doc.data(),
-        }));
+        // Only fetch assessments from the same category as the current one
+        let assessmentsToCheck = [];
 
-        const techRef = collection(db, "technicalAssessments");
-        const techSnap = await getDocs(techRef);
-        const techData = techSnap.docs.map((doc) => ({
-          id: doc.id,
-          type: "technical",
-          mode: doc.data().mode || "mcq",
-          collectionName: "technicalAssessments",
-          ...doc.data(),
-        }));
+        if (currentAssessmentType === "academic") {
+          const academicRef = collection(db, "assessments");
+          const academicSnap = await getDocs(academicRef);
+          assessmentsToCheck = academicSnap.docs.map((doc) => ({
+            id: doc.id,
+            type: "academic",
+            mode: "mcq",
+            collectionName: "assessments",
+            ...doc.data(),
+          }));
+        } else if (currentAssessmentType === "technical") {
+          const techRef = collection(db, "technicalAssessments");
+          const techSnap = await getDocs(techRef);
+          assessmentsToCheck = techSnap.docs.map((doc) => ({
+            id: doc.id,
+            type: "technical",
+            mode: doc.data().mode || "mcq",
+            collectionName: "technicalAssessments",
+            ...doc.data(),
+          }));
+        } else if (currentAssessmentType === "personal") {
+          const personalRef = collection(db, "personalAssessments");
+          const personalSnap = await getDocs(personalRef);
+          assessmentsToCheck = personalSnap.docs.map((doc) => ({
+            id: doc.id,
+            type: "personal",
+            mode: doc.data().mode || "survey",
+            collectionName: "personalAssessments",
+            ...doc.data(),
+          }));
+        }
 
-        const personalRef = collection(db, "personalAssessments");
-        const personalSnap = await getDocs(personalRef);
-        const personalData = personalSnap.docs.map((doc) => ({
-          id: doc.id,
-          type: "personal",
-          mode: doc.data().mode || "survey",
-          collectionName: "personalAssessments",
-          ...doc.data(),
-        }));
-
-        // Combine all assessments
-        const allAssessments = [...academicData, ...techData, ...personalData];
+        // Use only assessments from the same category
+        const allAssessments = assessmentsToCheck;
 
         // Fetch user's results to check what's been completed
         const resultsRef = collection(db, "users", user.uid, "results");
@@ -122,7 +129,7 @@ export default function ResultCard({ title, score }) {
     }
 
     findNextAssessment();
-  }, [user]);
+  }, [user, currentAssessmentType]);
 
   const handleNextAssessment = () => {
     if (!nextAssessment) return;

@@ -161,7 +161,7 @@ export default function WelcomeBanner() {
           {isNewUser && (
             <div className="flex md:flex-none flex-shrink-0 w-full md:w-auto">
               <button
-                onClick={() => navigate("/assessments")}
+                onClick={() => navigate("/academic-assessments")}
                 className="w-full md:w-auto rounded-xl max-sm:rounded-lg bg-gradient-to-r from-primary-500 via-cyan-400 to-emerald-400 px-8 py-4 max-sm:px-6 max-sm:py-3
                          text-base md:text-lg max-sm:text-sm font-bold text-primary-1300
                          hover:scale-105 active:scale-95

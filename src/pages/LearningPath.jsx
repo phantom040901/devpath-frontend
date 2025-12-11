@@ -16,13 +16,11 @@ import {
   ChevronDown,
   Video,
   FileText,
-  Code,
   BookMarked,
   Zap,
   PartyPopper,
   ArrowRight,
   Target,
-  Info,
   Lightbulb,
   GraduationCap
 } from "lucide-react";
@@ -39,7 +37,7 @@ export default function LearningPath() {
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [currentResource, setCurrentResource] = useState(null);
   const [currentTopic, setCurrentTopic] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  // Removed category filter - focusing only on academic assessments
   const [expandedTopics, setExpandedTopics] = useState({});
   const [assessmentResults, setAssessmentResults] = useState({});
   const [showUnlockNotification, setShowUnlockNotification] = useState(false);
@@ -87,14 +85,15 @@ export default function LearningPath() {
         ca_perc: resultsMap["assessments_computer_architecture"]?.score || 0,
       };
 
-      const technicalSkills = {
-        coding_skills: Math.round((resultsMap["technicalAssessments_coding_skills"]?.score || 0) / 20),
-        logical_quotient: Math.round((resultsMap["technicalAssessments_logical_quotient"]?.score || 0) / 20),
-        memory_test: Math.round((resultsMap["technicalAssessments_memory_test"]?.score || 0) / 10),
-      };
+      // Focus only on academic assessments for learning paths
+      const technicalSkills = {};
 
       const weak = identifyWeakAreas(academicScores, technicalSkills);
-      setWeakAreas(weak);
+      // Filter to only show academic assessment weak areas
+      const academicWeakAreas = weak.filter(area => area.type === "academic");
+      setWeakAreas(academicWeakAreas);
+
+      console.log("📚 Academic weak areas:", academicWeakAreas);
 
       const progressRef = collection(db, "users", user.uid, "learningProgress");
       const progressSnapshot = await getDocs(progressRef);
@@ -354,21 +353,12 @@ export default function LearningPath() {
   };
 
   const handleTakeAssessment = (assessmentId) => {
-    // Determine which tab to show based on assessment type
-    let tab = "academic";
-    if (assessmentId.startsWith("technicalAssessments_")) {
-      tab = "technical";
-    } else if (assessmentId.startsWith("personalAssessments_")) {
-      tab = "personal";
-    }
-    
-    // Navigate to assessments page with the appropriate tab
-    navigate(`/assessments?tab=${tab}`);
+    // Navigate to academic assessments page
+    navigate("/academic-assessments");
   };
 
-  const filteredAreas = selectedCategory === "all" 
-    ? weakAreas 
-    : weakAreas.filter(area => area.type === selectedCategory);
+  // No filtering needed - only showing academic assessments
+  const filteredAreas = weakAreas;
 
   if (loading) {
     return (
@@ -496,59 +486,7 @@ export default function LearningPath() {
           </div>
         </motion.div>
 
-        {weakAreas.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-6"
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <Info className="text-gray-400 dark:text-gray-400 light:text-gray-600" size={16} />
-              <span className="text-sm text-gray-400 dark:text-gray-400 light:text-gray-600">Filter by category to focus on specific areas</span>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setSelectedCategory("all")}
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
-                  selectedCategory === "all"
-                    ? "bg-gradient-to-r from-primary-500 to-purple-500 text-white shadow-lg shadow-primary-500/30"
-                    : "bg-gray-900/50 dark:bg-gray-900/50 light:bg-gray-100 text-gray-400 dark:text-gray-400 light:text-gray-700 hover:text-white dark:hover:text-white light:hover:text-gray-900 hover:bg-gray-800/70 dark:hover:bg-gray-800/70 light:hover:bg-gray-200 border border-gray-700/30 dark:border-gray-700/30 light:border-gray-300"
-                }`}
-              >
-                All Topics ({weakAreas.length})
-              </button>
-              <button
-                onClick={() => setSelectedCategory("academic")}
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
-                  selectedCategory === "academic"
-                    ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white shadow-lg shadow-blue-500/30"
-                    : "bg-gray-900/50 dark:bg-gray-900/50 light:bg-gray-100 text-gray-400 dark:text-gray-400 light:text-gray-700 hover:text-white dark:hover:text-white light:hover:text-gray-900 hover:bg-gray-800/70 dark:hover:bg-gray-800/70 light:hover:bg-gray-200 border border-gray-700/30 dark:border-gray-700/30 light:border-gray-300"
-                }`}
-              >
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <BookOpen size={14} className="sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Academic</span>
-                  <span className="sm:hidden">Academic</span>
-                  <span>({weakAreas.filter(a => a.type === "academic").length})</span>
-                </div>
-              </button>
-              <button
-                onClick={() => setSelectedCategory("technical")}
-                className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
-                  selectedCategory === "technical"
-                    ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg shadow-emerald-500/30"
-                    : "bg-gray-900/50 dark:bg-gray-900/50 light:bg-gray-100 text-gray-400 dark:text-gray-400 light:text-gray-700 hover:text-white dark:hover:text-white light:hover:text-gray-900 hover:bg-gray-800/70 dark:hover:bg-gray-800/70 light:hover:bg-gray-200 border border-gray-700/30 dark:border-gray-700/30 light:border-gray-300"
-                }`}
-              >
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <Code size={14} className="sm:w-4 sm:h-4" />
-                  <span>Technical ({weakAreas.filter(a => a.type === "technical").length})</span>
-                </div>
-              </button>
-            </div>
-          </motion.div>
-        )}
+        {/* Category filter removed - focusing only on academic assessments */}
 
         <div className="space-y-3">
           {filteredAreas.map((area, idx) => {
@@ -576,17 +514,9 @@ export default function LearningPath() {
                   className="w-full p-4 sm:p-5 lg:p-6 flex items-start sm:items-center justify-between hover:bg-gray-800/30 dark:hover:bg-gray-800/30 light:hover:bg-gray-50 transition group"
                 >
                   <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                    {/* Topic Icon */}
-                    <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                      area.type === 'academic'
-                        ? 'bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30'
-                        : 'bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/30'
-                    }`}>
-                      {area.type === 'academic' ? (
-                        <GraduationCap className={`${area.type === 'academic' ? 'text-blue-400' : 'text-emerald-400'} sm:w-6 sm:h-6`} size={20} />
-                      ) : (
-                        <Code className="text-emerald-400 sm:w-6 sm:h-6" size={20} />
-                      )}
+                    {/* Topic Icon - Academic Only */}
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30">
+                      <GraduationCap className="text-blue-400 sm:w-6 sm:h-6" size={20} />
                     </div>
 
                     <div className="text-left flex-1 min-w-0">
@@ -681,23 +611,59 @@ export default function LearningPath() {
                           </div>
                         </div>
 
-                        {completedCount >= totalResourcesForLevel && totalResourcesForLevel > 0 && (
-                          <div className="mb-3 sm:mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30">
-                            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
-                              <div className="flex items-center gap-2 text-emerald-400">
-                                <CheckCircle size={16} className="sm:w-[18px] sm:h-[18px] flex-shrink-0" />
-                                <span className="font-semibold text-xs sm:text-sm">Required resources completed!</span>
+                        {/* Retake Assessment Section */}
+                        <div className="mb-3 sm:mb-4 p-3 rounded-lg border transition-all">
+                          {/* Check if user already has a good score (above threshold) */}
+                          {area.currentScore >= area.threshold ? (
+                            <div className="bg-yellow-500/10 border-yellow-500/30 rounded-lg">
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                                <div className="flex items-center gap-2 text-yellow-400">
+                                  <Trophy size={16} className="sm:w-[18px] sm:h-[18px] flex-shrink-0" />
+                                  <span className="font-semibold text-xs sm:text-sm">Proficiency achieved! ({area.currentScore}% ≥ {area.threshold}%)</span>
+                                </div>
+                                <button
+                                  disabled
+                                  className="w-full sm:w-auto px-3 py-1.5 rounded-md bg-yellow-500/20 text-yellow-400 text-xs font-medium cursor-not-allowed flex items-center justify-center gap-1.5 opacity-75"
+                                >
+                                  <span>No Retake Needed</span>
+                                  <CheckCircle size={12} />
+                                </button>
                               </div>
-                              <button
-                                onClick={() => handleTakeAssessment(area.assessmentId)}
-                                className="w-full sm:w-auto px-3 py-1.5 rounded-md bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white text-xs font-medium transition flex items-center justify-center gap-1.5"
-                              >
-                                <span>Take 2nd Attempt</span>
-                                <ArrowRight size={12} />
-                              </button>
                             </div>
-                          </div>
-                        )}
+                          ) : completedCount >= totalResourcesForLevel && totalResourcesForLevel > 0 ? (
+                            <div className="bg-emerald-500/10 border-emerald-500/30 rounded-lg">
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+                                <div className="flex items-center gap-2 text-emerald-400">
+                                  <CheckCircle size={16} className="sm:w-[18px] sm:h-[18px] flex-shrink-0" />
+                                  <span className="font-semibold text-xs sm:text-sm">All resources completed! Ready for retake.</span>
+                                </div>
+                                <button
+                                  onClick={() => handleTakeAssessment(area.assessmentId)}
+                                  className="w-full sm:w-auto px-3 py-1.5 rounded-md bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white text-xs font-medium transition flex items-center justify-center gap-1.5"
+                                >
+                                  <span>Take 2nd Attempt</span>
+                                  <ArrowRight size={12} />
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="bg-gray-800/50 border-gray-700/40 rounded-lg">
+                              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                                <div className="flex items-center gap-2 text-gray-400">
+                                  <Lightbulb size={16} className="sm:w-[18px] sm:h-[18px] flex-shrink-0" />
+                                  <span className="font-medium text-xs sm:text-sm">Complete all resources to unlock retake</span>
+                                </div>
+                                <button
+                                  disabled
+                                  className="w-full sm:w-auto px-3 py-1.5 rounded-md bg-gray-700/50 text-gray-500 text-xs font-medium cursor-not-allowed flex items-center justify-center gap-1.5 opacity-50"
+                                >
+                                  <span>Retake Locked</span>
+                                  <Trophy size={12} />
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
 
                         <div className="space-y-2">
                           {resources[level]?.map((resource) => {
@@ -811,7 +777,7 @@ export default function LearningPath() {
                     <button
                       onClick={() => {
                         setShowUnlockNotification(false);
-                        navigate('/assessments');
+                        navigate('/academic-assessments');
                       }}
                       className="px-3 sm:px-4 py-2 bg-white text-emerald-600 rounded-lg font-semibold text-xs sm:text-sm hover:bg-gray-100 transition text-center"
                     >

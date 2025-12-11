@@ -78,17 +78,33 @@ export default function CareerMatches() {
   const checkCompletion = async () => {
     setLoading(true);
     try {
+      // Check academic assessments from results collection
       const resultsRef = collection(db, "users", user.uid, "results");
       const snapshot = await getDocs(resultsRef);
-      
+
       const completedIds = new Set(
         snapshot.docs.map(doc => doc.id.replace(/_\d+$/, ''))
       );
 
+      // Check technical assessments from assessments/technical document
+      const technicalDocRef = doc(db, "users", user.uid, "assessments", "technical");
+      const technicalDoc = await getDoc(technicalDocRef);
+      const technicalData = technicalDoc.exists() ? technicalDoc.data() : {};
+
+      // Count completed technical assessments (excluding the 'completed' flag)
+      const technicalCompleted = Object.keys(technicalData).filter(
+        key => key !== 'completed' && technicalData[key] !== undefined
+      ).length;
+
+      // Check profile survey from profile/survey document
+      const profileDocRef = doc(db, "users", user.uid, "profile", "survey");
+      const profileDoc = await getDoc(profileDocRef);
+      const profileCompleted = profileDoc.exists() ? 1 : 0;
+
       const required = {
         academic: [
           'assessments_algorithms',
-          'assessments_programming', 
+          'assessments_programming',
           'assessments_operating_systems',
           'assessments_software_engineering',
           'assessments_computer_networks',
@@ -97,18 +113,8 @@ export default function CareerMatches() {
           'assessments_mathematics',
           'assessments_communication'
         ],
-        technical: [
-          'technicalAssessments_coding_skills',
-          'technicalAssessments_logical_quotient',
-          'technicalAssessments_memory_test',
-          'survey_hackathons',
-          'survey_hours_working'
-        ],
-        personal: [
-          'survey_career_preferences',
-          'survey_personal_interests',
-          'survey_personality_workstyle'
-        ]
+        technical: 5, // Total technical assessments
+        personal: 1  // Profile survey
       };
 
       setCompletion({
@@ -117,12 +123,12 @@ export default function CareerMatches() {
           total: required.academic.length
         },
         technical: {
-          completed: required.technical.filter(id => completedIds.has(id)).length,
-          total: required.technical.length
+          completed: technicalCompleted,
+          total: required.technical
         },
         personal: {
-          completed: required.personal.filter(id => completedIds.has(id)).length,
-          total: required.personal.length
+          completed: profileCompleted,
+          total: required.personal
         }
       });
     } catch (err) {
@@ -133,17 +139,18 @@ export default function CareerMatches() {
   };
 
   const aggregateUserData = async () => {
+    // Fetch academic and technical assessment results
     const resultsRef = collection(db, "users", user.uid, "results");
     const snapshot = await getDocs(resultsRef);
-    
+
     const resultsMap = {};
-    
+
     snapshot.docs.forEach(doc => {
       const data = doc.data();
       const docId = doc.id;
       const baseId = docId.replace(/_\d+$/, '');
-      
-      if (!resultsMap[baseId] || 
+
+      if (!resultsMap[baseId] ||
           (data.score > (resultsMap[baseId].score || 0)) ||
           (data.timestamp > (resultsMap[baseId].timestamp || 0))) {
         resultsMap[baseId] = {
@@ -153,28 +160,43 @@ export default function CareerMatches() {
       }
     });
 
+    // Fetch profile survey data from users/{uid}/profile/survey
+    const profileRef = doc(db, "users", user.uid, "profile", "survey");
+    const profileSnap = await getDoc(profileRef);
+    const profileData = profileSnap.exists() ? profileSnap.data() : {};
+
+    // Fetch technical assessments from users/{uid}/assessments/technical
+    const technicalRef = doc(db, "users", user.uid, "assessments", "technical");
+    const technicalSnap = await getDoc(technicalRef);
+    const technicalData = technicalSnap.exists() ? technicalSnap.data() : {};
+
     const getScore = (assessmentId) => {
       return resultsMap[assessmentId]?.score || 0;
     };
 
-    const getSurveyValue = (surveyId, questionId = null) => {
-      const result = resultsMap[surveyId];
-      if (!result) return null;
-
-      if (result.answers) {
-        if (questionId) {
-          const answer = result.answers[questionId];
-          return answer?.value ?? answer?.label ?? null;
-        }
-        const firstAnswer = Object.values(result.answers)[0];
-        return firstAnswer?.value ?? firstAnswer?.label ?? null;
+    // Helper to safely get profile values
+    const getProfileValue = (key, defaultValue = "") => {
+      const value = profileData[key];
+      if (value === undefined || value === null || value === "") {
+        return defaultValue;
       }
-      
-      return result.modelValue ?? result.value ?? null;
+      // Handle arrays (join them)
+      if (Array.isArray(value)) {
+        return value.join(", ") || defaultValue;
+      }
+      return value;
+    };
+
+    // Helper to parse numbers from profile
+    const getProfileNumber = (key, defaultValue = 0) => {
+      const value = getProfileValue(key, defaultValue.toString());
+      const parsed = parseInt(value);
+      return isNaN(parsed) ? defaultValue : parsed;
     };
 
     const payload = {
-      courses: "BSIT",
+      courses: getProfileValue("Courses", "BSIT"),
+      // Academic assessment scores
       os_perc: getScore("assessments_operating_systems"),
       algo_perc: getScore("assessments_algorithms"),
       prog_perc: getScore("assessments_programming"),
@@ -184,28 +206,58 @@ export default function CareerMatches() {
       ca_perc: getScore("assessments_computer_architecture"),
       math_perc: getScore("assessments_mathematics"),
       comm_perc: getScore("assessments_communication"),
-      coding_skills: Math.round((getScore("technicalAssessments_coding_skills") / 100) * 5) || 3,
-      logical_quotient: Math.round((getScore("technicalAssessments_logical_quotient") / 100) * 5) || 3,
-      memory_score: Math.round((getScore("technicalAssessments_memory_test") / 100) * 10) || 5,
-      hours_working: parseInt(getSurveyValue("survey_hours_working", "q1")) || 6,
-      hackathons: parseInt(getSurveyValue("survey_hackathons", "q1")) || 0,
-      interested_subjects: getSurveyValue("survey_career_preferences", "q1") || "Software Engineering",
-      career_area: getSurveyValue("survey_career_preferences", "q2") || "system developer",
-      company_type: getSurveyValue("survey_career_preferences", "q3") || "Product based",
-      management_tech: getSurveyValue("survey_career_preferences", "q4") || "Technical",
-      books: getSurveyValue("survey_personal_interests", "q1") || "Technical",
-      gaming_interest: getSurveyValue("survey_personal_interests", "q2") || "no",
-      public_speaking: parseInt(getSurveyValue("survey_personal_interests", "q3")) || 3,
-      work_style: getSurveyValue("survey_personal_interests", "q4") || "smart worker",
-      behavior: getSurveyValue("survey_personality_workstyle", "q1") || "gentle",
-      introvert: getSurveyValue("survey_personality_workstyle", "q2") || "no",
-      relationship: getSurveyValue("survey_personality_workstyle", "q3") || "no",
-      team_exp: getSurveyValue("survey_personality_workstyle", "q4") || "yes",
-      seniors_input: getSurveyValue("survey_personality_workstyle", "q5") || "yes",
-      salary_work: getSurveyValue("survey_personality_workstyle", "q6") || "work",
+      // Technical skills (from technical assessments)
+      coding_skills: Math.round((technicalData.coding_skills || 0) / 100 * 5) || 3,
+      logical_quotient: Math.round((technicalData.logical_quotient || 0) / 100 * 5) || 3,
+      // memory_score should be categorical: "poor", "medium", or "excellent"
+      memory_score: (() => {
+        const score = technicalData.memory_test || 0;
+        if (score < 40) return "poor";
+        if (score < 70) return "medium";
+        return "excellent";
+      })(),
+      public_speaking: Math.round((technicalData.public_speaking || 0) / 100 * 5) || 3,
+      // Profile survey values - map from profile document fields
+      hours_working: getProfileNumber("Hours working per day", 6),
+      hackathons: getProfileNumber("hackathons", 0),
+      interested_subjects: getProfileValue("Interested subjects", "Software Engineering"),
+      career_area: getProfileValue("interested career area", "system developer"),
+      company_type: getProfileValue("Type of company want to settle in?", "Product based"),
+      management_tech: getProfileValue("Management or Technical", "Technical"),
+      books: getProfileValue("Interested Type of Books", "Technical"),
+      gaming_interest: getProfileValue("interested in games", "no"),
+      work_style: getProfileValue("hard/smart worker", "smart worker"),
+      behavior: getProfileValue("Gentle or Tuff behaviour?", "gentle"),
+      introvert: getProfileValue("Introvert", "no"),
+      relationship: getProfileValue("In a Realtionship?", "no"),
+      team_exp: getProfileValue("worked in teams ever?", "yes"),
+      seniors_input: getProfileValue("Taken inputs from seniors or elders", "yes"),
+      salary_work: getProfileValue("Salary/work", "work"),
+      // Additional profile fields required by backend model
+      can_work_long_time: getProfileValue("can work long time before system?", "yes"),
+      certifications: getProfileValue("certifications", "no"),
+      workshops: getProfileValue("workshops", "no"),
+      talenttests_taken: getProfileValue("talenttests taken?", "no"),
+      self_learning_capability: getProfileValue("self-learning capability?", "yes"),
+      extra_courses_did: getProfileValue("Extra-courses did", "no"),
+      olympiads: getProfileValue("olympiads", "no"),
+      job_higher_studies: getProfileValue("Job/Higher Studies?", "job"),  // lowercase to match training data
+      reading_writing_skills: getProfileValue("reading and writing skills", "medium"),
+      salary_range_expected: getProfileValue("Salary Range Expected", "Work"),
     };
 
     return payload;
+  };
+
+  const handleValidateJSON = async () => {
+    try {
+      const payload = await aggregateUserData();
+      console.log("📊 JSON Payload for API:", JSON.stringify(payload, null, 2));
+      alert("JSON payload logged to console. Check developer tools (F12) to see the full payload.");
+    } catch (err) {
+      console.error("Error generating JSON:", err);
+      alert("Error generating JSON payload. Check console for details.");
+    }
   };
 
   const handlePredict = async () => {
@@ -234,6 +286,20 @@ export default function CareerMatches() {
 
       if (data) {
         setPredictions(data.recommendations);
+
+        // Save career recommendations to Firebase for Progress Tracker
+        try {
+          const careerDataRef = doc(db, "users", user.uid, "careerData", "latestRecommendations");
+          await setDoc(careerDataRef, {
+            ...data.recommendations,
+            lastUpdated: new Date().toISOString(),
+            payload: payload // Store the input data for reference
+          });
+          console.log("Career recommendations saved successfully");
+        } catch (saveError) {
+          console.error("Error saving career recommendations:", saveError);
+          // Don't throw error - continue even if save fails
+        }
       } else {
         setError("Failed to get predictions. Make sure the FastAPI server is running.");
       }
@@ -545,6 +611,22 @@ const confirmSelectCareer = async () => {
               </>
             )}
           </motion.button>
+
+          {/* JSON Validation Button */}
+          {isAllComplete && !predicting && (
+            <motion.button
+              onClick={handleValidateJSON}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="mt-4 px-6 py-3 bg-gray-800 border-2 border-cyan-400/50 text-cyan-400 rounded-lg font-medium transition-all inline-flex items-center gap-2 hover:bg-cyan-400/10"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+            >
+              <Code size={20} />
+              Validate JSON Payload
+            </motion.button>
+          )}
 
           {!isAllComplete && (
             <motion.div

@@ -1,43 +1,165 @@
 {
   "title": "Logical Quotient Test",
-  "description": "Evaluate your logical reasoning and problem-solving ability.",
+  "description": "Test your analytical thinking and advanced logical reasoning skills",
+  "duration": 15,
+  "mode": "mcq",
+  "field": "Logical quotient rating",
+  "scoringType": "numeric",
   "questions": [
     {
       "id": 1,
-      "question": "If 5 workers take 5 days to build 5 houses, how many days would 10 workers take to build 10 houses?",
-      "options": ["5", "10", "2.5", "1"],
-      "answer": "5"
+      "question": "If you rearrange the letters 'CIFAIPC' you would have the name of a(n):",
+      "options": [
+        {
+          "value": "A",
+          "label": "City",
+          "correct": false
+        },
+        {
+          "value": "B",
+          "label": "Animal",
+          "correct": false
+        },
+        {
+          "value": "C",
+          "label": "Ocean",
+          "correct": true
+        },
+        {
+          "value": "D",
+          "label": "Country",
+          "correct": false
+        },
+        {
+          "value": "E",
+          "label": "River",
+          "correct": false
+        }
+      ]
     },
     {
       "id": 2,
-      "question": "Which number comes next in the sequence? 2, 6, 12, 20, 30, ?",
-      "options": ["36", "40", "42", "48"],
-      "answer": "42"
+      "question": "Statement: 'All students who study regularly pass exams. John passed his exam.' Which conclusion is DEFINITELY true?",
+      "options": [
+        {
+          "value": "A",
+          "label": "John studied regularly",
+          "correct": false
+        },
+        {
+          "value": "B",
+          "label": "John did not study regularly",
+          "correct": false
+        },
+        {
+          "value": "C",
+          "label": "Cannot determine if John studied regularly",
+          "correct": true
+        },
+        {
+          "value": "D",
+          "label": "John is a good student",
+          "correct": false
+        },
+        {
+          "value": "E",
+          "label": "All students who pass studied regularly",
+          "correct": false
+        }
+      ]
     },
     {
       "id": 3,
-      "question": "If all Bloops are Razzies and all Razzies are Lazzies, then all Bloops are definitely Lazzies?",
-      "options": ["True", "False"],
-      "answer": "True"
+      "question": "In a race, if you overtake the person in 2nd place, what position are you now in?",
+      "options": [
+        {
+          "value": "A",
+          "label": "1st place",
+          "correct": false
+        },
+        {
+          "value": "B",
+          "label": "2nd place",
+          "correct": true
+        },
+        {
+          "value": "C",
+          "label": "3rd place",
+          "correct": false
+        },
+        {
+          "value": "D",
+          "label": "Last place",
+          "correct": false
+        },
+        {
+          "value": "E",
+          "label": "Cannot be determined",
+          "correct": false
+        }
+      ]
     },
     {
       "id": 4,
-      "question": "Find the odd one out: Dog, Cat, Rabbit, Carrot",
-      "options": ["Dog", "Cat", "Rabbit", "Carrot"],
-      "answer": "Carrot"
+      "question": "Three switches outside a room control three bulbs inside. You can only enter the room once. How can you determine which switch controls which bulb?",
+      "options": [
+        {
+          "value": "A",
+          "label": "Turn on switch 1 and 2, enter immediately",
+          "correct": false
+        },
+        {
+          "value": "B",
+          "label": "Turn on switch 1, wait 10 minutes, turn it off and turn on switch 2, then enter",
+          "correct": true
+        },
+        {
+          "value": "C",
+          "label": "Turn all switches on, then enter",
+          "correct": false
+        },
+        {
+          "value": "D",
+          "label": "It's impossible with only one entry",
+          "correct": false
+        },
+        {
+          "value": "E",
+          "label": "Turn on one switch and immediately enter",
+          "correct": false
+        }
+      ]
     },
     {
       "id": 5,
-      "question": "A clock shows the time as 3:15. What is the angle between the hour and minute hand?",
-      "options": ["0°", "7.5°", "15°", "30°"],
-      "answer": "7.5°"
+      "question": "A bat and ball cost $1.10 in total. The bat costs $1.00 more than the ball. How much does the ball cost?",
+      "options": [
+        {
+          "value": "A",
+          "label": "$0.10",
+          "correct": false
+        },
+        {
+          "value": "B",
+          "label": "$0.05",
+          "correct": true
+        },
+        {
+          "value": "C",
+          "label": "$0.15",
+          "correct": false
+        },
+        {
+          "value": "D",
+          "label": "$0.20",
+          "correct": false
+        },
+        {
+          "value": "E",
+          "label": "$1.00",
+          "correct": false
+        }
+      ]
     }
-  ],
-  "mapping": {
-    "1": "Very Low Logical Quotient",
-    "2": "Low Logical Quotient",
-    "3": "Average Logical Quotient",
-    "4": "Good Logical Quotient",
-    "5": "Excellent Logical Quotient"
-  }
+  ]
 }

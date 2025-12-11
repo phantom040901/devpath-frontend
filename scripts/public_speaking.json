@@ -1,0 +1,140 @@
+{
+  "title": "Public Speaking Assessment",
+  "description": "Rate your communication and presentation skills honestly",
+  "duration": 5,
+  "mode": "mcq",
+  "field": "public speaking points",
+  "scoringType": "numeric",
+  "questions": [
+    {
+      "id": 1,
+      "question": "How comfortable are you speaking in front of a group of 20+ people?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Very uncomfortable - I avoid it at all costs"
+        },
+        {
+          "value": 2,
+          "label": "Uncomfortable - I get very nervous"
+        },
+        {
+          "value": 3,
+          "label": "Neutral - I can do it but prefer not to"
+        },
+        {
+          "value": 4,
+          "label": "Comfortable - I enjoy speaking to groups"
+        },
+        {
+          "value": 5,
+          "label": "Very comfortable - I seek out speaking opportunities"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "How often do you volunteer to present or speak in class, meetings, or events?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Never - I actively avoid it"
+        },
+        {
+          "value": 2,
+          "label": "Rarely - Only when required"
+        },
+        {
+          "value": 3,
+          "label": "Sometimes - When I feel confident about the topic"
+        },
+        {
+          "value": 4,
+          "label": "Often - I'm usually willing to volunteer"
+        },
+        {
+          "value": 5,
+          "label": "Always - I frequently raise my hand first"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "How well can you organize your thoughts and speak clearly under pressure?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Poorly - I freeze or ramble incoherently"
+        },
+        {
+          "value": 2,
+          "label": "Below average - I struggle to stay organized"
+        },
+        {
+          "value": 3,
+          "label": "Average - I can manage with some preparation"
+        },
+        {
+          "value": 4,
+          "label": "Good - I stay fairly organized even under stress"
+        },
+        {
+          "value": 5,
+          "label": "Excellent - I thrive under pressure and speak clearly"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "question": "How confident are you in your ability to engage and persuade an audience?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Not confident - I can't hold attention"
+        },
+        {
+          "value": 2,
+          "label": "Slightly confident - I struggle to engage listeners"
+        },
+        {
+          "value": 3,
+          "label": "Moderately confident - I can keep attention with effort"
+        },
+        {
+          "value": 4,
+          "label": "Confident - I can usually engage my audience well"
+        },
+        {
+          "value": 5,
+          "label": "Very confident - I consistently captivate audiences"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "question": "How do you handle feedback or questions after a presentation?",
+      "options": [
+        {
+          "value": 1,
+          "label": "Poorly - I get defensive or flustered"
+        },
+        {
+          "value": 2,
+          "label": "Below average - I struggle to respond clearly"
+        },
+        {
+          "value": 3,
+          "label": "Average - I can handle basic questions"
+        },
+        {
+          "value": 4,
+          "label": "Good - I welcome and address feedback effectively"
+        },
+        {
+          "value": 5,
+          "label": "Excellent - I encourage dialogue and handle tough questions"
+        }
+      ]
+    }
+  ]
+}

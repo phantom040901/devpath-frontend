@@ -254,25 +254,18 @@ export default function DashboardNav() {
                   }}
                 >
                   <Link
-                    to="/assessments?tab=academic"
+                    to="/academic-assessments"
                     onClick={() => setAssessOpen(false)}
                     className="block px-4 py-3 text-sm hover:bg-gray-800 dark:hover:bg-gray-800 light:hover:bg-gray-100 transition-colors duration-150 text-white dark:text-white light:text-gray-900 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
                   >
                     📚 Academic
                   </Link>
                   <Link
-                    to="/assessments?tab=technical"
+                    to="/technical-assessments"
                     onClick={() => setAssessOpen(false)}
                     className="block px-4 py-3 text-sm hover:bg-gray-800 dark:hover:bg-gray-800 light:hover:bg-gray-100 transition-colors duration-150 text-white dark:text-white light:text-gray-900 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
                   >
                     ⚡ Technical
-                  </Link>
-                  <Link
-                    to="/assessments?tab=personal"
-                    onClick={() => setAssessOpen(false)}
-                    className="block px-4 py-3 text-sm hover:bg-gray-800 dark:hover:bg-gray-800 light:hover:bg-gray-100 transition-colors duration-150 text-white dark:text-white light:text-gray-900 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 font-medium"
-                  >
-                    🎯 Personal
                   </Link>
                 </motion.div>
               )}
@@ -397,8 +390,8 @@ export default function DashboardNav() {
                     </p>
                     <p className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600 truncate mt-0.5">{user?.email}</p>
                   </div>
-                  <Link to="/student/profile" className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors text-gray-200 dark:text-gray-200 light:text-gray-700 font-medium">
-                    <User size={16} /> Profile
+                  <Link to="/profile" className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors text-gray-200 dark:text-gray-200 light:text-gray-700 font-medium">
+                    <User size={16} /> Profile Survey
                   </Link>
                   <Link to="/student/settings" className="flex items-center gap-3 px-4 py-3 text-sm hover:bg-primary-1200 dark:hover:bg-primary-1200 light:hover:bg-gray-100 transition-colors text-gray-200 dark:text-gray-200 light:text-gray-700 font-medium">
                     <Settings size={16} /> Settings
@@ -567,25 +560,18 @@ export default function DashboardNav() {
                     >
                       <div className="ml-4 mt-1 flex flex-col gap-1">
                         <Link
-                          to="/assessments?tab=academic"
+                          to="/academic-assessments"
                           onClick={() => setMobileOpen(false)}
                           className="py-2 px-3 text-sm rounded-lg text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100 transition-colors"
                         >
                           📚 Academic
                         </Link>
                         <Link
-                          to="/assessments?tab=technical"
+                          to="/technical-assessments"
                           onClick={() => setMobileOpen(false)}
                           className="py-2 px-3 text-sm rounded-lg text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100 transition-colors"
                         >
                           ⚡ Technical
-                        </Link>
-                        <Link
-                          to="/assessments?tab=personal"
-                          onClick={() => setMobileOpen(false)}
-                          className="py-2 px-3 text-sm rounded-lg text-gray-300 dark:text-gray-300 light:text-gray-600 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100 transition-colors"
-                        >
-                          🎯 Personal
                         </Link>
                       </div>
                     </motion.div>
@@ -654,11 +640,11 @@ export default function DashboardNav() {
               </div>
 
               <Link
-                to="/student/profile"
+                to="/profile"
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center gap-3 py-3 px-3 text-sm rounded-lg text-gray-200 dark:text-gray-200 light:text-gray-700 hover:text-primary-400 dark:hover:text-primary-400 light:hover:text-primary-600 hover:bg-primary-500/5 dark:hover:bg-primary-500/5 light:hover:bg-gray-100 transition-colors"
               >
-                <User size={16} /> Profile
+                <User size={16} /> Profile Survey
               </Link>
               <Link
                 to="/student/settings"

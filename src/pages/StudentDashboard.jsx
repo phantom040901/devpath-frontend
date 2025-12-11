@@ -121,25 +121,42 @@ export default function StudentDashboard() {
 
       const resultsRef = collection(db, "users", user.uid, "results");
       const resultsSnap = await getDocs(resultsRef);
-      
+
       const results = resultsSnap.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
+
+      // Also fetch technical assessments from assessments/technical
+      const technicalAssessmentsRef = doc(db, "users", user.uid, "assessments", "technical");
+      const technicalAssessmentsDoc = await getDoc(technicalAssessmentsRef);
+      const technicalAssessments = technicalAssessmentsDoc.exists() ? technicalAssessmentsDoc.data() : {};
 
       const academic = results.filter(r => r.id.includes("assessments_"));
       const technical = results.filter(r => r.id.includes("technicalAssessments_"));
       const personal = results.filter(r => r.id.includes("survey_"));
 
       const academicScores = academic.filter(r => r.score !== undefined).map(r => r.score);
-      const technicalScores = technical.filter(r => r.score !== undefined).map(r => r.score);
+      const technicalScoresFromResults = technical.filter(r => r.score !== undefined).map(r => r.score);
 
-      const avgAcademic = academicScores.length > 0 
+      // Get technical scores from assessments/technical document
+      const technicalScoresFromDoc = Object.values(technicalAssessments).filter(score => typeof score === 'number');
+
+      // Combine and convert technical scores (1-9 scale to percentage)
+      const allTechnicalScores = [...technicalScoresFromResults, ...technicalScoresFromDoc].map(score => {
+        // Technical assessments use 1-9 scale, convert to 0-100 percentage
+        if (score >= 1 && score <= 9) {
+          return ((score - 1) / 8) * 100;
+        }
+        return score; // Already a percentage
+      });
+
+      const avgAcademic = academicScores.length > 0
         ? Math.round(academicScores.reduce((a, b) => a + b, 0) / academicScores.length)
         : 0;
-      
-      const avgTechnical = technicalScores.length > 0 
-        ? Math.round(technicalScores.reduce((a, b) => a + b, 0) / technicalScores.length)
+
+      const avgTechnical = allTechnicalScores.length > 0
+        ? Math.round(allTechnicalScores.reduce((a, b) => a + b, 0) / allTechnicalScores.length)
         : 0;
 
       const datesSet = new Set(results.map(r => {
@@ -170,15 +187,24 @@ export default function StudentDashboard() {
       ]);
 
       const totalAssessments = academicSnap.size + technicalSnap.size + personalSnap.size;
+
+      // Combine technical completions from both sources
+      const technicalFromResults = technical.map(r => r.assessmentId);
+      const technicalFromDoc = Object.keys(technicalAssessments);
+      const allTechnicalCompleted = [...new Set([...technicalFromResults, ...technicalFromDoc])];
+
       const completedAssessments = [...new Set([
         ...academic.map(r => r.assessmentId),
-        ...technical.map(r => r.assessmentId),
+        ...allTechnicalCompleted,
         ...personal.map(r => r.assessmentId)
       ])].length;
 
+      // Ensure totalCompleted doesn't exceed totalAssessments
+      const adjustedTotal = Math.max(totalAssessments, completedAssessments);
+
       setProgressSummary({
         totalCompleted: completedAssessments,
-        totalAssessments,
+        totalAssessments: adjustedTotal,
         academicAvg: avgAcademic,
         technicalAvg: avgTechnical,
         currentStreak,
@@ -245,7 +271,7 @@ export default function StudentDashboard() {
             label="Assessments"
             value={`${progressSummary?.totalCompleted || 0}/${progressSummary?.totalAssessments || 0}`}
             subtitle="Completed"
-            onClick={() => navigate("/assessments")}
+            onClick={() => navigate("/academic-assessments")}
           />
           <StatCard
             icon={<TrendingUp className="text-primary-400" size={20} />}
@@ -350,7 +376,7 @@ export default function StudentDashboard() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <button
-                      onClick={() => navigate("/assessments")}
+                      onClick={() => navigate("/academic-assessments")}
                       className="px-6 py-3 rounded-lg bg-primary-500 hover:bg-primary-600 dark:text-white light:text-white light:bg-emerald-500 light:hover:bg-emerald-600 font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 inline-flex items-center gap-2 justify-center"
                     >
                       <BookOpen size={18} />
@@ -515,7 +541,7 @@ export default function StudentDashboard() {
                 </div>
 
                 <button
-                  onClick={() => navigate("/assessments")}
+                  onClick={() => navigate("/academic-assessments")}
                   className="w-full py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-lg font-bold transition-all shadow-lg hover:shadow-xl hover:scale-105 flex items-center justify-center gap-2"
                 >
                   <Sparkles size={16} />
@@ -577,7 +603,7 @@ export default function StudentDashboard() {
                   </div>
                   <span className="text-white font-bold text-lg">
                     {progressSummary?.totalAssessments > 0
-                      ? Math.round((progressSummary.totalCompleted / progressSummary.totalAssessments) * 100)
+                      ? Math.min(100, Math.round((progressSummary.totalCompleted / progressSummary.totalAssessments) * 100))
                       : 0}%
                   </span>
                 </div>
@@ -586,7 +612,7 @@ export default function StudentDashboard() {
                     className="h-3 rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 transition-all duration-500 relative overflow-hidden"
                     style={{
                       width: `${progressSummary?.totalAssessments > 0
-                        ? (progressSummary.totalCompleted / progressSummary.totalAssessments) * 100
+                        ? Math.min(100, (progressSummary.totalCompleted / progressSummary.totalAssessments) * 100)
                         : 0}%`
                     }}
                   >
@@ -696,7 +722,7 @@ export default function StudentDashboard() {
 
               {/* Action Button */}
               <button
-                onClick={() => navigate("/assessments")}
+                onClick={() => navigate("/academic-assessments")}
                 className="w-full mt-4 py-3 bg-primary-500 hover:bg-primary-600 rounded-lg text-white font-semibold transition-all shadow-lg hover:shadow-xl hover:scale-[1.02] flex items-center justify-center gap-2"
               >
                 <Rocket size={18} />
@@ -720,7 +746,7 @@ export default function StudentDashboard() {
                   icon={<BookOpen size={18} />}
                   label="Take Assessments"
                   description="Continue learning"
-                  onClick={() => navigate("/assessments")}
+                  onClick={() => navigate("/academic-assessments")}
                 />
                 <ActionButton
                   icon={<BarChart3 size={18} />}
@@ -783,12 +809,14 @@ export default function StudentDashboard() {
                   <div className="w-full bg-gray-800 rounded-full h-2.5 shadow-inner">
                     <div
                       className="h-2.5 rounded-full bg-gradient-to-r from-primary-500 to-emerald-400 transition-all duration-500"
-                      style={{ width: `${progressSummary.totalAssessments > 0 ? (progressSummary.totalCompleted / progressSummary.totalAssessments) * 100 : 0}%` }}
+                      style={{ width: `${progressSummary.totalAssessments > 0 ? Math.min(100, (progressSummary.totalCompleted / progressSummary.totalAssessments) * 100) : 0}%` }}
                     />
                   </div>
                   <p className="text-xs text-gray-400 mt-2">
                     {progressSummary.totalCompleted === 0
                       ? "Start your first assessment to begin your journey"
+                      : progressSummary.totalCompleted >= progressSummary.totalAssessments
+                      ? "All assessments completed! Great job!"
                       : `${progressSummary.totalAssessments - progressSummary.totalCompleted} assessments remaining`
                     }
                   </p>
