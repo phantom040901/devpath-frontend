@@ -260,6 +260,33 @@ export default function CareerMatches() {
     }
   };
 
+  const fetchCareerAnalytics = async () => {
+    try {
+      // Fetch all users' selected careers
+      const usersRef = collection(db, "users");
+      const usersSnapshot = await getDocs(usersRef);
+
+      const careerCounts = {};
+      let totalUsers = 0;
+
+      for (const userDoc of usersSnapshot.docs) {
+        const selectedCareerRef = doc(db, "users", userDoc.id, "selectedCareer", "current");
+        const selectedCareerDoc = await getDoc(selectedCareerRef);
+
+        if (selectedCareerDoc.exists()) {
+          const jobRole = selectedCareerDoc.data().jobRole;
+          careerCounts[jobRole] = (careerCounts[jobRole] || 0) + 1;
+          totalUsers++;
+        }
+      }
+
+      return { careerCounts, totalUsers };
+    } catch (err) {
+      console.error("Error fetching career analytics:", err);
+      return { careerCounts: {}, totalUsers: 0 };
+    }
+  };
+
   const handlePredict = async () => {
     setPredicting(true);
     setError(null);
@@ -285,13 +312,35 @@ export default function CareerMatches() {
       });
 
       if (data) {
-        setPredictions(data.recommendations);
+        // Fetch career analytics to enrich predictions with real student counts
+        const analytics = await fetchCareerAnalytics();
+
+        // Enrich job matches with student count and popularity
+        const enrichedMatches = data.recommendations.job_matches.map(match => {
+          const studentCount = analytics.careerCounts[match.job_role] || 0;
+          const popularityPercentage = analytics.totalUsers > 0
+            ? Math.round((studentCount / analytics.totalUsers) * 100)
+            : 0;
+
+          return {
+            ...match,
+            studentCount,
+            popularityPercentage
+          };
+        });
+
+        const enrichedRecommendations = {
+          ...data.recommendations,
+          job_matches: enrichedMatches
+        };
+
+        setPredictions(enrichedRecommendations);
 
         // Save career recommendations to Firebase for Progress Tracker
         try {
           const careerDataRef = doc(db, "users", user.uid, "careerData", "latestRecommendations");
           await setDoc(careerDataRef, {
-            ...data.recommendations,
+            ...enrichedRecommendations,
             lastUpdated: new Date().toISOString(),
             payload: payload // Store the input data for reference
           });
