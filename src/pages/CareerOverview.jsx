@@ -154,15 +154,18 @@ export default function StudentProgress() {
       ? allTechnicalScores.reduce((a, b) => a + b, 0) / allTechnicalScores.length
       : 0;
 
-    // Calculate completion percentages
-    const academicCompletion = totalAssessments.academic > 0 ? (uniqueAcademic.length / totalAssessments.academic) * 100 : 0;
+    // Calculate completion percentages (cap at 100%)
+    const academicCompletion = totalAssessments.academic > 0 ? Math.min((uniqueAcademic.length / totalAssessments.academic) * 100, 100) : 0;
     const technicalCompletionCount = Math.max(uniqueTechnical.length, uniqueTechnicalCount);
-    const technicalCompletion = totalAssessments.technical > 0 ? (technicalCompletionCount / totalAssessments.technical) * 100 : 0;
-    const personalCompletion = totalAssessments.personal > 0 ? (uniquePersonal.length / totalAssessments.personal) * 100 : 0;
+    const technicalCompletion = totalAssessments.technical > 0 ? Math.min((technicalCompletionCount / totalAssessments.technical) * 100, 100) : 0;
+    const personalCompletion = totalAssessments.personal > 0 ? Math.min((uniquePersonal.length / totalAssessments.personal) * 100, 100) : 0;
 
-    // Overall completion - use the combined technical count
-    const totalCompleted = uniqueAcademic.length + technicalCompletionCount + uniquePersonal.length;
-    const overallCompletion = totalAssessments.total > 0 ? (totalCompleted / totalAssessments.total) * 100 : 0;
+    // Overall completion - use the combined technical count (cap at 100%)
+    const totalCompleted = Math.min(
+      uniqueAcademic.length + technicalCompletionCount + uniquePersonal.length,
+      totalAssessments.total
+    );
+    const overallCompletion = totalAssessments.total > 0 ? Math.min((totalCompleted / totalAssessments.total) * 100, 100) : 0;
 
     // Calculate improvement trends (compare first vs latest attempt)
     const improvements = calculateImprovements(results);
