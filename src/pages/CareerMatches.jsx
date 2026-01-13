@@ -526,7 +526,7 @@ const confirmSelectCareer = async () => {
             Discover Your
             <br />
             <span className="bg-gradient-to-r from-yellow-300 via-primary-400 to-emerald-400 dark:from-yellow-300 dark:via-primary-400 dark:to-emerald-400 light:from-yellow-600 light:via-primary-600 light:to-emerald-600 bg-clip-text text-transparent">
-              Perfect Career Path
+              Best-Fit Career Path
             </span>
           </motion.h1>
 
