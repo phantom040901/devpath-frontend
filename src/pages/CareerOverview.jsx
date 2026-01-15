@@ -94,8 +94,8 @@ export default function StudentProgress() {
       const totalAssessments = {
         academic: academicSnap.size,
         technical: technicalSnap.size,
-        personal: personalSnap.size,
-        total: academicSnap.size + technicalSnap.size + personalSnap.size
+        personal: 0, // Personal assessments not counted
+        total: academicSnap.size + technicalSnap.size
       };
 
       // Fetch user profile for additional info
@@ -160,9 +160,9 @@ export default function StudentProgress() {
     const technicalCompletion = totalAssessments.technical > 0 ? Math.min((technicalCompletionCount / totalAssessments.technical) * 100, 100) : 0;
     const personalCompletion = totalAssessments.personal > 0 ? Math.min((uniquePersonal.length / totalAssessments.personal) * 100, 100) : 0;
 
-    // Overall completion - use the combined technical count (cap at 100%)
+    // Overall completion - don't count personal assessments (cap at 100%)
     const totalCompleted = Math.min(
-      uniqueAcademic.length + technicalCompletionCount + uniquePersonal.length,
+      uniqueAcademic.length + technicalCompletionCount,
       totalAssessments.total
     );
     const overallCompletion = totalAssessments.total > 0 ? Math.min((totalCompleted / totalAssessments.total) * 100, 100) : 0;

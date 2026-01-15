@@ -15,6 +15,26 @@ export default function TechnicalAssessmentsList() {
   const [completedTests, setCompletedTests] = useState({});
   const [loading, setLoading] = useState(true);
 
+  // Helper function to get performance label from score
+  const getPerformanceLabel = (score) => {
+    if (typeof score === "string") {
+      // Handle text scores (poor/medium/excellent)
+      const textScores = {
+        poor: { label: "Needs Work", color: "orange-400" },
+        medium: { label: "Good", color: "purple-400" },
+        excellent: { label: "Excellent", color: "green-400" }
+      };
+      return textScores[score.toLowerCase()] || { label: score.toUpperCase(), color: "gray-400" };
+    }
+
+    // Handle numerical scores (1-9 scale)
+    if (score >= 8) return { label: "Excellent", color: "green-400" };
+    if (score === 7) return { label: "Very Good", color: "blue-400" };
+    if (score >= 5) return { label: "Good", color: "purple-400" };
+    if (score >= 3) return { label: "Fair", color: "yellow-400" };
+    return { label: "Needs Work", color: "orange-400" };
+  };
+
   const technicalAssessments = [
     {
       id: "logical-quotient",
@@ -252,7 +272,10 @@ export default function TechnicalAssessmentsList() {
                       <div className={`flex items-center gap-2 text-${assessment.color}-400 font-bold`}>
                         <CheckCircle2 size={18} />
                         <span className="text-base">
-                          Score: {typeof score === "number" ? `${score}/9` : score.toUpperCase()}
+                          {typeof score === "number"
+                            ? `Score: ${score}/9 • ${getPerformanceLabel(score).label}`
+                            : `Score: ${getPerformanceLabel(score).label}`
+                          }
                         </span>
                       </div>
                     </div>
@@ -275,7 +298,9 @@ export default function TechnicalAssessmentsList() {
                       className="w-full px-4 py-2 bg-gray-700 text-gray-300 rounded-lg hover:bg-gray-600 transition flex items-center justify-center gap-2 text-sm"
                     >
                       <SkipForward size={16} />
-                      Skip (Default: {typeof assessment.defaultScore === "number" ? `${assessment.defaultScore}/9` : assessment.defaultScore})
+                      Skip (Default: {typeof assessment.defaultScore === "number"
+                        ? `${assessment.defaultScore}/9 • ${getPerformanceLabel(assessment.defaultScore).label}`
+                        : getPerformanceLabel(assessment.defaultScore).label})
                     </button>
                   </div>
                 )}

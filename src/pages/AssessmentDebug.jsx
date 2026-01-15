@@ -27,8 +27,8 @@ export default function AssessmentDebug() {
           counts: {
             academic: academicSnap.size,
             technical: technicalSnap.size,
-            personal: personalSnap.size,
-            total: academicSnap.size + technicalSnap.size + personalSnap.size
+            personal: 0, // Personal assessments not counted
+            total: academicSnap.size + technicalSnap.size
           }
         });
       } catch (error) {

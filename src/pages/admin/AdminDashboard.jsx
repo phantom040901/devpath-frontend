@@ -86,7 +86,7 @@ export default function AdminDashboard() {
       ]);
 
       const totalStudents = usersSnap.size;
-      const totalAssessments = academicSnap.size + technicalSnap.size + personalSnap.size;
+      const totalAssessments = academicSnap.size + technicalSnap.size; // Academic + Technical only
 
       // Calculate active students (students with results in last 30 days)
       const thirtyDaysAgo = new Date();

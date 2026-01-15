@@ -26,6 +26,7 @@ import AcademicTestsList from "./pages/AcademicTestsList";
 import AcademicAssessmentsList from "./pages/AcademicAssessmentsList";
 import TechnicalAssessmentsList from "./pages/TechnicalAssessmentsList";
 import TechnicalAssessmentRouter from "./pages/TechnicalAssessmentRouter";
+import AssessmentDebugger from "./pages/AssessmentDebugger";
 
 // Career Roadmap Pages
 import CareerRoadmap from "./pages/CareerRoadmap";
@@ -252,6 +253,7 @@ function App() {
 
         {/* Assessment Debug - Temporary Route */}
         <Route path="/assessment-debug" element={<AssessmentDebug />} />
+        <Route path="/assessment-debugger" element={<AssessmentDebugger />} />
 
         {/* Protected Student Routes */}
         <Route
