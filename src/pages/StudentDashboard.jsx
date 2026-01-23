@@ -185,18 +185,15 @@ export default function StudentDashboard() {
         getDocs(collection(db, "personalAssessments"))
       ]);
 
-      const totalAssessments = academicSnap.size + technicalSnap.size; // Academic + Technical only (9 + 5 = 14)
+      const totalAssessments = academicSnap.size; // Academic assessments only (9)
 
       // Combine technical completions from both sources
       const technicalFromResults = technical.map(r => r.assessmentId);
       const technicalFromDoc = Object.keys(technicalAssessments);
       const allTechnicalCompleted = [...new Set([...technicalFromResults, ...technicalFromDoc])];
 
-      // Don't count personal assessments
-      const completedAssessments = [
-        ...new Set(academic.map(r => r.assessmentId)),
-        ...new Set(allTechnicalCompleted)
-      ].length;
+      // Count only academic assessments (not technical or personal)
+      const completedAssessments = [...new Set(academic.map(r => r.assessmentId))].length;
 
       // Ensure totalCompleted doesn't exceed totalAssessments
       const adjustedTotal = Math.max(totalAssessments, completedAssessments);
