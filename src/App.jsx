@@ -48,6 +48,7 @@ import EmployersList from "./pages/admin/EmployersList";
 import EmployerVerificationPage from "./pages/admin/EmployerVerification";
 import MigrationGuide from "./pages/admin/MigrationGuide";
 import DatasetViewer from "./pages/admin/DatasetViewer";
+import AssessmentViewer from "./pages/admin/AssessmentViewer";
 
 // Employer Pages
 import EmployerLandingPage from "./pages/employer/EmployerLandingPage";
@@ -181,6 +182,16 @@ function App() {
           element={
             <RequireAdmin>
               <AssessmentManagement />
+            </RequireAdmin>
+          }
+        />
+
+        {/* Assessment Viewer/Analyzer */}
+        <Route
+          path="/admin/assessment-viewer"
+          element={
+            <RequireAdmin>
+              <AssessmentViewer />
             </RequireAdmin>
           }
         />

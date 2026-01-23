@@ -10,7 +10,6 @@ import { motion } from "framer-motion";
 import { useNotifications } from '../hooks/useNotifications';
 import DashboardNav from "../components/dashboard/DashboardNav";
 import WelcomeBanner from "../components/dashboard/WelcomeBanner";
-import ResumeCard from "../components/dashboard/ResumeCard";
 import DashboardFooter from "../components/dashboard/DashboardFooter";
 import DashboardTutorial from "../components/dashboard/DashboardTutorial";
 import {
@@ -769,9 +768,6 @@ export default function StudentDashboard() {
               </div>
             </motion.div>
 
-            {/* Resume Builder Card */}
-            <ResumeCard />
-
             {/* Keep Learning Status */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -902,12 +898,12 @@ function StatCard({ icon, label, value, subtitle, onClick }) {
         <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-primary-500/20 group-hover:bg-primary-500/30 border border-primary-500/30 group-hover:border-primary-500/50 transition-all">
           {icon}
         </div>
-        <div className="text-xs font-bold text-gray-300 group-hover:text-gray-200 uppercase tracking-wider transition-colors">{label}</div>
+        <div className="text-xs font-bold text-gray-300 group-hover:text-gray-200 uppercase tracking-wider transition-colors text-left">{label}</div>
       </div>
-      <div className="text-3xl sm:text-4xl font-extrabold text-white dark:text-gray-100 mb-1 sm:mb-2 group-hover:text-primary-400 transition-colors">
+      <div className="text-3xl sm:text-4xl font-extrabold text-white dark:text-gray-100 mb-1 sm:mb-2 group-hover:text-primary-400 transition-colors text-right">
         {value}
       </div>
-      <div className="text-xs text-gray-400 font-semibold">{subtitle}</div>
+      <div className="text-xs text-gray-400 font-semibold text-left">{subtitle}</div>
     </motion.div>
   );
 }

@@ -530,12 +530,12 @@ const AssessmentCard = memo(function AssessmentCard({
   };
 
   return (
-    <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-sm transition-all group flex flex-col h-full hover:-translate-y-1 relative overflow-hidden
+    <div className={`rounded-xl sm:rounded-2xl p-4 sm:p-6 backdrop-blur-sm transition-all duration-300 ease-in-out group flex flex-col h-full hover:-translate-y-2 hover:scale-[1.02] relative overflow-hidden cursor-pointer
       ${isCompleted
-        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-gray-50 border-2 dark:border-emerald-500/50 light:border-black hover:border-emerald-400/70 shadow-xl dark:shadow-emerald-500/20 light:shadow-lg'
+        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-gray-50 border-2 dark:border-emerald-500/50 light:border-black hover:border-emerald-400 hover:bg-gray-900/90 dark:hover:bg-gray-900/90 light:hover:bg-white shadow-xl dark:shadow-emerald-500/20 light:shadow-lg hover:shadow-2xl dark:hover:shadow-emerald-500/40'
         : !accessStatus.canAccess && accessStatus.reason === 'threshold_met_incomplete_resources'
-        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-gray-50 border-2 dark:border-yellow-500/50 light:border-black hover:border-yellow-400/70 shadow-xl dark:shadow-yellow-500/20 light:shadow-lg'
-        : 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-gray-50 border-2 dark:border-gray-700/40 light:border-black hover:border-primary-500/50 shadow-xl dark:shadow-black/40 light:shadow-lg'
+        ? 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-gray-50 border-2 dark:border-yellow-500/50 light:border-black hover:border-yellow-400 hover:bg-gray-900/90 dark:hover:bg-gray-900/90 light:hover:bg-white shadow-xl dark:shadow-yellow-500/20 light:shadow-lg hover:shadow-2xl dark:hover:shadow-yellow-500/40'
+        : 'bg-gray-900/70 dark:bg-gray-900/70 light:bg-gray-50 border-2 dark:border-gray-700/40 light:border-black hover:border-primary-500 hover:bg-gray-900/90 dark:hover:bg-gray-900/90 light:hover:bg-white shadow-xl dark:shadow-black/40 light:shadow-lg hover:shadow-2xl dark:hover:shadow-primary-500/30'
       }`}
     >
       {/* Threshold Met Badge */}

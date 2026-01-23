@@ -17,43 +17,43 @@ export default function AcademicAssessmentsList() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  // Map of assessment IDs to icons and colors
+  // Map of assessment IDs to icons - using consistent cyan/primary color scheme
   const assessmentConfig = {
     "operating_systems": {
-      icon: <Cpu className="text-blue-400" size={32} />,
-      color: "blue",
+      icon: <Cpu className="text-primary-400" size={32} />,
+      color: "primary",
     },
     "algorithms": {
-      icon: <Brain className="text-purple-400" size={32} />,
-      color: "purple",
+      icon: <Brain className="text-primary-400" size={32} />,
+      color: "primary",
     },
     "programming": {
-      icon: <Code className="text-green-400" size={32} />,
-      color: "green",
+      icon: <Code className="text-primary-400" size={32} />,
+      color: "primary",
     },
     "software_engineering": {
-      icon: <BookOpen className="text-cyan-400" size={32} />,
-      color: "cyan",
+      icon: <BookOpen className="text-primary-400" size={32} />,
+      color: "primary",
     },
     "computer_networks": {
-      icon: <Network className="text-pink-400" size={32} />,
-      color: "pink",
+      icon: <Network className="text-primary-400" size={32} />,
+      color: "primary",
     },
     "communication": {
-      icon: <MessageSquare className="text-orange-400" size={32} />,
-      color: "orange",
+      icon: <MessageSquare className="text-primary-400" size={32} />,
+      color: "primary",
     },
     "mathematics": {
-      icon: <Calculator className="text-yellow-400" size={32} />,
-      color: "yellow",
+      icon: <Calculator className="text-primary-400" size={32} />,
+      color: "primary",
     },
     "electronics": {
-      icon: <Radio className="text-red-400" size={32} />,
-      color: "red",
+      icon: <Radio className="text-primary-400" size={32} />,
+      color: "primary",
     },
     "computer_architecture": {
-      icon: <Cpu className="text-indigo-400" size={32} />,
-      color: "indigo",
+      icon: <Cpu className="text-primary-400" size={32} />,
+      color: "primary",
     },
   };
 
@@ -208,102 +208,122 @@ export default function AcademicAssessmentsList() {
           </div>
         </div>
 
-        {/* Assessments Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {assessments.map((assessment, index) => {
-            const config = assessmentConfig[assessment.id] || {
-              icon: <BookOpen className="text-gray-400" size={32} />,
-              color: "gray",
-            };
+        {/* Assessments Table View */}
+        <div className="bg-gray-900/70 border border-gray-700/40 rounded-2xl overflow-hidden mb-12">
+          {/* Table Header */}
+          <div className="bg-gray-800/80 border-b border-gray-700/50 px-6 py-4">
+            <div className="grid grid-cols-12 gap-4 items-center text-sm font-semibold text-gray-400 uppercase tracking-wider">
+              <div className="col-span-4">Assessment</div>
+              <div className="col-span-2 text-center">Status</div>
+              <div className="col-span-2 text-center">Score</div>
+              <div className="col-span-2 text-center">Proficiency</div>
+              <div className="col-span-2 text-center">Action</div>
+            </div>
+          </div>
 
-            const result = completedTests[assessment.id];
-            const isCompleted = !!result;
-            const score = result?.score;
+          {/* Table Body */}
+          <div className="divide-y divide-gray-700/30">
+            {assessments.map((assessment, index) => {
+              const config = assessmentConfig[assessment.id] || {
+                icon: <BookOpen className="text-primary-400" size={24} />,
+                color: "primary",
+              };
 
-            return (
-              <motion.div
-                key={assessment.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className={`relative bg-gradient-to-br from-gray-800/80 to-gray-900/90 border rounded-2xl p-6 shadow-lg ${
-                  isCompleted
-                    ? `border-${config.color}-400/50`
-                    : "border-gray-700 hover:border-cyan-400/30"
-                }`}
-              >
-                {/* Completed Badge */}
-                {isCompleted && (
-                  <div className="absolute top-4 right-4">
-                    <CheckCircle2 className={`text-${config.color}-400`} size={24} />
-                  </div>
-                )}
+              const result = completedTests[assessment.id];
+              const isCompleted = !!result;
+              const score = result?.score;
 
-                <div className="mb-4">
-                  <div className="mb-3">{config.icon}</div>
-                  <h3 className="text-xl font-bold text-white mb-2">
-                    {assessment.title}
-                  </h3>
-                  <p className="text-sm text-gray-400 mb-3">
-                    {assessment.description}
-                  </p>
-
-                  {isCompleted && (
-                    <div className={`mt-3 px-4 py-2.5 bg-${config.color}-500/20 border border-${config.color}-400/50 rounded-lg`}>
-                      <div className={`flex items-center gap-2 text-${config.color}-400 font-bold`}>
-                        <CheckCircle2 size={18} />
-                        <span className="text-base">
-                          Score: {score}%
-                        </span>
+              return (
+                <motion.div
+                  key={assessment.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="px-6 py-5 hover:bg-gray-800/30 transition-colors"
+                >
+                  <div className="grid grid-cols-12 gap-4 items-center">
+                    {/* Assessment Name */}
+                    <div className="col-span-4 flex items-center gap-3">
+                      <div className="flex-shrink-0">{config.icon}</div>
+                      <div>
+                        <h3 className="text-white font-semibold text-base">
+                          {assessment.title}
+                        </h3>
+                        <p className="text-gray-400 text-xs mt-0.5">
+                          {assessment.duration || "15"} minutes
+                        </p>
                       </div>
                     </div>
-                  )}
-                </div>
 
-                {!isCompleted && (
-                  <div className="space-y-2">
-                    <button
-                      onClick={() => handleTakeTest(assessment)}
-                      className={`w-full px-4 py-3 bg-${config.color}-500 text-white rounded-lg hover:bg-${config.color}-600 transition flex items-center justify-center gap-2 font-medium`}
-                    >
-                      {config.icon}
-                      Take Assessment
-                      <Clock size={16} className="opacity-70" />
-                      {assessment.duration || "15"} minutes
-                    </button>
-                  </div>
-                )}
+                    {/* Status */}
+                    <div className="col-span-2 text-center">
+                      {isCompleted ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/50 text-cyan-400 text-xs font-medium">
+                          <CheckCircle2 size={14} />
+                          Completed
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-700/50 border border-gray-600 text-gray-400 text-xs font-medium">
+                          <Clock size={14} />
+                          Pending
+                        </span>
+                      )}
+                    </div>
 
-                {isCompleted && (
-                  <div className="space-y-2">
-                    {/* Check if score is already good (>= 70%) */}
-                    {score >= 70 ? (
-                      <div className="w-full px-4 py-2 bg-yellow-500/20 border border-yellow-400/50 rounded-lg text-center">
-                        <div className="flex items-center justify-center gap-2 text-yellow-400 text-sm font-medium">
-                          <Trophy size={16} />
-                          <span>Proficiency Achieved!</span>
-                        </div>
-                      </div>
-                    ) : result.attempts < 2 ? (
-                      <button
-                        onClick={() => handleTakeTest(assessment)}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition flex items-center justify-center gap-2 font-medium"
-                      >
-                        Retake Assessment ({result.attempts}/2)
-                      </button>
-                    ) : (
-                      <div className="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-center">
-                        <div className="flex items-center justify-center gap-2 text-gray-400 text-sm">
-                          <Lock size={16} />
-                          <span>Max attempts reached (2/2)</span>
-                        </div>
-                      </div>
-                    )}
+                    {/* Score */}
+                    <div className="col-span-2 text-center">
+                      {isCompleted ? (
+                        <span className="text-2xl font-bold text-cyan-400">
+                          {score}%
+                        </span>
+                      ) : (
+                        <span className="text-gray-500 text-sm">—</span>
+                      )}
+                    </div>
+
+                    {/* Proficiency */}
+                    <div className="col-span-2 text-center">
+                      {isCompleted && score >= 70 ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-400/50 text-yellow-400 text-xs font-medium">
+                          <Trophy size={14} />
+                          Achieved
+                        </span>
+                      ) : isCompleted ? (
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/20 border border-red-400/50 text-red-400 text-xs font-medium">
+                          Not Yet
+                        </span>
+                      ) : (
+                        <span className="text-gray-500 text-sm">—</span>
+                      )}
+                    </div>
+
+                    {/* Action */}
+                    <div className="col-span-2 text-center">
+                      {!isCompleted ? (
+                        <button
+                          onClick={() => handleTakeTest(assessment)}
+                          className="px-4 py-2 bg-cyan-500 text-white text-sm font-medium rounded-lg hover:bg-cyan-600 transition"
+                        >
+                          Take Test
+                        </button>
+                      ) : score < 70 && result.attempts < 2 ? (
+                        <button
+                          onClick={() => handleTakeTest(assessment)}
+                          className="px-4 py-2 bg-blue-500 text-white text-sm font-medium rounded-lg hover:bg-blue-600 transition"
+                        >
+                          Retake ({result.attempts}/2)
+                        </button>
+                      ) : result.attempts >= 2 && score < 70 ? (
+                        <span className="text-gray-500 text-xs">Max Attempts</span>
+                      ) : (
+                        <span className="text-emerald-400 text-sm font-medium">✓ Complete</span>
+                      )}
+                    </div>
                   </div>
-                )}
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Finish Button */}
