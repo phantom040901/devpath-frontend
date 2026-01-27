@@ -264,9 +264,9 @@ export default function AcademicAssessmentsList() {
                         </span>
                       )}
 
-                      {/* Score percentage */}
+                      {/* Score as X/10 */}
                       <span className={`text-sm font-bold mb-2 ${textColor}`}>
-                        {score}%
+                        {Math.round(score / 10)}/10
                       </span>
 
                       {/* Bar */}
@@ -295,19 +295,19 @@ export default function AcademicAssessmentsList() {
             <div className="flex flex-wrap justify-center gap-6 mt-6 pt-4 border-t border-gray-700/50">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
-                <span className="text-xs text-gray-400">Excellent (80%+)</span>
+                <span className="text-xs text-gray-400">Excellent (8-10)</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
-                <span className="text-xs text-gray-400">Good (60-79%)</span>
+                <span className="text-xs text-gray-400">Good (6-7)</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <span className="text-xs text-gray-400">Fair (40-59%)</span>
+                <span className="text-xs text-gray-400">Fair (4-5)</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                <span className="text-xs text-gray-400">Needs Work (&lt;40%)</span>
+                <span className="text-xs text-gray-400">Needs Work (&lt;4)</span>
               </div>
             </div>
           </motion.div>
@@ -379,7 +379,7 @@ export default function AcademicAssessmentsList() {
                     <div className="col-span-2 text-center">
                       {isCompleted ? (
                         <span className="text-2xl font-bold text-cyan-400">
-                          {score}%
+                          {Math.round(score / 10)}/10
                         </span>
                       ) : (
                         <span className="text-gray-500 text-sm">—</span>
