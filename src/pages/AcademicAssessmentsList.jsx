@@ -208,6 +208,111 @@ export default function AcademicAssessmentsList() {
           </div>
         </div>
 
+        {/* Bar Graph Visualization - Only show if there are completed assessments */}
+        {completedCount > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gray-900/70 border border-gray-700/40 rounded-2xl p-6 mb-8"
+          >
+            <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+              <Trophy className="text-yellow-400" size={20} />
+              Your Score Overview
+            </h3>
+
+            <div className="flex items-end justify-center gap-4 overflow-x-auto pb-4" style={{ minHeight: '220px' }}>
+              {/* Sort assessments by score (highest first) */}
+              {assessments
+                .filter((assessment) => !!completedTests[assessment.id])
+                .sort((a, b) => (completedTests[b.id]?.score || 0) - (completedTests[a.id]?.score || 0))
+                .map((assessment, index) => {
+                  const result = completedTests[assessment.id];
+                  const score = result?.score || 0;
+
+                  const barHeight = Math.max(score, 5);
+                  const barColor = score >= 80 ? 'from-emerald-500 to-emerald-400' :
+                                   score >= 60 ? 'from-cyan-500 to-cyan-400' :
+                                   score >= 40 ? 'from-yellow-500 to-yellow-400' :
+                                   'from-red-500 to-red-400';
+                  const textColor = score >= 80 ? 'text-emerald-400' :
+                                    score >= 60 ? 'text-cyan-400' :
+                                    score >= 40 ? 'text-yellow-400' :
+                                    'text-red-400';
+
+                  // Get short name for display
+                  const shortName = assessment.title
+                    .replace('& ', '')
+                    .split(' ')
+                    .slice(0, 2)
+                    .join(' ');
+
+                  return (
+                    <motion.div
+                      key={assessment.id}
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      className="flex flex-col items-center min-w-[70px]"
+                    >
+                      {/* Rank badge for top 3 */}
+                      {index < 3 && (
+                        <span className={`text-xs font-bold mb-1 px-2 py-0.5 rounded-full ${
+                          index === 0 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                          index === 1 ? 'bg-gray-400/20 text-gray-300 border border-gray-400/30' :
+                          'bg-amber-600/20 text-amber-500 border border-amber-600/30'
+                        }`}>
+                          #{index + 1}
+                        </span>
+                      )}
+
+                      {/* Score percentage */}
+                      <span className={`text-sm font-bold mb-2 ${textColor}`}>
+                        {score}%
+                      </span>
+
+                      {/* Bar */}
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: `${barHeight * 1.5}px` }}
+                        transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.05 }}
+                        className={`w-12 rounded-t-lg bg-gradient-to-t ${barColor} shadow-lg`}
+                      />
+
+                      {/* Subject name */}
+                      <div className="mt-3 text-center">
+                        <span
+                          className="text-xs text-gray-400 block max-w-[80px] leading-tight"
+                          title={assessment.title}
+                        >
+                          {shortName}
+                        </span>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+            </div>
+
+            {/* Legend */}
+            <div className="flex flex-wrap justify-center gap-6 mt-6 pt-4 border-t border-gray-700/50">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                <span className="text-xs text-gray-400">Excellent (80%+)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
+                <span className="text-xs text-gray-400">Good (60-79%)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <span className="text-xs text-gray-400">Fair (40-59%)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <span className="text-xs text-gray-400">Needs Work (&lt;40%)</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Assessments Table View */}
         <div className="bg-gray-900/70 border border-gray-700/40 rounded-2xl overflow-hidden mb-12">
           {/* Table Header */}

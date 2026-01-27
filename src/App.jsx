@@ -49,6 +49,7 @@ import EmployerVerificationPage from "./pages/admin/EmployerVerification";
 import MigrationGuide from "./pages/admin/MigrationGuide";
 import DatasetViewer from "./pages/admin/DatasetViewer";
 import AssessmentViewer from "./pages/admin/AssessmentViewer";
+import CreateTestAccount from "./pages/admin/CreateTestAccount";
 
 // Employer Pages
 import EmployerLandingPage from "./pages/employer/EmployerLandingPage";
@@ -212,6 +213,16 @@ function App() {
           element={
             <RequireAdmin>
               <SystemSettings />
+            </RequireAdmin>
+          }
+        />
+
+        {/* Create Test Account */}
+        <Route
+          path="/admin/create-test-account"
+          element={
+            <RequireAdmin>
+              <CreateTestAccount />
             </RequireAdmin>
           }
         />

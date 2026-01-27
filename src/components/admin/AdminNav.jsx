@@ -17,7 +17,8 @@ import {
   BookOpen,
   MessageSquare,
   Briefcase,
-  Building2
+  Building2,
+  UserPlus
 } from "lucide-react";
 
 export default function AdminNav() {
@@ -67,6 +68,7 @@ export default function AdminNav() {
     { path: "/admin/assessments", label: "Assessments", icon: <BookOpen size={20} /> },
     { path: "/admin/career-analytics", label: "Careers", icon: <Briefcase size={20} /> },
     { path: "/admin/messaging", label: "Messages", icon: <MessageSquare size={20} /> },
+    { path: "/admin/create-test-account", label: "Test Account", icon: <UserPlus size={20} /> },
   ];
 
   const handleLogout = async () => {

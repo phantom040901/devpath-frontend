@@ -71,23 +71,29 @@ export default function QuestionCard({ question, selected, onSelect }) {
 
       {/* Options */}
       <div className="space-y-3">
-        {question.options.map((opt, idx) => (
-          <motion.button
-            key={idx}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => onSelect(opt)}
-            className={`w-full rounded-xl px-5 py-4 text-left text-base sm:text-lg transition-all
-              break-words whitespace-normal border-2
-              ${
-                selected === opt
-                  ? "bg-primary-500/20 border-primary-400 text-white font-semibold shadow-lg shadow-primary-500/20"
-                  : "bg-gray-800/70 border-transparent text-gray-200 hover:border-gray-600"
-              }`}
-          >
-            {opt}
-          </motion.button>
-        ))}
+        {question.options.map((opt, idx) => {
+          // Handle both string options and object options {value, label, correct}
+          const optionLabel = typeof opt === 'object' && opt !== null ? opt.label : opt;
+          const optionValue = typeof opt === 'object' && opt !== null ? opt.value : opt;
+
+          return (
+            <motion.button
+              key={idx}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => onSelect(optionValue)}
+              className={`w-full rounded-xl px-5 py-4 text-left text-base sm:text-lg transition-all
+                break-words whitespace-normal border-2
+                ${
+                  selected === optionValue
+                    ? "bg-primary-500/20 border-primary-400 text-white font-semibold shadow-lg shadow-primary-500/20"
+                    : "bg-gray-800/70 border-transparent text-gray-200 hover:border-gray-600"
+                }`}
+            >
+              {optionLabel}
+            </motion.button>
+          );
+        })}
       </div>
     </div>
   );

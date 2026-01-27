@@ -1,7 +1,7 @@
 // src/pages/admin/StudentDetails.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { doc, getDoc, collection, getDocs, updateDoc } from "firebase/firestore";
+import { doc, getDoc, collection, getDocs, updateDoc, deleteDoc } from "firebase/firestore";
 import { db } from "../../lib/firebase";
 import AdminNav from "../../components/admin/AdminNav";
 import {
@@ -23,7 +23,9 @@ import {
   Clock,
   ArrowRight,
   Shield,
-  ShieldCheck
+  ShieldCheck,
+  Trash2,
+  RefreshCw
 } from "lucide-react";
 
 export default function StudentDetails() {
@@ -36,6 +38,9 @@ export default function StudentDetails() {
   const [showAllAssessments, setShowAllAssessments] = useState(false);
   const [bypassMaintenance, setBypassMaintenance] = useState(false);
   const [updatingBypass, setUpdatingBypass] = useState(false);
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [assessmentToReset, setAssessmentToReset] = useState(null);
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     loadStudentData();
@@ -239,6 +244,39 @@ export default function StudentDetails() {
       month: 'long',
       day: 'numeric'
     });
+  };
+
+  const handleResetAssessment = async () => {
+    if (!assessmentToReset) return;
+
+    setResetting(true);
+    try {
+      // Delete the assessment result document
+      const resultRef = doc(db, "users", studentId, "results", assessmentToReset.id);
+      await deleteDoc(resultRef);
+
+      // Remove from local state
+      setAssessments(prev => prev.filter(a => a.id !== assessmentToReset.id));
+
+      // Close modal
+      setShowResetModal(false);
+      setAssessmentToReset(null);
+
+      // Reload student data to update stats
+      loadStudentData();
+
+      alert(`Assessment "${assessmentToReset.name}" has been reset. The student can now retake it.`);
+    } catch (error) {
+      console.error("Error resetting assessment:", error);
+      alert("Failed to reset assessment. Please try again.");
+    } finally {
+      setResetting(false);
+    }
+  };
+
+  const openResetModal = (assessment) => {
+    setAssessmentToReset(assessment);
+    setShowResetModal(true);
   };
 
   if (loading) {
@@ -637,6 +675,70 @@ export default function StudentDetails() {
               </button>
             )}
           </div>
+
+          {/* Bar Graph Visualization */}
+          {assessments.length > 0 && (
+            <div className="p-6 border-b border-gray-800">
+              <h3 className="text-sm font-semibold text-gray-400 uppercase mb-4">Score Distribution</h3>
+              <div className="flex items-end justify-start gap-3 overflow-x-auto pb-4" style={{ minHeight: '200px' }}>
+                {displayedAssessments.map((assessment, index) => {
+                  const barHeight = Math.max(assessment.score, 5); // Minimum 5% height for visibility
+                  const barColor = assessment.score >= 80 ? 'from-emerald-500 to-emerald-400' :
+                                   assessment.score >= 60 ? 'from-blue-500 to-blue-400' :
+                                   assessment.score >= 40 ? 'from-yellow-500 to-yellow-400' :
+                                   'from-red-500 to-red-400';
+
+                  return (
+                    <div key={assessment.id} className="flex flex-col items-center min-w-[60px]">
+                      {/* Percentage label */}
+                      <span className={`text-sm font-bold mb-2 ${
+                        assessment.score >= 80 ? 'text-emerald-400' :
+                        assessment.score >= 60 ? 'text-blue-400' :
+                        assessment.score >= 40 ? 'text-yellow-400' :
+                        'text-red-400'
+                      }`}>
+                        {assessment.score}%
+                      </span>
+
+                      {/* Bar */}
+                      <div
+                        className={`w-10 rounded-t-lg bg-gradient-to-t ${barColor} transition-all duration-500 shadow-lg`}
+                        style={{ height: `${barHeight * 1.5}px` }}
+                      />
+
+                      {/* Subject name */}
+                      <div className="mt-2 text-center">
+                        <span className="text-xs text-gray-400 block max-w-[70px] truncate capitalize" title={assessment.name}>
+                          {assessment.name.split(' ')[0]}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Legend */}
+              <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-800">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                  <span className="text-xs text-gray-400">Excellent (80%+)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                  <span className="text-xs text-gray-400">Good (60-79%)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <span className="text-xs text-gray-400">Fair (40-59%)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                  <span className="text-xs text-gray-400">Needs Work (&lt;40%)</span>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gray-800/50">
@@ -655,6 +757,9 @@ export default function StudentDetails() {
                       Rank
                     </th>
                   )}
+                  <th className="px-6 py-4 text-center text-xs font-semibold text-gray-400 uppercase">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-800">
@@ -687,11 +792,33 @@ export default function StudentDetails() {
                           {assessment.score}%
                         </div>
                       </td>
+                      {!showAllAssessments && (
+                        <td className="px-6 py-4">
+                          <span className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold ${
+                            index === 0 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                            index === 1 ? 'bg-gray-400/20 text-gray-300 border border-gray-400/30' :
+                            index === 2 ? 'bg-amber-600/20 text-amber-500 border border-amber-600/30' :
+                            'bg-gray-700/50 text-gray-400'
+                          }`}>
+                            {index + 1}
+                          </span>
+                        </td>
+                      )}
+                      <td className="px-6 py-4 text-center">
+                        <button
+                          onClick={() => openResetModal(assessment)}
+                          className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 transition-all text-xs font-semibold"
+                          title="Reset assessment so student can retake"
+                        >
+                          <RefreshCw size={14} />
+                          Reset
+                        </button>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={showAllAssessments ? "3" : "4"} className="px-6 py-12 text-center text-gray-400">
+                    <td colSpan={showAllAssessments ? 4 : 5} className="px-6 py-12 text-center text-gray-400">
                       No assessments completed yet
                     </td>
                   </tr>
@@ -738,6 +865,75 @@ export default function StudentDetails() {
           )}
         </div>
       </main>
+
+      {/* Reset Assessment Confirmation Modal */}
+      {showResetModal && assessmentToReset && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                <RefreshCw className="text-red-400" size={24} />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-white">Reset Assessment</h3>
+                <p className="text-sm text-gray-400">This action cannot be undone</p>
+              </div>
+            </div>
+
+            <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 mb-6">
+              <p className="text-gray-300 mb-2">
+                You are about to reset the following assessment:
+              </p>
+              <div className="flex items-center justify-between">
+                <span className="text-white font-semibold capitalize">{assessmentToReset.name}</span>
+                <span className={`text-lg font-bold ${
+                  assessmentToReset.score >= 80 ? 'text-emerald-400' :
+                  assessmentToReset.score >= 60 ? 'text-blue-400' :
+                  assessmentToReset.score >= 40 ? 'text-yellow-400' :
+                  'text-red-400'
+                }`}>
+                  {assessmentToReset.score}%
+                </span>
+              </div>
+            </div>
+
+            <p className="text-gray-400 text-sm mb-6">
+              The student's score will be deleted and they will be able to retake this assessment.
+              This will also affect their overall statistics.
+            </p>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  setShowResetModal(false);
+                  setAssessmentToReset(null);
+                }}
+                disabled={resetting}
+                className="flex-1 px-4 py-3 rounded-lg bg-gray-800 hover:bg-gray-700 text-white font-semibold transition-all border border-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleResetAssessment}
+                disabled={resetting}
+                className="flex-1 px-4 py-3 rounded-lg bg-red-500 hover:bg-red-600 text-white font-semibold transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+              >
+                {resetting ? (
+                  <>
+                    <Loader2 className="animate-spin" size={18} />
+                    Resetting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={18} />
+                    Reset Assessment
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

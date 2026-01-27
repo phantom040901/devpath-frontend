@@ -47,7 +47,7 @@ export default function CareerMatches() {
   const [completion, setCompletion] = useState({
     academic: { completed: 0, total: 9 },
     technical: { completed: 0, total: 5 },
-    personal: { completed: 0, total: 3 },
+    personal: { completed: 0, total: 1 },
   });
   const [predictions, setPredictions] = useState(null);
   const [error, setError] = useState(null);
@@ -101,26 +101,34 @@ export default function CareerMatches() {
       const profileDoc = await getDoc(profileDocRef);
       const profileCompleted = profileDoc.exists() ? 1 : 0;
 
+      // Support both old and new assessment ID formats
+      const academicIdMappings = [
+        ['assessments_algorithms', 'assessments_algorithms_data_structures'],
+        ['assessments_programming', 'assessments_programming_software_dev'],
+        ['assessments_operating_systems'],
+        ['assessments_software_engineering'],
+        ['assessments_computer_networks'],
+        ['assessments_electronics', 'assessments_electronics_digital_logic', 'assessments_embedded_systems'],
+        ['assessments_computer_architecture'],
+        ['assessments_mathematics', 'assessments_mathematics_logic'],
+        ['assessments_communication', 'assessments_communication_skills']
+      ];
+
       const required = {
-        academic: [
-          'assessments_algorithms',
-          'assessments_programming',
-          'assessments_operating_systems',
-          'assessments_software_engineering',
-          'assessments_computer_networks',
-          'assessments_electronics',
-          'assessments_computer_architecture',
-          'assessments_mathematics',
-          'assessments_communication'
-        ],
+        academic: academicIdMappings,
         technical: 5, // Total technical assessments
         personal: 1  // Profile survey
       };
 
+      // Count academic assessments - check if ANY variant of each assessment is completed
+      const academicCompleted = academicIdMappings.filter(variants =>
+        variants.some(id => completedIds.has(id))
+      ).length;
+
       setCompletion({
         academic: {
-          completed: required.academic.filter(id => completedIds.has(id)).length,
-          total: required.academic.length
+          completed: academicCompleted,
+          total: academicIdMappings.length
         },
         technical: {
           completed: technicalCompleted,
@@ -170,8 +178,33 @@ export default function CareerMatches() {
     const technicalSnap = await getDoc(technicalRef);
     const technicalData = technicalSnap.exists() ? technicalSnap.data() : {};
 
+    // Helper to get score - checks both old and new assessment ID formats
     const getScore = (assessmentId) => {
-      return resultsMap[assessmentId]?.score || 0;
+      // Direct match first
+      if (resultsMap[assessmentId]?.score !== undefined) {
+        return resultsMap[assessmentId].score;
+      }
+
+      // ID mappings: old ID -> new ID variants
+      const idMappings = {
+        'assessments_algorithms': ['assessments_algorithms_data_structures'],
+        'assessments_programming': ['assessments_programming_software_dev'],
+        'assessments_mathematics': ['assessments_mathematics_logic'],
+        'assessments_communication': ['assessments_communication_skills'],
+        'assessments_electronics': ['assessments_electronics_digital_logic', 'assessments_embedded_systems'],
+      };
+
+      // Check if there's a mapping for this ID
+      const variants = idMappings[assessmentId];
+      if (variants) {
+        for (const variant of variants) {
+          if (resultsMap[variant]?.score !== undefined) {
+            return resultsMap[variant].score;
+          }
+        }
+      }
+
+      return 0;
     };
 
     // Helper to safely get profile values
@@ -550,7 +583,7 @@ const confirmSelectCareer = async () => {
           >
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-emerald-400 dark:bg-emerald-400 light:bg-emerald-500 animate-pulse"></div>
-              <span className="text-gray-400 dark:text-gray-400 light:text-gray-600">17 Total Assessments</span>
+              <span className="text-gray-400 dark:text-gray-400 light:text-gray-600">{completion.academic.total + completion.technical.total + completion.personal.total} Total Assessments</span>
             </div>
             <div className="w-px h-4 bg-gray-700 dark:bg-gray-700 light:bg-gray-300"></div>
             <div className="flex items-center gap-2">

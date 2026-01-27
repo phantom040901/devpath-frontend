@@ -118,14 +118,29 @@ export default function Assessment({
 
         const qset = shuffle(data.questions || [])
           .slice(0, 10)
-          .map((q, i) => ({
-            id: q.id || `q${i + 1}`,
-            number: i + 1,
-            question: q.question || q.prompt,
-            options: shuffle(q.options),
-            answer: q.answer,
-            image: q.image || null,
-          }));
+          .map((q, i) => {
+            // Handle both old format (question) and new format (text)
+            const questionText = q.question || q.prompt || q.text;
+
+            // Handle both old format (plain strings) and new format (objects with {value, label, correct})
+            const isObjectOptions = q.options?.[0] && typeof q.options[0] === 'object';
+
+            // For new format, find the correct answer from options
+            let answer = q.answer;
+            if (!answer && isObjectOptions) {
+              const correctOption = q.options.find(opt => opt.correct);
+              answer = correctOption?.value || correctOption?.label;
+            }
+
+            return {
+              id: q.id || `q${i + 1}`,
+              number: i + 1,
+              question: questionText,
+              options: shuffle(q.options),
+              answer: answer,
+              image: q.image || null,
+            };
+          });
 
         const now = Date.now();
         setQuestions(qset);
@@ -326,14 +341,29 @@ export default function Assessment({
     if (assessment?.questions) {
       const qset = shuffle(assessment.questions)
         .slice(0, 10)
-        .map((q, i) => ({
-          id: `q${i + 1}`,
-          number: i + 1,
-          question: q.question || q.prompt,
-          options: shuffle(q.options),
-          answer: q.answer,
-          image: q.image || null,
-        }));
+        .map((q, i) => {
+          // Handle both old format (question) and new format (text)
+          const questionText = q.question || q.prompt || q.text;
+
+          // Handle both old format (plain strings) and new format (objects with {value, label, correct})
+          const isObjectOptions = q.options?.[0] && typeof q.options[0] === 'object';
+
+          // For new format, find the correct answer from options
+          let answer = q.answer;
+          if (!answer && isObjectOptions) {
+            const correctOption = q.options.find(opt => opt.correct);
+            answer = correctOption?.value || correctOption?.label;
+          }
+
+          return {
+            id: q.id || `q${i + 1}`,
+            number: i + 1,
+            question: questionText,
+            options: shuffle(q.options),
+            answer: answer,
+            image: q.image || null,
+          };
+        });
 
       const now = Date.now();
       setQuestions(qset);
