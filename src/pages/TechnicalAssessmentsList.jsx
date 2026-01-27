@@ -6,7 +6,7 @@ import { db } from "../lib/firebase";
 import { useAuth } from "../components/AuthContext";
 import { motion } from "framer-motion";
 import DashNav from "../components/dashboard/DashboardNav";
-import { Brain, Code, Mic, Gamepad2, PenTool, CheckCircle2, SkipForward, Clock, AlertCircle, Sparkles, Users } from "lucide-react";
+import { Brain, Code, Mic, Gamepad2, PenTool, CheckCircle2, SkipForward, Clock, AlertCircle, Sparkles, Users, Trophy } from "lucide-react";
 
 export default function TechnicalAssessmentsList() {
   const { user } = useAuth() || {};
@@ -217,6 +217,114 @@ export default function TechnicalAssessmentsList() {
           </div>
         </div>
 
+        {/* Bar Graph Visualization - Only show if there are completed assessments */}
+        {completedCount > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gray-900/70 border border-gray-700/40 rounded-2xl p-6 mb-8"
+          >
+            <h3 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+              <Trophy className="text-yellow-400" size={20} />
+              Your Score Overview
+            </h3>
+
+            <div className="flex items-end justify-center gap-6 overflow-x-auto pb-4" style={{ minHeight: '220px' }}>
+              {/* Sort assessments by score (highest first) */}
+              {technicalAssessments
+                .filter((assessment) => completedTests[assessment.field] !== undefined)
+                .sort((a, b) => {
+                  const scoreA = completedTests[a.field];
+                  const scoreB = completedTests[b.field];
+                  // Convert text scores to numbers for sorting
+                  const numA = typeof scoreA === 'number' ? scoreA : (scoreA === 'excellent' ? 9 : scoreA === 'medium' ? 5 : 2);
+                  const numB = typeof scoreB === 'number' ? scoreB : (scoreB === 'excellent' ? 9 : scoreB === 'medium' ? 5 : 2);
+                  return numB - numA;
+                })
+                .map((assessment, index) => {
+                  const score = completedTests[assessment.field];
+                  const isNumeric = typeof score === 'number';
+
+                  // Convert to percentage for bar height (1-9 scale to 0-100)
+                  const numericScore = isNumeric ? score : (score === 'excellent' ? 9 : score === 'medium' ? 5 : 2);
+                  const barHeight = Math.max((numericScore / 9) * 100, 10);
+
+                  const barColor = numericScore >= 7 ? 'from-emerald-500 to-emerald-400' :
+                                   numericScore >= 5 ? 'from-cyan-500 to-cyan-400' :
+                                   numericScore >= 3 ? 'from-yellow-500 to-yellow-400' :
+                                   'from-red-500 to-red-400';
+                  const textColor = numericScore >= 7 ? 'text-emerald-400' :
+                                    numericScore >= 5 ? 'text-cyan-400' :
+                                    numericScore >= 3 ? 'text-yellow-400' :
+                                    'text-red-400';
+
+                  return (
+                    <motion.div
+                      key={assessment.id}
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      className="flex flex-col items-center min-w-[80px]"
+                    >
+                      {/* Rank badge for top 3 */}
+                      {index < 3 && (
+                        <span className={`text-xs font-bold mb-1 px-2 py-0.5 rounded-full ${
+                          index === 0 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                          index === 1 ? 'bg-gray-400/20 text-gray-300 border border-gray-400/30' :
+                          'bg-amber-600/20 text-amber-500 border border-amber-600/30'
+                        }`}>
+                          #{index + 1}
+                        </span>
+                      )}
+
+                      {/* Score display */}
+                      <span className={`text-sm font-bold mb-2 ${textColor}`}>
+                        {isNumeric ? `${score}/9` : score.charAt(0).toUpperCase() + score.slice(1)}
+                      </span>
+
+                      {/* Bar */}
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: `${barHeight * 1.5}px` }}
+                        transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.05 }}
+                        className={`w-12 rounded-t-lg bg-gradient-to-t ${barColor} shadow-lg`}
+                      />
+
+                      {/* Assessment name */}
+                      <div className="mt-3 text-center">
+                        <span
+                          className="text-xs text-gray-400 block max-w-[90px] leading-tight"
+                          title={assessment.title}
+                        >
+                          {assessment.title.split(' ')[0]}
+                        </span>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+            </div>
+
+            {/* Legend */}
+            <div className="flex flex-wrap justify-center gap-6 mt-6 pt-4 border-t border-gray-700/50">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-emerald-500"></div>
+                <span className="text-xs text-gray-400">Excellent (7-9)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
+                <span className="text-xs text-gray-400">Good (5-6)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                <span className="text-xs text-gray-400">Fair (3-4)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                <span className="text-xs text-gray-400">Needs Work (1-2)</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Info Banner */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -225,10 +333,10 @@ export default function TechnicalAssessmentsList() {
         >
           <Sparkles className="text-purple-400 flex-shrink-0 mt-1" size={20} />
           <div className="text-sm text-gray-300">
-            <p className="font-medium text-white mb-1">Placeholder Assessments</p>
+            <p className="font-medium text-white mb-1">Technical Skills Assessment</p>
             <p>
-              These are simplified placeholder assessments. Click "Take Assessment" to see
-              the placeholder interface. You can skip any assessment to proceed faster.
+              These assessments evaluate your technical abilities including logical reasoning,
+              coding skills, communication, and memory. Complete all assessments for accurate career recommendations.
             </p>
           </div>
         </motion.div>
