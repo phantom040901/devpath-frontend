@@ -245,9 +245,12 @@ export default function TechnicalAssessmentsList() {
                   const score = completedTests[assessment.field];
                   const isNumeric = typeof score === 'number';
 
-                  // Convert to percentage for bar height (1-9 scale to 0-100)
+                  // Convert text scores to numeric for display and height calculation
                   const numericScore = isNumeric ? score : (score === 'excellent' ? 9 : score === 'medium' ? 5 : 2);
-                  const barHeight = Math.max((numericScore / 9) * 100, 10);
+
+                  // Calculate bar height - scale from 1-9 to proper visual height
+                  // Min height 20px, max height 150px
+                  const barHeight = 20 + ((numericScore - 1) / 8) * 130;
 
                   const barColor = numericScore >= 7 ? 'from-emerald-500 to-emerald-400' :
                                    numericScore >= 5 ? 'from-cyan-500 to-cyan-400' :
@@ -276,15 +279,15 @@ export default function TechnicalAssessmentsList() {
                         </span>
                       )}
 
-                      {/* Score display */}
+                      {/* Score display - always show as X/9 */}
                       <span className={`text-sm font-bold mb-2 ${textColor}`}>
-                        {isNumeric ? `${score}/9` : score.charAt(0).toUpperCase() + score.slice(1)}
+                        {numericScore}/9
                       </span>
 
                       {/* Bar */}
                       <motion.div
                         initial={{ height: 0 }}
-                        animate={{ height: `${barHeight * 1.5}px` }}
+                        animate={{ height: `${barHeight}px` }}
                         transition={{ duration: 0.5, ease: "easeOut", delay: index * 0.05 }}
                         className={`w-12 rounded-t-lg bg-gradient-to-t ${barColor} shadow-lg`}
                       />
