@@ -379,7 +379,7 @@ export default function AcademicAssessmentsList() {
                     <div className="col-span-2 text-center">
                       {isCompleted ? (
                         <span className="text-2xl font-bold text-cyan-400">
-                          {score}%
+                          {Math.round(score / 10)}/10
                         </span>
                       ) : (
                         <span className="text-gray-500 text-sm">—</span>
