@@ -15,7 +15,11 @@ import {
   X,
   Loader2,
   AlertCircle,
-  CheckCircle
+  CheckCircle,
+  ChevronUp,
+  ChevronDown,
+  GripVertical,
+  HelpCircle
 } from "lucide-react";
 
 export default function AssessmentManagement() {
@@ -281,19 +285,75 @@ export default function AssessmentManagement() {
   );
 }
 
-// Assessment Editor Modal Component - Mobile Optimized
+// Assessment Editor Modal Component - Mobile Optimized with Question Editor
 function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
   const [formData, setFormData] = useState({
     title: assessment.title || "",
     description: assessment.description || "",
     instructions: assessment.instructions || "",
     timeLimit: assessment.timeLimit || 30,
+    mode: assessment.mode || "mcq",
     questions: assessment.questions || []
   });
+  const [expandedQuestion, setExpandedQuestion] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave({ ...assessment, ...formData });
+  };
+
+  // Question management functions
+  const addQuestion = () => {
+    const newQuestion = {
+      text: "",
+      difficulty: "beginner",
+      options: ["", "", "", ""],
+      answer: "A"
+    };
+    setFormData({
+      ...formData,
+      questions: [...formData.questions, newQuestion]
+    });
+    setExpandedQuestion(formData.questions.length);
+  };
+
+  const updateQuestion = (index, field, value) => {
+    const updatedQuestions = [...formData.questions];
+    updatedQuestions[index] = { ...updatedQuestions[index], [field]: value };
+    setFormData({ ...formData, questions: updatedQuestions });
+  };
+
+  const updateOption = (questionIndex, optionIndex, value) => {
+    const updatedQuestions = [...formData.questions];
+    const updatedOptions = [...updatedQuestions[questionIndex].options];
+    updatedOptions[optionIndex] = value;
+    updatedQuestions[questionIndex] = { ...updatedQuestions[questionIndex], options: updatedOptions };
+    setFormData({ ...formData, questions: updatedQuestions });
+  };
+
+  const deleteQuestion = (index) => {
+    const updatedQuestions = formData.questions.filter((_, i) => i !== index);
+    setFormData({ ...formData, questions: updatedQuestions });
+    setExpandedQuestion(null);
+  };
+
+  const moveQuestion = (index, direction) => {
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= formData.questions.length) return;
+
+    const updatedQuestions = [...formData.questions];
+    [updatedQuestions[index], updatedQuestions[newIndex]] = [updatedQuestions[newIndex], updatedQuestions[index]];
+    setFormData({ ...formData, questions: updatedQuestions });
+    setExpandedQuestion(newIndex);
+  };
+
+  const getDifficultyColor = (difficulty) => {
+    switch (difficulty) {
+      case "beginner": return "text-emerald-400 bg-emerald-500/20";
+      case "intermediate": return "text-yellow-400 bg-yellow-500/20";
+      case "advanced": return "text-red-400 bg-red-500/20";
+      default: return "text-gray-400 bg-gray-500/20";
+    }
   };
 
   return (
@@ -301,7 +361,7 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start sm:items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto"
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-start justify-center z-50 p-3 sm:p-4 overflow-y-auto"
       onClick={onClose}
     >
       <motion.div
@@ -309,7 +369,7 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
-        className="bg-gray-900 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 max-w-2xl w-full my-4 sm:my-0"
+        className="bg-gray-900 border border-gray-700 rounded-xl sm:rounded-2xl p-4 sm:p-6 max-w-4xl w-full my-4"
       >
         <div className="flex items-center justify-between mb-4 sm:mb-6">
           <h2 className="text-xl sm:text-2xl font-bold text-white">
@@ -323,18 +383,34 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
-              Title
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              required
-              className="w-full px-3 sm:px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-primary-500 text-sm"
-            />
+        <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+          {/* Basic Info Section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+            <div>
+              <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                Title *
+              </label>
+              <input
+                type="text"
+                value={formData.title}
+                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                required
+                placeholder="e.g., JavaScript Fundamentals"
+                className="w-full px-3 sm:px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-primary-500 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
+                Time Limit (minutes)
+              </label>
+              <input
+                type="number"
+                value={formData.timeLimit}
+                onChange={(e) => setFormData({ ...formData, timeLimit: parseInt(e.target.value) || 30 })}
+                min="1"
+                className="w-full px-3 sm:px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-primary-500 text-sm"
+              />
+            </div>
           </div>
 
           <div>
@@ -344,7 +420,8 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={3}
+              rows={2}
+              placeholder="Brief description of the assessment"
               className="w-full px-3 sm:px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-primary-500 text-sm resize-none"
             />
           </div>
@@ -356,25 +433,192 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
             <textarea
               value={formData.instructions}
               onChange={(e) => setFormData({ ...formData, instructions: e.target.value })}
-              rows={3}
+              rows={2}
+              placeholder="Instructions for students taking the assessment"
               className="w-full px-3 sm:px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-primary-500 text-sm resize-none"
             />
           </div>
 
-          <div>
-            <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
-              Time Limit (minutes)
-            </label>
-            <input
-              type="number"
-              value={formData.timeLimit}
-              onChange={(e) => setFormData({ ...formData, timeLimit: parseInt(e.target.value) })}
-              min="1"
-              className="w-full px-3 sm:px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white focus:outline-none focus:border-primary-500 text-sm"
-            />
+          {/* Questions Section */}
+          <div className="border-t border-gray-700 pt-4 sm:pt-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <HelpCircle size={18} className="text-primary-400" />
+                <h3 className="text-lg font-semibold text-white">Questions</h3>
+                <span className="px-2 py-0.5 rounded-full bg-gray-700 text-xs text-gray-300">
+                  {formData.questions.length}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={addQuestion}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium transition-all"
+              >
+                <Plus size={14} />
+                Add Question
+              </button>
+            </div>
+
+            {/* Questions List */}
+            <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
+              {formData.questions.length === 0 ? (
+                <div className="text-center py-8 border border-dashed border-gray-700 rounded-lg">
+                  <HelpCircle size={32} className="mx-auto text-gray-600 mb-2" />
+                  <p className="text-gray-500 text-sm">No questions yet</p>
+                  <p className="text-gray-600 text-xs">Click "Add Question" to get started</p>
+                </div>
+              ) : (
+                formData.questions.map((question, qIndex) => (
+                  <div
+                    key={qIndex}
+                    className="bg-gray-800/50 border border-gray-700 rounded-lg overflow-hidden"
+                  >
+                    {/* Question Header */}
+                    <div
+                      className="flex items-center gap-2 p-3 cursor-pointer hover:bg-gray-800/80 transition-all"
+                      onClick={() => setExpandedQuestion(expandedQuestion === qIndex ? null : qIndex)}
+                    >
+                      <GripVertical size={14} className="text-gray-500" />
+                      <span className="text-xs font-medium text-gray-400 w-6">Q{qIndex + 1}</span>
+                      <span className="flex-1 text-sm text-white truncate">
+                        {question.text || "Untitled question"}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${getDifficultyColor(question.difficulty)}`}>
+                        {question.difficulty}
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 text-xs font-medium">
+                        {question.answer}
+                      </span>
+                      {expandedQuestion === qIndex ? (
+                        <ChevronUp size={16} className="text-gray-400" />
+                      ) : (
+                        <ChevronDown size={16} className="text-gray-400" />
+                      )}
+                    </div>
+
+                    {/* Expanded Question Editor */}
+                    <AnimatePresence>
+                      {expandedQuestion === qIndex && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="border-t border-gray-700"
+                        >
+                          <div className="p-4 space-y-4">
+                            {/* Question Text */}
+                            <div>
+                              <label className="block text-xs font-medium text-gray-400 mb-1.5">
+                                Question Text *
+                              </label>
+                              <textarea
+                                value={question.text}
+                                onChange={(e) => updateQuestion(qIndex, "text", e.target.value)}
+                                rows={2}
+                                placeholder="Enter your question here..."
+                                className="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-600 text-white focus:outline-none focus:border-primary-500 text-sm resize-none"
+                              />
+                            </div>
+
+                            {/* Difficulty */}
+                            <div>
+                              <label className="block text-xs font-medium text-gray-400 mb-1.5">
+                                Difficulty
+                              </label>
+                              <select
+                                value={question.difficulty}
+                                onChange={(e) => updateQuestion(qIndex, "difficulty", e.target.value)}
+                                className="w-full px-3 py-2 rounded-lg bg-gray-900 border border-gray-600 text-white focus:outline-none focus:border-primary-500 text-sm"
+                              >
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                              </select>
+                            </div>
+
+                            {/* Options */}
+                            <div>
+                              <label className="block text-xs font-medium text-gray-400 mb-1.5">
+                                Options
+                              </label>
+                              <div className="space-y-2">
+                                {["A", "B", "C", "D"].map((letter, oIndex) => (
+                                  <div key={letter} className="flex items-center gap-2">
+                                    <span
+                                      className={`w-7 h-7 flex items-center justify-center rounded text-xs font-bold ${
+                                        question.answer === letter
+                                          ? "bg-emerald-500 text-white"
+                                          : "bg-gray-700 text-gray-400"
+                                      }`}
+                                    >
+                                      {letter}
+                                    </span>
+                                    <input
+                                      type="text"
+                                      value={question.options[oIndex] || ""}
+                                      onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
+                                      placeholder={`Option ${letter}`}
+                                      className="flex-1 px-3 py-1.5 rounded-lg bg-gray-900 border border-gray-600 text-white focus:outline-none focus:border-primary-500 text-sm"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => updateQuestion(qIndex, "answer", letter)}
+                                      className={`px-2 py-1.5 rounded text-xs font-medium transition-all ${
+                                        question.answer === letter
+                                          ? "bg-emerald-500 text-white"
+                                          : "bg-gray-700 text-gray-400 hover:bg-gray-600"
+                                      }`}
+                                    >
+                                      {question.answer === letter ? "Correct" : "Set Correct"}
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center justify-between pt-2 border-t border-gray-700">
+                              <div className="flex gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => moveQuestion(qIndex, -1)}
+                                  disabled={qIndex === 0}
+                                  className="p-1.5 rounded bg-gray-700 text-gray-400 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                  title="Move up"
+                                >
+                                  <ChevronUp size={14} />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => moveQuestion(qIndex, 1)}
+                                  disabled={qIndex === formData.questions.length - 1}
+                                  className="p-1.5 rounded bg-gray-700 text-gray-400 hover:bg-gray-600 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                                  title="Move down"
+                                >
+                                  <ChevronDown size={14} />
+                                </button>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => deleteQuestion(qIndex)}
+                                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-red-500/20 text-red-400 hover:bg-red-500/30 text-xs font-medium transition-all"
+                              >
+                                <Trash2 size={12} />
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-3 sm:pt-4">
+          {/* Form Actions */}
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t border-gray-700">
             <button
               type="button"
               onClick={onClose}
@@ -384,7 +628,7 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
             </button>
             <button
               type="submit"
-              disabled={saving}
+              disabled={saving || !formData.title}
               className="w-full sm:flex-1 px-4 py-2.5 sm:py-3 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
             >
               {saving ? (
@@ -395,7 +639,7 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
               ) : (
                 <>
                   <Save size={16} />
-                  Save Assessment
+                  Save Assessment ({formData.questions.length} questions)
                 </>
               )}
             </button>
