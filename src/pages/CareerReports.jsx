@@ -675,9 +675,11 @@ export default function CareerReports() {
   const skillsRadarRef = useRef(null);
   const performanceBarRef = useRef(null);
   const matchDoughnutRef = useRef(null);
+  const riasecRadarRef = useRef(null);
   const skillsChartInstance = useRef(null);
   const performanceChartInstance = useRef(null);
   const matchChartInstance = useRef(null);
+  const riasecChartInstance = useRef(null);
 
   // PDF export using browser's native print
   const handleDownloadReport = () => {
@@ -725,6 +727,7 @@ export default function CareerReports() {
       if (skillsChartInstance.current) skillsChartInstance.current.destroy();
       if (performanceChartInstance.current) performanceChartInstance.current.destroy();
       if (matchChartInstance.current) matchChartInstance.current.destroy();
+      if (riasecChartInstance.current) riasecChartInstance.current.destroy();
     };
   }, []);
 
@@ -732,7 +735,7 @@ export default function CareerReports() {
     if (reportData && predictions && hasSelectedCareer) {
       createCharts();
     }
-  }, [reportData, predictions, hasSelectedCareer, showAdvancedDetails]);
+  }, [reportData, predictions, hasSelectedCareer, showAdvancedDetails, riasecProfile]);
 
   // Close all expanded cards when entering advanced mode
   useEffect(() => {
@@ -991,6 +994,59 @@ export default function CareerReports() {
     if (skillsChartInstance.current) skillsChartInstance.current.destroy();
     if (performanceChartInstance.current) performanceChartInstance.current.destroy();
     if (matchChartInstance.current) matchChartInstance.current.destroy();
+    if (riasecChartInstance.current) riasecChartInstance.current.destroy();
+
+    // RIASEC Radar Chart
+    if (riasecRadarRef.current && riasecProfile && riasecProfile.total > 0) {
+      const ctx = riasecRadarRef.current.getContext('2d');
+      riasecChartInstance.current = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['Realistic', 'Investigative', 'Artistic', 'Social', 'Enterprising', 'Conventional'],
+          datasets: [{
+            label: 'RIASEC Profile',
+            data: [
+              riasecProfile.percentages.R || 0,
+              riasecProfile.percentages.I || 0,
+              riasecProfile.percentages.A || 0,
+              riasecProfile.percentages.S || 0,
+              riasecProfile.percentages.E || 0,
+              riasecProfile.percentages.C || 0
+            ],
+            backgroundColor: 'rgba(168, 85, 247, 0.2)',
+            borderColor: 'rgb(168, 85, 247)',
+            borderWidth: 2,
+            pointBackgroundColor: [
+              'rgb(239, 68, 68)',
+              'rgb(59, 130, 246)',
+              'rgb(168, 85, 247)',
+              'rgb(234, 179, 8)',
+              'rgb(249, 115, 22)',
+              'rgb(34, 197, 94)'
+            ],
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(168, 85, 247)',
+            pointRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: Math.max(...Object.values(riasecProfile.percentages), 50),
+              ticks: { stepSize: 10, color: '#9ca3af', backdropColor: 'transparent' },
+              grid: { color: 'rgba(168, 85, 247, 0.15)' },
+              angleLines: { color: 'rgba(168, 85, 247, 0.15)' },
+              pointLabels: { color: '#d1d5db', font: { size: 11, weight: 'bold' } }
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
 
     if (skillsRadarRef.current && reportData) {
       const ctx = skillsRadarRef.current.getContext('2d');
@@ -2070,7 +2126,7 @@ export default function CareerReports() {
 
               {riasecProfile && riasecProfile.total > 0 ? (
                 <>
-                  <p className="text-xs text-gray-400 mb-4">
+                  <p className="text-xs text-gray-400 mb-3">
                     Based on your assessment performance, you excel at{' '}
                     <span className="text-purple-300 font-medium">
                       {Object.entries(riasecProfile.percentages)
@@ -2088,33 +2144,30 @@ export default function CareerReports() {
                     </span>{' '}tasks.
                   </p>
 
-                  <div className="space-y-2">
+                  {/* RIASEC Radar Chart */}
+                  <div className="relative h-56 mb-4">
+                    <canvas ref={riasecRadarRef}></canvas>
+                  </div>
+
+                  {/* RIASEC Legend */}
+                  <div className="grid grid-cols-2 gap-x-3 gap-y-1.5">
                     {Object.entries(riasecProfile.percentages)
                       .sort(([, a], [, b]) => b - a)
                       .map(([code, value]) => {
                         const info = {
-                          R: { name: 'Realistic', color: 'bg-red-500', desc: 'Hands-on, practical' },
-                          I: { name: 'Investigative', color: 'bg-blue-500', desc: 'Analytical, research' },
-                          A: { name: 'Artistic', color: 'bg-purple-500', desc: 'Creative, innovative' },
-                          S: { name: 'Social', color: 'bg-yellow-500', desc: 'Helping, teamwork' },
-                          E: { name: 'Enterprising', color: 'bg-orange-500', desc: 'Leadership, persuasion' },
-                          C: { name: 'Conventional', color: 'bg-green-500', desc: 'Organized, systematic' }
+                          R: { name: 'Realistic', color: 'bg-red-500' },
+                          I: { name: 'Investigative', color: 'bg-blue-500' },
+                          A: { name: 'Artistic', color: 'bg-purple-500' },
+                          S: { name: 'Social', color: 'bg-yellow-500' },
+                          E: { name: 'Enterprising', color: 'bg-orange-500' },
+                          C: { name: 'Conventional', color: 'bg-green-500' }
                         }[code];
 
                         return (
-                          <div key={code} className="group">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="w-20 text-xs text-gray-400 group-hover:text-white transition-colors">{info.name}</span>
-                              <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
-                                <motion.div
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${value}%` }}
-                                  transition={{ duration: 0.8, delay: 0.2 }}
-                                  className={`h-full ${info.color}`}
-                                />
-                              </div>
-                              <span className="w-8 text-right text-xs font-bold text-white">{value}%</span>
-                            </div>
+                          <div key={code} className="flex items-center gap-1.5">
+                            <span className={`w-2.5 h-2.5 rounded-full ${info.color} shrink-0`}></span>
+                            <span className="text-xs text-gray-400">{info.name}</span>
+                            <span className="text-xs font-bold text-white ml-auto">{value}%</span>
                           </div>
                         );
                       })}
