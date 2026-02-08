@@ -907,7 +907,7 @@ export default function CareerReports() {
         // Fallback to fresh API call if no saved data exists
         console.log("No saved recommendations found, making fresh API call");
         data = await executeApiCall(async () => {
-          const response = await fetch(`${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}/predict`, {
+          const response = await fetch(`${import.meta.env.VITE_API_URL || "https://devpath-backend.onrender.com"}/predict`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload),

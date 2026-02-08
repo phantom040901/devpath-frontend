@@ -399,7 +399,7 @@ export default function CareerMatches() {
 
       // Wrap API call with cold start detection
       const data = await executeApiCall(async () => {
-        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
+        const apiUrl = import.meta.env.VITE_API_URL || "https://devpath-backend.onrender.com";
         const response = await fetch(`${apiUrl}/predict`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

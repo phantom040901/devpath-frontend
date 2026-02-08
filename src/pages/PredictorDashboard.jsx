@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import ApiLoadingState from "../components/loading/ApiLoadingState";
 import useApiWithColdStart from "../hooks/useApiWithColdStart";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"; // backend URL
+const API_URL = import.meta.env.VITE_API_URL || "https://devpath-backend.onrender.com"; // backend URL
 
 function PredictorDashboard() {
   const [profile, setProfile] = useState({

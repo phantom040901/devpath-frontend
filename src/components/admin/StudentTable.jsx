@@ -517,7 +517,7 @@ export default function StudentTable({ students, loading }) {
       };
 
       // Call ML API for career prediction
-      const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
+      const API_URL = import.meta.env.VITE_API_URL || "https://devpath-backend.onrender.com";
       let data = null;
 
       try {
@@ -673,7 +673,7 @@ export default function StudentTable({ students, loading }) {
 
     } catch (error) {
       console.error("Error auto-generating assessment:", error);
-      alert(`Failed to generate assessment: ${error.message}\n\nMake sure the ML API is running at ${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}`);
+      alert(`Failed to generate assessment: ${error.message}\n\nMake sure the ML API is running at ${import.meta.env.VITE_API_URL || "https://devpath-backend.onrender.com"}`);
     } finally {
       setGeneratingFor(null);
     }
