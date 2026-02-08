@@ -31,8 +31,19 @@ import {
   BarChart3,
   ChevronDown,
   ChevronUp,
-  Users
+  Users,
+  Compass
 } from "lucide-react";
+
+// RIASEC info for profile visualization
+const RIASEC_INFO = {
+  R: { name: "Realistic", color: "bg-red-500", lightColor: "bg-red-500/20", textColor: "text-red-400", desc: "Hands-on, practical problem-solving" },
+  I: { name: "Investigative", color: "bg-blue-500", lightColor: "bg-blue-500/20", textColor: "text-blue-400", desc: "Analytical thinking, research" },
+  A: { name: "Artistic", color: "bg-purple-500", lightColor: "bg-purple-500/20", textColor: "text-purple-400", desc: "Creative, innovative thinking" },
+  S: { name: "Social", color: "bg-yellow-500", lightColor: "bg-yellow-500/20", textColor: "text-yellow-400", desc: "Helping, teamwork, communication" },
+  E: { name: "Enterprising", color: "bg-orange-500", lightColor: "bg-orange-500/20", textColor: "text-orange-400", desc: "Leadership, persuasion" },
+  C: { name: "Conventional", color: "bg-green-500", lightColor: "bg-green-500/20", textColor: "text-green-400", desc: "Organized, systematic, detail-oriented" },
+};
 
 export default function CareerMatches() {
   const { user } = useAuth();
@@ -51,6 +62,8 @@ export default function CareerMatches() {
   });
   const [predictions, setPredictions] = useState(null);
   const [error, setError] = useState(null);
+  const [riasecProfile, setRiasecProfile] = useState(null);
+  const [showRiasecModal, setShowRiasecModal] = useState(false);
 
   // API cold start detection hook
   const { isLoading: isApiLoading, execute: executeApiCall } = useApiWithColdStart();
@@ -82,19 +95,39 @@ export default function CareerMatches() {
       const resultsRef = collection(db, "users", user.uid, "results");
       const snapshot = await getDocs(resultsRef);
 
+      // Extract base assessment ID - handles both formats:
+      // Old test format: assessments_algorithms_data_structures_1738959302342_abc123def
+      // Real format: assessments_algorithms_data_structures_1
       const completedIds = new Set(
-        snapshot.docs.map(doc => doc.id.replace(/_\d+$/, ''))
+        snapshot.docs.map(docSnap => {
+          const id = docSnap.id;
+          // Match pattern: assessments_<subject_name> and remove _<number> or _<timestamp>_<random> suffix
+          const match = id.match(/^((?:assessments|technicalAssessments)_[a-z_]+?)(?:_\d+.*)?$/i);
+          return match ? match[1] : id.replace(/_\d+$/, '');
+        })
       );
 
-      // Check technical assessments from assessments/technical document
+      console.log("📊 Completed assessment IDs:", [...completedIds]);
+
+      // Check technical assessments from both:
+      // 1. assessments/technical document (old format)
+      // 2. results collection with technicalAssessments_ prefix (test accounts)
       const technicalDocRef = doc(db, "users", user.uid, "assessments", "technical");
       const technicalDoc = await getDoc(technicalDocRef);
       const technicalData = technicalDoc.exists() ? technicalDoc.data() : {};
 
-      // Count completed technical assessments (excluding the 'completed' flag)
-      const technicalCompleted = Object.keys(technicalData).filter(
+      // Count from assessments/technical document
+      const technicalFromDoc = Object.keys(technicalData).filter(
         key => key !== 'completed' && technicalData[key] !== undefined
       ).length;
+
+      // Count from results collection (technicalAssessments_ prefix)
+      const technicalIds = ['technicalAssessments_logical_quotient', 'technicalAssessments_coding_skills',
+        'technicalAssessments_public_speaking', 'technicalAssessments_memory_test', 'technicalAssessments_communication_test'];
+      const technicalFromResults = technicalIds.filter(id => completedIds.has(id)).length;
+
+      // Use whichever has more completions
+      const technicalCompleted = Math.max(technicalFromDoc, technicalFromResults);
 
       // Check profile survey from profile/survey document
       const profileDocRef = doc(db, "users", user.uid, "profile", "survey");
@@ -125,6 +158,13 @@ export default function CareerMatches() {
         variants.some(id => completedIds.has(id))
       ).length;
 
+      console.log("📊 CareerMatches completion check:", {
+        academicCompleted,
+        technicalCompleted,
+        profileCompleted,
+        completedIds: [...completedIds]
+      });
+
       setCompletion({
         academic: {
           completed: academicCompleted,
@@ -143,6 +183,36 @@ export default function CareerMatches() {
       console.error("Error checking completion:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Aggregate RIASEC profile from all assessment results
+  const aggregateRiasecProfile = async () => {
+    try {
+      const resultsRef = collection(db, "users", user.uid, "results");
+      const snapshot = await getDocs(resultsRef);
+
+      const totalRiasec = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        const profile = data.riasecProfile || {};
+        Object.keys(totalRiasec).forEach(code => {
+          totalRiasec[code] += (profile[code] || 0);
+        });
+      });
+
+      // Convert to percentages
+      const total = Object.values(totalRiasec).reduce((a, b) => a + b, 0);
+      const riasecPercent = {};
+      Object.keys(totalRiasec).forEach(code => {
+        riasecPercent[code] = total > 0 ? Math.round((totalRiasec[code] / total) * 100) : 0;
+      });
+
+      return { points: totalRiasec, percentages: riasecPercent, total };
+    } catch (err) {
+      console.error("Error aggregating RIASEC:", err);
+      return null;
     }
   };
 
@@ -347,6 +417,12 @@ export default function CareerMatches() {
       if (data) {
         // Fetch career analytics to enrich predictions with real student counts
         const analytics = await fetchCareerAnalytics();
+
+        // Fetch RIASEC profile
+        const riasecData = await aggregateRiasecProfile();
+        if (riasecData && riasecData.total > 0) {
+          setRiasecProfile(riasecData);
+        }
 
         // Enrich job matches with student count and popularity
         const enrichedMatches = data.recommendations.job_matches.map(match => {
@@ -817,6 +893,34 @@ const confirmSelectCareer = async () => {
               ))}
             </div>
 
+            {/* RIASEC Profile Button */}
+            {riasecProfile && riasecProfile.total > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="mt-8 flex justify-center"
+              >
+                <button
+                  onClick={() => setShowRiasecModal(true)}
+                  className="group flex items-center gap-3 px-6 py-3 rounded-2xl bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-2 border-purple-500/40 hover:border-purple-400 transition-all hover:scale-105"
+                >
+                  <Compass className="text-purple-400 group-hover:rotate-45 transition-transform" size={22} />
+                  <div className="text-left">
+                    <p className="text-white font-semibold">View Your RIASEC Profile</p>
+                    <p className="text-xs text-gray-400">
+                      Top: {Object.entries(riasecProfile.percentages)
+                        .sort(([, a], [, b]) => b - a)
+                        .slice(0, 2)
+                        .map(([code]) => RIASEC_INFO[code].name)
+                        .join(" & ")}
+                    </p>
+                  </div>
+                  <ArrowRight className="text-purple-400 group-hover:translate-x-1 transition-transform" size={18} />
+                </button>
+              </motion.div>
+            )}
+
             {/* Info Footer */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -832,6 +936,111 @@ const confirmSelectCareer = async () => {
           </motion.div>
         )}
       </div>
+
+      {/* RIASEC Profile Modal */}
+      <AnimatePresence>
+        {showRiasecModal && riasecProfile && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-[9999] p-4"
+            onClick={() => setShowRiasecModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-gradient-to-br from-gray-900 to-gray-800 border-2 border-purple-500/40 rounded-3xl p-6 sm:p-8 max-w-lg w-full max-h-[85vh] overflow-y-auto my-auto"
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-xl bg-purple-500/20 border border-purple-500/30">
+                    <Compass className="text-purple-400" size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Your RIASEC Profile</h3>
+                    <p className="text-sm text-gray-400">Holland's personality model</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowRiasecModal(false)}
+                  className="p-2 rounded-lg hover:bg-gray-700/50 transition-colors"
+                >
+                  <XCircle className="text-gray-400 hover:text-white" size={24} />
+                </button>
+              </div>
+
+              {/* Top strengths */}
+              <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4 mb-6">
+                <p className="text-sm text-gray-300">
+                  Based on your assessment performance, you excel at{' '}
+                  <span className="text-purple-400 font-bold">
+                    {Object.entries(riasecProfile.percentages)
+                      .sort(([, a], [, b]) => b - a)
+                      .slice(0, 2)
+                      .map(([code]) => RIASEC_INFO[code].name)
+                      .join(" & ")}
+                  </span>{' '}tasks.
+                </p>
+              </div>
+
+              {/* RIASEC Bars */}
+              <div className="space-y-4 mb-6">
+                {Object.entries(riasecProfile.percentages)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([code, value]) => {
+                    const info = RIASEC_INFO[code];
+                    return (
+                      <div key={code}>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-2">
+                            <span className={`w-3 h-3 rounded-full ${info.color}`}></span>
+                            <span className="text-sm text-white font-medium">{info.name}</span>
+                          </div>
+                          <span className="text-sm font-bold text-white">{value}%</span>
+                        </div>
+                        <div className="h-3 bg-gray-700/50 rounded-full overflow-hidden">
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${value}%` }}
+                            transition={{ duration: 0.8, ease: "easeOut" }}
+                            className={`h-full ${info.color} rounded-full`}
+                          />
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1">{info.desc}</p>
+                      </div>
+                    );
+                  })}
+              </div>
+
+              {/* Info box */}
+              <div className="bg-gray-800/50 border border-gray-700/50 rounded-xl p-4">
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  <span className="font-bold text-purple-300">What is RIASEC?</span><br />
+                  Holland's theory categorizes people into 6 personality types based on their interests and skills.
+                  This profile is calculated from your correctly answered questions with RIASEC tags.
+                </p>
+              </div>
+
+              {/* Footer */}
+              <div className="mt-6 pt-4 border-t border-gray-700/50 flex items-center justify-between">
+                <span className="text-xs text-gray-500">
+                  Based on {riasecProfile.total} correct answers
+                </span>
+                <button
+                  onClick={() => setShowRiasecModal(false)}
+                  className="px-4 py-2 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 text-sm font-medium transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Confirmation Modal */}
       <AnimatePresence>
@@ -1191,6 +1400,79 @@ function CareerCard({ match, rank, onSelect }) {
           <span className="relative z-10">SELECT THIS CAREER</span>
           <ArrowRight size={18} className="relative z-10" />
         </motion.button>
+      </div>
+    </motion.div>
+  );
+}
+
+// RIASEC Profile Card Component
+function RiasecProfileCard({ riasecData }) {
+  if (!riasecData || riasecData.total === 0) return null;
+
+  const sortedCodes = Object.entries(riasecData.percentages)
+    .sort(([, a], [, b]) => b - a);
+  const topTwo = sortedCodes.slice(0, 2).map(([code]) => RIASEC_INFO[code].name);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.8 }}
+      className="bg-gradient-to-br from-gray-900/80 via-gray-900/60 to-gray-900/80 border-2 border-primary-500/30 rounded-3xl p-6 sm:p-8 backdrop-blur-sm"
+    >
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="p-3 rounded-xl bg-primary-500/20 border border-primary-500/30">
+          <Compass className="text-primary-400" size={24} />
+        </div>
+        <div>
+          <h3 className="text-xl font-bold text-white">Your RIASEC Profile</h3>
+          <p className="text-sm text-gray-400">
+            Based on your assessment performance
+          </p>
+        </div>
+      </div>
+
+      {/* Top strengths message */}
+      <div className="bg-primary-500/10 border border-primary-500/20 rounded-xl p-4 mb-6">
+        <p className="text-sm text-gray-300">
+          You excel at <span className="text-primary-400 font-bold">{topTwo.join(" & ")}</span> tasks.
+          These personality types align well with your matched careers.
+        </p>
+      </div>
+
+      {/* RIASEC Bars */}
+      <div className="space-y-3">
+        {sortedCodes.map(([code, value]) => {
+          const info = RIASEC_INFO[code];
+          return (
+            <div key={code} className="group">
+              <div className="flex items-center justify-between mb-1">
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${info.color}`}></span>
+                  <span className="text-sm text-gray-300 font-medium">{info.name}</span>
+                </div>
+                <span className="text-sm font-bold text-white">{value}%</span>
+              </div>
+              <div className="h-2.5 bg-gray-800 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${value}%` }}
+                  transition={{ duration: 1, ease: "easeOut", delay: 0.5 }}
+                  className={`h-full ${info.color} rounded-full`}
+                />
+              </div>
+              <p className="text-xs text-gray-500 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                {info.desc}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Total points */}
+      <div className="mt-6 pt-4 border-t border-gray-700/50 flex items-center justify-between">
+        <span className="text-xs text-gray-500">Based on {riasecData.total} correct answers with RIASEC tags</span>
       </div>
     </motion.div>
   );

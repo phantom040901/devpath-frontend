@@ -306,9 +306,31 @@ export default function CreateTestAccount() {
       if (formData.autoFillAcademic && formData.selectedAcademicAssessments.length > 0) {
         const [minScore, maxScore] = formData.academicScoreRange;
 
+        // Generate ONE base score, then vary each assessment by ±5% (10% total range)
+        const baseScore = randInt(minScore, maxScore);
+
+        // Generate RIASEC profile based on template type
+        const generateRiasecProfile = (templateKey) => {
+          const profiles = {
+            realistic_investigative: { R: randInt(2, 4), I: randInt(2, 4), A: randInt(0, 1), S: randInt(0, 1), E: randInt(0, 1), C: randInt(0, 1) },
+            artistic_social: { R: randInt(0, 1), I: randInt(0, 1), A: randInt(2, 4), S: randInt(2, 4), E: randInt(0, 1), C: randInt(0, 1) },
+            enterprising_conventional: { R: randInt(0, 1), I: randInt(0, 1), A: randInt(0, 1), S: randInt(0, 1), E: randInt(2, 4), C: randInt(2, 4) },
+            investigative_artistic: { R: randInt(0, 1), I: randInt(2, 4), A: randInt(2, 4), S: randInt(0, 1), E: randInt(0, 1), C: randInt(0, 1) },
+            balanced: { R: randInt(1, 2), I: randInt(1, 2), A: randInt(1, 2), S: randInt(1, 2), E: randInt(1, 2), C: randInt(1, 2) },
+          };
+          return profiles[templateKey] || profiles.balanced;
+        };
+
         for (const assessmentId of formData.selectedAcademicAssessments) {
-          const score = randInt(minScore, maxScore);
-          const resultId = `assessments_${assessmentId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          // Add small variance of ±5% from base score (10% total variance)
+          const variance = randInt(-5, 5);
+          const score = Math.max(0, Math.min(100, baseScore + variance));
+
+          // Generate RIASEC profile for this assessment result
+          const riasecProfile = generateRiasecProfile(formData.selectedTemplate);
+
+          // Use same format as Assessment.jsx: collectionName_subjectId_attemptNum
+          const resultId = `assessments_${assessmentId}_1`;
 
           await setDoc(doc(db, "users", user.uid, "results", resultId), {
             assessmentId: assessmentId,
@@ -320,6 +342,7 @@ export default function CreateTestAccount() {
             completedAt: new Date().toISOString(),
             submittedAt: new Date().toISOString(),
             type: "academic",
+            riasecProfile, // Include RIASEC profile for visualization
           });
 
           // Small delay to ensure unique timestamps
@@ -330,6 +353,24 @@ export default function CreateTestAccount() {
       // 6. Auto-fill technical assessments if enabled
       if (formData.autoFillTechnical && formData.selectedTechnicalAssessments.length > 0) {
         const techScores = template.technicalScores;
+
+        // Generate RIASEC profile for technical assessments based on template
+        const generateTechRiasecProfile = (templateKey, assessmentType) => {
+          // Technical assessments map to specific RIASEC types
+          const typeMapping = {
+            logical_quotient: { primary: "I", secondary: "R" },
+            coding_skills: { primary: "R", secondary: "I" },
+            public_speaking: { primary: "E", secondary: "S" },
+            memory_test: { primary: "I", secondary: "C" },
+            communication_test: { primary: "S", secondary: "E" },
+          };
+          const mapping = typeMapping[assessmentType] || { primary: "I", secondary: "R" };
+
+          const profile = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+          profile[mapping.primary] = randInt(2, 4);
+          profile[mapping.secondary] = randInt(1, 3);
+          return profile;
+        };
 
         for (const assessmentId of formData.selectedTechnicalAssessments) {
           let score;
@@ -347,7 +388,11 @@ export default function CreateTestAccount() {
             score = randInt(60, 85);
           }
 
-          const resultId = `technicalAssessments_${assessmentId}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+          // Generate RIASEC profile for this technical assessment
+          const riasecProfile = generateTechRiasecProfile(formData.selectedTemplate, assessmentId);
+
+          // Use same format as Assessment.jsx: collectionName_subjectId_attemptNum
+          const resultId = `technicalAssessments_${assessmentId}_1`;
 
           await setDoc(doc(db, "users", user.uid, "results", resultId), {
             assessmentId: assessmentId,
@@ -356,9 +401,8 @@ export default function CreateTestAccount() {
             completedAt: new Date().toISOString(),
             submittedAt: new Date().toISOString(),
             type: "technical",
+            riasecProfile, // Include RIASEC profile for visualization
           });
-
-          await new Promise((resolve) => setTimeout(resolve, 50));
         }
       }
 

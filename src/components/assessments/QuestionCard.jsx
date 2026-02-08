@@ -2,10 +2,22 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
+// RIASEC info for displaying badges
+const RIASEC_INFO = {
+  R: { name: "Realistic", color: "bg-red-500/20 text-red-400 border-red-500/40" },
+  I: { name: "Investigative", color: "bg-blue-500/20 text-blue-400 border-blue-500/40" },
+  A: { name: "Artistic", color: "bg-purple-500/20 text-purple-400 border-purple-500/40" },
+  S: { name: "Social", color: "bg-yellow-500/20 text-yellow-400 border-yellow-500/40" },
+  E: { name: "Enterprising", color: "bg-orange-500/20 text-orange-400 border-orange-500/40" },
+  C: { name: "Conventional", color: "bg-green-500/20 text-green-400 border-green-500/40" }
+};
+
 export default function QuestionCard({ question, selected, onSelect }) {
   const [showModal, setShowModal] = useState(false);
 
   if (!question) return null;
+
+  const riasecCategories = question.riasecCategories || [];
 
   // Close modal on ESC key
   useEffect(() => {
@@ -22,6 +34,25 @@ export default function QuestionCard({ question, selected, onSelect }) {
       <h2 className="text-xl sm:text-2xl font-semibold text-white break-words whitespace-pre-wrap leading-relaxed">
         {question.question}
       </h2>
+
+      {/* RIASEC Category Badges */}
+      {riasecCategories.length > 0 && (
+        <div className="flex flex-wrap gap-2 mt-3">
+          {riasecCategories.map(code => {
+            const info = RIASEC_INFO[code];
+            if (!info) return null;
+            return (
+              <span
+                key={code}
+                className={`px-2.5 py-1 rounded-full text-xs font-medium border ${info.color}`}
+                title={`This question relates to ${info.name} skills`}
+              >
+                {info.name}
+              </span>
+            );
+          })}
+        </div>
+      )}
 
       {/* Show image with modal trigger */}
       {question.image && (

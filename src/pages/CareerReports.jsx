@@ -649,6 +649,7 @@ export default function CareerReports() {
   const [showComparisonModal, setShowComparisonModal] = useState(false); // Show comparison modal
   const [showAdvancedDetails, setShowAdvancedDetails] = useState(false); // Toggle for advanced details
   const [runTutorial, setRunTutorial] = useState(false); // Tutorial state
+  const [riasecProfile, setRiasecProfile] = useState(null); // RIASEC profile from assessments
   const reportRef = useRef(null);
 
   // Manual trigger for tutorial (can be called from Settings)
@@ -808,6 +809,29 @@ export default function CareerReports() {
         }
       });
 
+      // Aggregate RIASEC profile from all assessment results
+      const totalRiasec = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        const profile = data.riasecProfile || {};
+        Object.keys(totalRiasec).forEach(code => {
+          totalRiasec[code] += (profile[code] || 0);
+        });
+      });
+
+      // Convert to percentages
+      const totalPoints = Object.values(totalRiasec).reduce((a, b) => a + b, 0);
+      const riasecPercent = {};
+      Object.keys(totalRiasec).forEach(code => {
+        riasecPercent[code] = totalPoints > 0 ? Math.round((totalRiasec[code] / totalPoints) * 100) : 0;
+      });
+
+      setRiasecProfile({
+        points: totalRiasec,
+        percentages: riasecPercent,
+        total: totalPoints
+      });
+
       const getSurveyValue = (surveyId, questionId = null) => {
         const result = resultsMap[surveyId];
         if (!result) return null;
@@ -866,37 +890,65 @@ export default function CareerReports() {
         salary_work: getSurveyValue("survey_personality_workstyle", "q6") || "work",
       };
 
-      // Wrap API call with cold start detection
-      const data = await executeApiCall(async () => {
-        const response = await fetch(`${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}/predict`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+      // First, try to load saved recommendations from CareerMatches page
+      const savedRecsRef = doc(db, "users", user.uid, "careerData", "latestRecommendations");
+      const savedRecsDoc = await getDoc(savedRecsRef);
+
+      let data = null;
+      let usedSavedData = false;
+
+      if (savedRecsDoc.exists()) {
+        // Use saved recommendations for consistency with career selection
+        const savedData = savedRecsDoc.data();
+        console.log("Using saved recommendations from CareerMatches:", savedData);
+        data = { recommendations: savedData };
+        usedSavedData = true;
+      } else {
+        // Fallback to fresh API call if no saved data exists
+        console.log("No saved recommendations found, making fresh API call");
+        data = await executeApiCall(async () => {
+          const response = await fetch(`${import.meta.env.VITE_API_URL || "http://127.0.0.1:8000"}/predict`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          if (!response.ok) {
+            throw new Error(`API responded with status ${response.status}`);
+          }
+
+          return await response.json();
         });
-
-        if (!response.ok) {
-          throw new Error(`API responded with status ${response.status}`);
-        }
-
-        return await response.json();
-      });
+      }
 
       if (data) {
-        console.log("Full API Response for Career Reports:", data); // For debugging
-        console.log("Detailed Explanations:", data.recommendations?.detailed_explanations);
-        console.log("Validation:", data.recommendations?.validation);
-        console.log("Diversity Info:", {
-          strategy: data.recommendations?.diversity_strategy,
-          note: data.recommendations?.diversity_note
-        });
+        console.log("Career data for Reports:", data);
 
         let topMatches = data.recommendations?.job_matches?.slice(0, 3) || [];
 
+        // Mark the selected career and ensure it's included
         if (selectedCareerInfo && selectedCareerInfo.jobRole) {
-          topMatches = topMatches.map(match => ({
-            ...match,
-            isSelected: match.job_role === selectedCareerInfo.jobRole
-          }));
+          // Check if selected career is in top matches
+          const selectedInMatches = topMatches.some(m => m.job_role === selectedCareerInfo.jobRole);
+
+          if (!selectedInMatches) {
+            // Add selected career as first item if not in top 3
+            topMatches = [
+              {
+                job_role: selectedCareerInfo.jobRole,
+                category: selectedCareerInfo.category,
+                match_score: selectedCareerInfo.matchScore,
+                isSelected: true
+              },
+              ...topMatches.slice(0, 2) // Keep only top 2 others
+            ];
+          } else {
+            // Mark the selected one
+            topMatches = topMatches.map(match => ({
+              ...match,
+              isSelected: match.job_role === selectedCareerInfo.jobRole
+            }));
+          }
         }
 
         setPredictions({
@@ -2004,6 +2056,90 @@ export default function CareerReports() {
               </motion.div>
             )}
 
+            {/* RIASEC Profile Card - Always show */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.12 }}
+              className="bg-gradient-to-br from-gray-900/70 to-gray-800/50 border-2 border-purple-500/30 rounded-2xl p-5 shadow-lg"
+            >
+              <h3 className="text-lg font-black text-white mb-3 flex items-center gap-2">
+                <Sparkles className="text-purple-400" size={20} />
+                Your RIASEC Profile
+              </h3>
+
+              {riasecProfile && riasecProfile.total > 0 ? (
+                <>
+                  <p className="text-xs text-gray-400 mb-4">
+                    Based on your assessment performance, you excel at{' '}
+                    <span className="text-purple-300 font-medium">
+                      {Object.entries(riasecProfile.percentages)
+                        .sort(([, a], [, b]) => b - a)
+                        .slice(0, 2)
+                        .map(([code]) => ({
+                          R: 'Realistic',
+                          I: 'Investigative',
+                          A: 'Artistic',
+                          S: 'Social',
+                          E: 'Enterprising',
+                          C: 'Conventional'
+                        }[code]))
+                        .join(' & ')}
+                    </span>{' '}tasks.
+                  </p>
+
+                  <div className="space-y-2">
+                    {Object.entries(riasecProfile.percentages)
+                      .sort(([, a], [, b]) => b - a)
+                      .map(([code, value]) => {
+                        const info = {
+                          R: { name: 'Realistic', color: 'bg-red-500', desc: 'Hands-on, practical' },
+                          I: { name: 'Investigative', color: 'bg-blue-500', desc: 'Analytical, research' },
+                          A: { name: 'Artistic', color: 'bg-purple-500', desc: 'Creative, innovative' },
+                          S: { name: 'Social', color: 'bg-yellow-500', desc: 'Helping, teamwork' },
+                          E: { name: 'Enterprising', color: 'bg-orange-500', desc: 'Leadership, persuasion' },
+                          C: { name: 'Conventional', color: 'bg-green-500', desc: 'Organized, systematic' }
+                        }[code];
+
+                        return (
+                          <div key={code} className="group">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="w-20 text-xs text-gray-400 group-hover:text-white transition-colors">{info.name}</span>
+                              <div className="flex-1 h-2 bg-gray-700 rounded-full overflow-hidden">
+                                <motion.div
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${value}%` }}
+                                  transition={{ duration: 0.8, delay: 0.2 }}
+                                  className={`h-full ${info.color}`}
+                                />
+                              </div>
+                              <span className="w-8 text-right text-xs font-bold text-white">{value}%</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-6">
+                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-purple-500/20 flex items-center justify-center">
+                    <Sparkles className="text-purple-400" size={28} />
+                  </div>
+                  <p className="text-sm text-gray-400 mb-2">No RIASEC data yet</p>
+                  <p className="text-xs text-gray-500">
+                    Take assessments with RIASEC-tagged questions to build your personality profile.
+                  </p>
+                </div>
+              )}
+
+              <div className="mt-4 bg-purple-500/10 border border-purple-500/30 rounded-lg p-3">
+                <p className="text-xs text-gray-300 leading-relaxed">
+                  <span className="font-bold text-purple-300">What is RIASEC?</span><br />
+                    Holland's theory suggests people and careers fit into 6 types. Your profile shows which question types you answered correctly.
+                  </p>
+                </div>
+              </motion.div>
+
             {/* Top Match Analysis */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
@@ -2038,23 +2174,21 @@ export default function CareerReports() {
               )}
             </motion.div>
 
-            {/* ADVANCED DETAILS - Skills Radar */}
-            {showAdvancedDetails && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.2 }}
-                className="bg-gray-900/70 border border-gray-700/40 rounded-2xl p-5"
-              >
-                <h3 className="text-lg font-black bg-gradient-to-r from-gray-900 to-primary-600 dark:from-white dark:to-primary-200 bg-clip-text text-transparent mb-4 flex items-center gap-2">
-                  <Activity className="text-primary-400 dark:text-primary-400" size={20} />
-                  <span>Skills Radar</span>
-                </h3>
-                <div className="h-64">
-                  <canvas ref={skillsRadarRef}></canvas>
-                </div>
-              </motion.div>
-            )}
+            {/* Skills Radar - Always Visible */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              className="bg-gray-900/70 border border-cyan-500/30 rounded-2xl p-5"
+            >
+              <h3 className="text-lg font-black bg-gradient-to-r from-gray-900 to-cyan-600 dark:from-white dark:to-cyan-200 bg-clip-text text-transparent mb-4 flex items-center gap-2">
+                <Activity className="text-cyan-400 dark:text-cyan-400" size={20} />
+                <span>Skills Radar</span>
+              </h3>
+              <div className="h-64">
+                <canvas ref={skillsRadarRef}></canvas>
+              </div>
+            </motion.div>
 
             {/* ADVANCED DETAILS - Performance Bar */}
             {showAdvancedDetails && (

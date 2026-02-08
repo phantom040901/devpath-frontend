@@ -261,6 +261,25 @@ export default function Assessment({
   const formatTime = (secs) =>
     `${Math.floor(secs / 60)}:${(secs % 60).toString().padStart(2, "0")}`;
 
+  // Calculate RIASEC profile based on correctly answered questions
+  const calculateRiasecProfile = (questionList, userAnswers) => {
+    const riasecPoints = { R: 0, I: 0, A: 0, S: 0, E: 0, C: 0 };
+
+    questionList.forEach((q) => {
+      // Only count correct answers
+      if (userAnswers[q.id] === q.answer) {
+        const categories = q.riasecCategories || [];
+        categories.forEach((code) => {
+          if (riasecPoints.hasOwnProperty(code)) {
+            riasecPoints[code]++;
+          }
+        });
+      }
+    });
+
+    return riasecPoints;
+  };
+
   const handleSubmit = async (
     force = false,
     overrideQuestions = null,
@@ -312,6 +331,9 @@ export default function Assessment({
           `${collectionName}_${subjectId}_${attemptNum}`
         );
 
+        // Calculate RIASEC profile from correctly answered questions
+        const riasecProfile = calculateRiasecProfile(qList, ans);
+
         await setDoc(resultRef, {
           assessmentId: subjectId,
           collection: collectionName,
@@ -322,6 +344,7 @@ export default function Assessment({
           answers: ans,
           attempt: attemptNum,
           submittedAt: new Date().toISOString(),
+          riasecProfile, // RIASEC breakdown for this assessment
         });
       } catch (err) {
         console.error("Failed to save result:", err);

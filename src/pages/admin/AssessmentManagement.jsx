@@ -4,6 +4,9 @@ import { collection, getDocs, doc, updateDoc, addDoc, deleteDoc } from "firebase
 import { db } from "../../lib/firebase";
 import { motion, AnimatePresence } from "framer-motion";
 import AdminNav from "../../components/admin/AdminNav";
+import RiasecSelector from "../../components/admin/RiasecSelector";
+import RiasecDistributionBar from "../../components/admin/RiasecDistributionBar";
+import { RIASEC_CATEGORIES, calculateRiasecDistribution, getDefaultRiasecForAssessment, getSmartRiasecForQuestion } from "../../constants/riasec";
 import {
   BookOpen,
   Code,
@@ -19,7 +22,8 @@ import {
   ChevronUp,
   ChevronDown,
   GripVertical,
-  HelpCircle
+  HelpCircle,
+  Wand2
 } from "lucide-react";
 
 export default function AssessmentManagement() {
@@ -216,6 +220,16 @@ export default function AssessmentManagement() {
                 </div>
               </div>
 
+              {/* RIASEC Distribution */}
+              {assessment.questions?.length > 0 && (
+                <div className="mb-3">
+                  <RiasecDistributionBar
+                    distribution={calculateRiasecDistribution(assessment.questions)}
+                    showLabels={false}
+                  />
+                </div>
+              )}
+
               <div className="flex items-center justify-between pt-3 border-t border-gray-800">
                 <div className="text-xs sm:text-sm text-gray-400">
                   {assessment.questions?.length || assessment.questionsCount || 0} questions
@@ -304,9 +318,12 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
 
   // Question management functions
   const addQuestion = () => {
+    // Auto-assign RIASEC based on assessment subject/title
+    const defaultRiasec = getDefaultRiasecForAssessment(assessment.id, formData.title);
     const newQuestion = {
       text: "",
       difficulty: "beginner",
+      riasecCategories: defaultRiasec,
       options: ["", "", "", ""],
       answer: "A"
     };
@@ -315,6 +332,25 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
       questions: [...formData.questions, newQuestion]
     });
     setExpandedQuestion(formData.questions.length);
+  };
+
+  // Auto-assign RIASEC to all questions (smart analysis based on question text)
+  const autoAssignAllRiasec = () => {
+    const updatedQuestions = formData.questions.map(q => ({
+      ...q,
+      riasecCategories: getSmartRiasecForQuestion(q.text, assessment.id, formData.title)
+    }));
+    setFormData({ ...formData, questions: updatedQuestions });
+  };
+
+  // Quick toggle RIASEC for a specific question
+  const toggleQuestionRiasec = (qIndex, code) => {
+    const question = formData.questions[qIndex];
+    const currentCategories = question.riasecCategories || [];
+    const updatedCategories = currentCategories.includes(code)
+      ? currentCategories.filter(c => c !== code)
+      : [...currentCategories, code];
+    updateQuestion(qIndex, "riasecCategories", updatedCategories);
   };
 
   const updateQuestion = (index, field, value) => {
@@ -355,6 +391,25 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
       default: return "text-gray-400 bg-gray-500/20";
     }
   };
+
+  // Required difficulty distribution: 5 beginner, 3 intermediate, 2 advanced
+  const REQUIRED_DISTRIBUTION = { beginner: 5, intermediate: 3, advanced: 2 };
+
+  const getDifficultyDistribution = () => {
+    const distribution = { beginner: 0, intermediate: 0, advanced: 0 };
+    formData.questions.forEach(q => {
+      if (distribution.hasOwnProperty(q.difficulty)) {
+        distribution[q.difficulty]++;
+      }
+    });
+    return distribution;
+  };
+
+  const difficultyDistribution = getDifficultyDistribution();
+  const isDistributionValid =
+    difficultyDistribution.beginner === REQUIRED_DISTRIBUTION.beginner &&
+    difficultyDistribution.intermediate === REQUIRED_DISTRIBUTION.intermediate &&
+    difficultyDistribution.advanced === REQUIRED_DISTRIBUTION.advanced;
 
   return (
     <motion.div
@@ -441,7 +496,7 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
 
           {/* Questions Section */}
           <div className="border-t border-gray-700 pt-4 sm:pt-5">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <HelpCircle size={18} className="text-primary-400" />
                 <h3 className="text-lg font-semibold text-white">Questions</h3>
@@ -449,15 +504,74 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
                   {formData.questions.length}
                 </span>
               </div>
-              <button
-                type="button"
-                onClick={addQuestion}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium transition-all"
-              >
-                <Plus size={14} />
-                Add Question
-              </button>
+              <div className="flex gap-2">
+                {formData.questions.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={autoAssignAllRiasec}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium transition-all"
+                    title="Auto-assign RIASEC to all questions based on subject"
+                  >
+                    <Wand2 size={14} />
+                    <span className="hidden sm:inline">Auto RIASEC</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={addQuestion}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium transition-all"
+                >
+                  <Plus size={14} />
+                  Add Question
+                </button>
+              </div>
             </div>
+
+            {/* Difficulty Distribution Summary */}
+            <div className={`mb-4 p-3 rounded-lg border ${isDistributionValid ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-amber-500/10 border-amber-500/30'}`}>
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs text-gray-400">Difficulty Distribution</p>
+                {isDistributionValid ? (
+                  <span className="text-xs text-emerald-400 flex items-center gap-1">
+                    <CheckCircle size={12} /> Valid
+                  </span>
+                ) : (
+                  <span className="text-xs text-amber-400 flex items-center gap-1">
+                    <AlertCircle size={12} /> Requires 5B / 3I / 2A
+                  </span>
+                )}
+              </div>
+              <div className="flex gap-3">
+                <div className={`flex items-center gap-1.5 px-2 py-1 rounded ${difficultyDistribution.beginner === REQUIRED_DISTRIBUTION.beginner ? 'bg-emerald-500/20' : 'bg-gray-700'}`}>
+                  <span className="text-emerald-400 text-xs font-medium">B:</span>
+                  <span className={`text-xs font-bold ${difficultyDistribution.beginner === REQUIRED_DISTRIBUTION.beginner ? 'text-emerald-400' : 'text-white'}`}>
+                    {difficultyDistribution.beginner}/{REQUIRED_DISTRIBUTION.beginner}
+                  </span>
+                </div>
+                <div className={`flex items-center gap-1.5 px-2 py-1 rounded ${difficultyDistribution.intermediate === REQUIRED_DISTRIBUTION.intermediate ? 'bg-yellow-500/20' : 'bg-gray-700'}`}>
+                  <span className="text-yellow-400 text-xs font-medium">I:</span>
+                  <span className={`text-xs font-bold ${difficultyDistribution.intermediate === REQUIRED_DISTRIBUTION.intermediate ? 'text-yellow-400' : 'text-white'}`}>
+                    {difficultyDistribution.intermediate}/{REQUIRED_DISTRIBUTION.intermediate}
+                  </span>
+                </div>
+                <div className={`flex items-center gap-1.5 px-2 py-1 rounded ${difficultyDistribution.advanced === REQUIRED_DISTRIBUTION.advanced ? 'bg-red-500/20' : 'bg-gray-700'}`}>
+                  <span className="text-red-400 text-xs font-medium">A:</span>
+                  <span className={`text-xs font-bold ${difficultyDistribution.advanced === REQUIRED_DISTRIBUTION.advanced ? 'text-red-400' : 'text-white'}`}>
+                    {difficultyDistribution.advanced}/{REQUIRED_DISTRIBUTION.advanced}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* RIASEC Distribution Summary */}
+            {formData.questions.length > 0 && (
+              <div className="mb-4 p-3 bg-gray-800/50 rounded-lg">
+                <p className="text-xs text-gray-400 mb-2">RIASEC Distribution</p>
+                <RiasecDistributionBar
+                  distribution={calculateRiasecDistribution(formData.questions)}
+                />
+              </div>
+            )}
 
             {/* Questions List */}
             <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
@@ -486,6 +600,28 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
                       <span className={`px-2 py-0.5 rounded text-xs font-medium ${getDifficultyColor(question.difficulty)}`}>
                         {question.difficulty}
                       </span>
+                      {/* Quick RIASEC toggle buttons */}
+                      <div className="flex gap-0.5" onClick={(e) => e.stopPropagation()}>
+                        {["R", "I", "A", "S", "E", "C"].map(code => {
+                          const isSelected = question.riasecCategories?.includes(code);
+                          const category = RIASEC_CATEGORIES[code];
+                          return (
+                            <button
+                              key={code}
+                              type="button"
+                              onClick={() => toggleQuestionRiasec(qIndex, code)}
+                              className={`w-5 h-5 rounded text-[10px] font-bold transition-all
+                                ${isSelected
+                                  ? `${category.bgClass} ${category.textClass}`
+                                  : "bg-gray-700/50 text-gray-500 hover:bg-gray-600"
+                                }`}
+                              title={`${category.name}: ${category.description}`}
+                            >
+                              {code}
+                            </button>
+                          );
+                        })}
+                      </div>
                       <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 text-xs font-medium">
                         {question.answer}
                       </span>
@@ -534,6 +670,20 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
                                 <option value="intermediate">Intermediate</option>
                                 <option value="advanced">Advanced</option>
                               </select>
+                            </div>
+
+                            {/* RIASEC Categories */}
+                            <div>
+                              <label className="block text-xs font-medium text-gray-400 mb-1.5">
+                                RIASEC Categories
+                              </label>
+                              <RiasecSelector
+                                selected={question.riasecCategories || []}
+                                onChange={(categories) => updateQuestion(qIndex, "riasecCategories", categories)}
+                              />
+                              <p className="text-xs text-gray-500 mt-1.5">
+                                Select personality types this question relates to
+                              </p>
                             </div>
 
                             {/* Options */}
@@ -617,6 +767,14 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
             </div>
           </div>
 
+          {/* Distribution Warning */}
+          {formData.questions.length > 0 && !isDistributionValid && (
+            <div className="flex items-center gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-400 text-sm">
+              <AlertCircle size={16} className="flex-shrink-0" />
+              <span>Questions should have 5 Beginner, 3 Intermediate, and 2 Advanced for proper assessment structure.</span>
+            </div>
+          )}
+
           {/* Form Actions */}
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 pt-4 border-t border-gray-700">
             <button
@@ -629,7 +787,11 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
             <button
               type="submit"
               disabled={saving || !formData.title}
-              className="w-full sm:flex-1 px-4 py-2.5 sm:py-3 rounded-lg bg-primary-500 hover:bg-primary-600 text-white font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+              className={`w-full sm:flex-1 px-4 py-2.5 sm:py-3 rounded-lg font-semibold transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm ${
+                formData.questions.length > 0 && !isDistributionValid
+                  ? 'bg-amber-500 hover:bg-amber-600 text-white'
+                  : 'bg-primary-500 hover:bg-primary-600 text-white'
+              }`}
             >
               {saving ? (
                 <>
@@ -639,7 +801,10 @@ function AssessmentEditorModal({ assessment, onSave, onClose, saving }) {
               ) : (
                 <>
                   <Save size={16} />
-                  Save Assessment ({formData.questions.length} questions)
+                  {formData.questions.length > 0 && !isDistributionValid
+                    ? `Save Anyway (${formData.questions.length}/10 questions)`
+                    : `Save Assessment (${formData.questions.length} questions)`
+                  }
                 </>
               )}
             </button>
